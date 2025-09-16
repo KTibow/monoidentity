@@ -27,18 +27,19 @@
   .first,
   .second {
     display: flex;
-    height: 2.5rem;
     align-items: center;
     justify-content: center;
     border-radius: var(--m3-util-rounding-small);
     position: relative;
     &.first {
+      padding-block: 1rem;
       border-start-start-radius: var(--m3-util-rounding-large);
       border-start-end-radius: var(--m3-util-rounding-large);
       background-color: rgb(var(--m3-scheme-surface-container-high));
       color: rgb(var(--m3-scheme-on-surface));
     }
     &.second {
+      height: 2.5rem;
       border-end-start-radius: var(--m3-util-rounding-large);
       border-end-end-radius: var(--m3-util-rounding-large);
       background-color: rgb(var(--m3-scheme-secondary-container));
