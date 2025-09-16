@@ -7,9 +7,15 @@
   let {
     appName,
     scopes,
+    submitCloud,
+    submitLocalPW,
+    submitLocal,
   }: {
     appName: string;
     scopes: Scope[];
+    submitCloud: (email: string, password: string) => void;
+    submitLocalPW: (email: string, password: string) => void;
+    submitLocal: () => void;
   } = $props();
 
   let email = $state("");
@@ -24,18 +30,25 @@
     if (!["com", "org", "net", "edu"].includes(tld)) return true;
     return recognized;
   });
-  const submit = (e: Event) => {
+  const submit = (e: SubmitEvent) => {
     e.preventDefault();
-    // TODO: finishing etc
+
+    const method = e.submitter?.getAttribute("value");
+    if (method == "local-pw") {
+      submitLocalPW(email, password);
+    } else if (method == "local") {
+      submitLocal();
+    } else {
+      submitCloud(email, password);
+    }
   };
 </script>
 
-{#snippet emailpassword(required: boolean)}
-  <FormEmail {required} bind:email />
+{#snippet emailpassword()}
+  <FormEmail bind:email />
   <input
     type="password"
     placeholder="Password"
-    {required}
     bind:value={password}
     class="m3-font-body-large focus-inset"
   />
@@ -52,19 +65,20 @@
   {/if}
   <div class="spacer"></div>
   {#if scopes.includes("login-recognized")}
-    {@render emailpassword(true)}
+    {@render emailpassword()}
     {#if maybeRecognized}
       <Button variant="filled" name="method" value="cloud" disabled={!recognized}>Sign in</Button>
-      <Button variant="tonal" name="method" value="local" disabled={!recognized}
-        >Sign in locally</Button
+      <Button variant="tonal" name="method" value="local-pw" disabled={!recognized}
+        >Sign in with local storage</Button
       >
+      <Button variant="text" name="method" value="local">Use locally stored credentials</Button>
     {:else}
-      <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
+      <p class="m3-font-body-medium">This app doesn't work with your email.</p>
     {/if}
   {:else}
     <details>
-      <Button variant="tonal" summary>Use cloud storage</Button>
-      {@render emailpassword(false)}
+      <Button variant="filled" summary>Use cloud storage</Button>
+      {@render emailpassword()}
       {#if maybeRecognized}
         <Button variant="filled" name="method" value="cloud" disabled={!recognized}>
           Continue

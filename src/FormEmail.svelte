@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { required, email = $bindable() }: { required: boolean; email: string } = $props();
+  let { email = $bindable() }: { email: string } = $props();
 
   const focusOnVisible = (node: HTMLElement) => {
     const observer = new IntersectionObserver(
@@ -25,7 +25,6 @@
   <input
     type="email"
     placeholder="Email"
-    {required}
     bind:value={email}
     class="m3-font-body-large focus-inset"
     use:focusOnVisible
