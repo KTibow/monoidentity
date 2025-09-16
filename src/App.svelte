@@ -17,7 +17,7 @@
 
     const callback = new URLSearchParams();
     callback.set("monoidentitycallback", JSON.stringify(data));
-    url.search = callback.toString();
+    url.hash = callback.toString();
 
     window.location.href = url.toString();
   };
