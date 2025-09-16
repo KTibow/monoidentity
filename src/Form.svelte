@@ -1,8 +1,10 @@
 <script lang="ts">
+  import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
   import { domains, type Scope } from "./lib";
   import FormEmail from "./FormEmail.svelte";
+  import FormLocalCountdown from "./FormLocalCountdown.svelte";
 
   let {
     appName,
@@ -13,13 +15,14 @@
   }: {
     appName: string;
     scopes: Scope[];
-    submitCloud: (email: string, password: string) => void;
+    submitCloud: (email: string, password: string, sharePW: boolean) => void;
     submitLocalPW: (email: string, password: string) => void;
     submitLocal: () => void;
   } = $props();
 
   let email = $state("");
   let password = $state("");
+  let loginScope = $derived(scopes.includes("login-recognized"));
   let recognized = $derived.by(() => {
     const domain = email.split("@")[1];
     return domains.includes(domain);
@@ -39,9 +42,11 @@
     } else if (method == "local") {
       submitLocal();
     } else {
-      submitCloud(email, password);
+      submitCloud(email, password, loginScope);
     }
   };
+  let lastUsed = $state(localStorage.lastUsed);
+  let cloudNotice = $derived(lastUsed == "cloud" ? " (last used)" : "");
 </script>
 
 {#snippet emailpassword()}
@@ -56,7 +61,7 @@
 
 <form onsubmit={submit}>
   <Icon icon={iconCable} width="1.5rem" height="1.5rem" />
-  {#if scopes.includes("login-recognized")}
+  {#if loginScope}
     <h1 class="m3-font-headline-small">Sign in</h1>
     <p>Securely authorize {appName}.</p>
   {:else}
@@ -64,20 +69,34 @@
     <p>Get {appName}'s storage working.</p>
   {/if}
   <div class="spacer"></div>
-  {#if scopes.includes("login-recognized")}
+  {#if lastUsed == "local"}
+    <FormLocalCountdown
+      {submitLocal}
+      cancel={() => {
+        lastUsed = undefined;
+        delete localStorage.lastUsed;
+      }}
+    />
+  {:else if loginScope}
     {@render emailpassword()}
     {#if maybeRecognized}
-      <Button variant="filled" name="method" value="cloud" disabled={!recognized}>Sign in</Button>
+      <Button variant="filled" name="method" value="cloud" iconType="left" disabled={!recognized}>
+        <Icon icon={iconCloud} />
+        Sign in{cloudNotice}
+      </Button>
       <Button variant="tonal" name="method" value="local-pw" disabled={!recognized}
         >Sign in with local storage</Button
       >
-      <Button variant="text" name="method" value="local">Use locally stored credentials</Button>
+      <Button variant="text" name="method" value="local">Use preexisting local storage</Button>
     {:else}
       <p class="m3-font-body-medium">This app doesn't work with your email.</p>
     {/if}
   {:else}
     <details>
-      <Button variant="filled" summary>Use cloud storage</Button>
+      <Button variant="filled" summary iconType="left">
+        <Icon icon={iconCloud} />
+        Use cloud storage{cloudNotice}
+      </Button>
       {@render emailpassword()}
       {#if maybeRecognized}
         <Button variant="filled" name="method" value="cloud" disabled={!recognized}>

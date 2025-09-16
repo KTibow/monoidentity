@@ -21,13 +21,16 @@
 
     window.location.href = url.toString();
   };
-  const submitCloud = (email: string, password: string) => {
+  const submitCloud = (email: string, password: string, sharePW: boolean) => {
+    localStorage.lastUsed = "cloud";
     // TODO
   };
   const submitLocalPW = (email: string, password: string) => {
+    localStorage.lastUsed = "local";
     redirectBack({ storageMethod: "local", email, password });
   };
   const submitLocal = () => {
+    localStorage.lastUsed = "local";
     redirectBack({ storageMethod: "local" });
   };
 </script>
