@@ -1,6 +1,6 @@
 <script lang="ts">
   import Form from "./Form.svelte";
-  import type { AppData, Scope } from "./lib";
+  import type { AppData, Callback, Scope } from "./lib";
 
   let {
     appData,
@@ -12,19 +12,23 @@
     redirectURI: string;
   } = $props();
 
-  const redirectBack = (data: unknown) => {
+  const redirectBack = (data: Callback) => {
     const url = new URL(redirectURI);
-    url.hash = `monoidentity=${encodeURIComponent(JSON.stringify(data))}`;
+
+    const callback = new URLSearchParams();
+    callback.set("monoidentitycallback", JSON.stringify(data));
+    url.search = callback.toString();
+
     window.location.href = url.toString();
   };
   const submitCloud = (email: string, password: string) => {
     // TODO
   };
   const submitLocalPW = (email: string, password: string) => {
-    redirectBack({ method: "local", email, password });
+    redirectBack({ storageMethod: "local", email, password });
   };
   const submitLocal = () => {
-    redirectBack({ method: "local" });
+    redirectBack({ storageMethod: "local" });
   };
 </script>
 
