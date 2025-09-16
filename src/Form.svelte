@@ -10,14 +10,12 @@
     appName,
     scopes,
     submitCloud,
-    submitLocalPW,
     submitLocal,
   }: {
     appName: string;
     scopes: Scope[];
     submitCloud: (email: string, password: string, sharePW: boolean) => void;
-    submitLocalPW: (email: string, password: string) => void;
-    submitLocal: () => void;
+    submitLocal: (create: boolean, email?: string, password?: string) => void;
   } = $props();
 
   let email = $state("");
@@ -37,10 +35,10 @@
     e.preventDefault();
 
     const method = e.submitter?.getAttribute("value");
-    if (method == "local-pw") {
-      submitLocalPW(email, password);
+    if (method == "local-create") {
+      submitLocal(true, email, password);
     } else if (method == "local") {
-      submitLocal();
+      submitLocal(false);
     } else {
       submitCloud(email, password, loginScope);
     }
@@ -84,10 +82,10 @@
         <Icon icon={iconCloud} />
         Sign in{cloudNotice}
       </Button>
-      <Button variant="tonal" name="method" value="local-pw" disabled={!recognized}
-        >Sign in with local storage</Button
+      <Button variant="tonal" name="method" value="local-create" disabled={!recognized}
+        >Create local storage</Button
       >
-      <Button variant="text" name="method" value="local">Use preexisting local storage</Button>
+      <Button variant="tonal" name="method" value="local">Use preexisting local storage</Button>
     {:else}
       <p class="m3-font-body-medium">This app doesn't work with your email.</p>
     {/if}
@@ -106,7 +104,8 @@
         <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
       {/if}
     </details>
-    <Button variant="tonal" name="method" value="local">Use local storage</Button>
+    <Button variant="tonal" name="method" value="local-create">Set up local storage</Button>
+    <Button variant="tonal" name="method" value="local">Use preexisting local storage</Button>
   {/if}
 </form>
 
@@ -149,7 +148,7 @@
       flex-direction: column;
       gap: 0.5rem;
     }
-    &:open + :global(*) {
+    &:open ~ :global(*) {
       display: none;
     }
     &:not(:open) > :global(summary) {

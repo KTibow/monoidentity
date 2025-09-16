@@ -23,16 +23,15 @@
   };
   const submitCloud = (email: string, password: string, sharePW: boolean) => {
     localStorage.lastUsed = "cloud";
-    // TODO
+    // TODO: verify storage, create storage, add password to storage, create a key for using it
   };
-  const submitLocalPW = (email: string, password: string) => {
+  const submitLocal = (create: boolean, email?: string, password?: string) => {
     localStorage.lastUsed = "local";
-    redirectBack({ storageMethod: "local", email, password });
-  };
-  const submitLocal = () => {
-    localStorage.lastUsed = "local";
-    redirectBack({ storageMethod: "local" });
+    redirectBack({
+      storageMethod: "local",
+      localCreateTask: create ? { email, password } : undefined,
+    });
   };
 </script>
 
-<Form appName={appData.name} {scopes} {submitCloud} {submitLocalPW} {submitLocal} />
+<Form appName={appData.name} {scopes} {submitCloud} {submitLocal} />

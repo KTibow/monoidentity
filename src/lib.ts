@@ -3,8 +3,7 @@ export const domains: string[] = ["apps.nsd.org"];
 export type Scope = "login-recognized" | "storage";
 export type Callback = {
   storageMethod: "cloud" | "local";
-  email?: string;
-  password?: string;
+  localCreateTask?: { email?: string; password?: string };
 };
 
 // TODO: in the future allow app federation
