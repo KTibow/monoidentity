@@ -83,7 +83,7 @@
         Sign in{cloudNotice}
       </Button>
       <Button variant="tonal" name="method" value="local-create" disabled={!recognized}
-        >Create local storage</Button
+        >Set up local storage</Button
       >
       <Button variant="tonal" name="method" value="local">Use preexisting local storage</Button>
     {:else}
