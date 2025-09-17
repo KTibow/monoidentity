@@ -148,10 +148,11 @@
       flex-direction: column;
       gap: 0.5rem;
     }
-    &:open ~ :global(*) {
+    /* todo: once chromebooks use chrome >132 use :open */
+    &[open] ~ :global(*) {
       display: none;
     }
-    &:not(:open) > :global(summary) {
+    &:not([open]) > :global(summary) {
       margin-bottom: -0.5rem;
     }
   }
