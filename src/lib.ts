@@ -2,8 +2,16 @@ export const domains: string[] = ["apps.nsd.org"];
 
 export type Scope = "login-recognized" | "storage";
 export type Callback = {
-  storageMethod: "cloud" | "local";
-  localCreateTask?: { email?: string; password?: string };
+  connect:
+    | {
+        method: "cloud";
+        jwt: string;
+      }
+    | {
+        method: "local";
+        createNew: boolean;
+      };
+  fileTasks: Record<string, string> | undefined;
 };
 
 // TODO: in the future allow app federation
