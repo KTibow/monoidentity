@@ -1,21 +1,22 @@
-import type { Callback, Scope } from "../../../src/lib.js";
+import { rememberCallback, type Callback, type Scope } from "../../../src/lib.js";
 
 export const isReady = (app: string, scopes: Scope[]) => {
   const params = new URLSearchParams(location.hash.slice(1));
 
-  const callback = params.get("monoidentitycallback");
-  if (callback) {
+  const paramCB = params.get("monoidentitycallback");
+  if (paramCB) {
     history.replaceState(null, "", location.pathname);
 
-    const data = JSON.parse(callback) as Callback;
-    console.log("got callback", data);
-    localStorage.monoidentityStorageMethod = data.storageMethod;
-    // TODO handle localCreateTask
-    // and remove the console log
+    const cb = JSON.parse(paramCB) as Callback;
+    console.log("got callback", cb); // todo remove
+
+    localStorage.monoidentityMemory = rememberCallback(
+      cb,
+      JSON.parse(localStorage.monoidentityMemory || "null"),
+    );
   }
 
-  const storageMethod = localStorage.monoidentityStorageMethod;
-  if (!storageMethod) {
+  if (!localStorage.monoidentityMemory) {
     const params = new URLSearchParams();
     params.set("app", app);
     params.set("scopes", scopes.join(","));
@@ -23,6 +24,8 @@ export const isReady = (app: string, scopes: Scope[]) => {
     location.href = `https://usemonoidentity.web.app/#${params.toString()}`;
     return false;
   }
+
+  // todo use localStorage.monoidentityMemory
 
   return true;
 };

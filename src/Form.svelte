@@ -2,18 +2,20 @@
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
-  import { domains, type Scope } from "./lib";
+  import { domains, scopeDefs, type Memory, type Scope } from "./lib";
   import FormEmail from "./FormEmail.svelte";
   import FormLocalCountdown from "./FormLocalCountdown.svelte";
 
   let {
     appName,
     scopes,
+    savedMemory,
     submitCloud,
     submitLocal,
   }: {
     appName: string;
     scopes: Scope[];
+    savedMemory: Memory | undefined;
     submitCloud: (email: string, password: string, sharePW: boolean) => void;
     submitLocal: (create: boolean, email?: string, password?: string) => void;
   } = $props();
@@ -21,6 +23,13 @@
   let email = $state("");
   let password = $state("");
   let loginScope = $derived(scopes.includes("login-recognized"));
+  let memory = $derived.by(() => {
+    const memory = savedMemory;
+    if (!memory) return undefined;
+    if (scopes.some((s) => scopeDefs[s].files.some((f) => !memory.knownFiles?.includes(f))))
+      return undefined;
+    return memory;
+  });
   let recognized = $derived.by(() => {
     const domain = email.split("@")[1];
     return domains.includes(domain);
@@ -43,8 +52,6 @@
       submitCloud(email, password, loginScope);
     }
   };
-  let lastUsed = $state(localStorage.lastUsed);
-  let cloudNotice = $derived(lastUsed == "cloud" ? " (last used)" : "");
 </script>
 
 {#snippet emailpassword()}
@@ -67,12 +74,12 @@
     <p>Get {appName}'s storage working.</p>
   {/if}
   <div class="spacer"></div>
-  {#if lastUsed == "local"}
+  {#if memory?.method == "local"}
     <FormLocalCountdown
-      {submitLocal}
+      run={() => submitLocal(false)}
       cancel={() => {
-        lastUsed = undefined;
-        delete localStorage.lastUsed;
+        memory = undefined;
+        delete localStorage.monoidentityMemory;
       }}
     />
   {:else if loginScope}
@@ -80,7 +87,7 @@
     {#if maybeRecognized}
       <Button variant="filled" name="method" value="cloud" iconType="left" disabled={!recognized}>
         <Icon icon={iconCloud} />
-        Sign in{cloudNotice}
+        Sign in
       </Button>
       <Button variant="tonal" name="method" value="local-create" disabled={!recognized}
         >Set up local storage</Button
@@ -93,7 +100,7 @@
     <details>
       <Button variant="filled" summary iconType="left">
         <Icon icon={iconCloud} />
-        Use cloud storage{cloudNotice}
+        Use cloud storage
       </Button>
       {@render emailpassword()}
       {#if maybeRecognized}

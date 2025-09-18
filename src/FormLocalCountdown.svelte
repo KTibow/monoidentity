@@ -2,8 +2,7 @@
   import { Layer } from "m3-svelte";
   import { onMount } from "svelte";
 
-  let { submitLocal, cancel }: { submitLocal: (create: boolean) => void; cancel: () => void } =
-    $props();
+  let { run, cancel }: { run: () => void; cancel: () => void } = $props();
   let countdown = $state(2);
 
   onMount(() => {
@@ -11,7 +10,7 @@
       countdown -= 1;
       if (countdown <= 0) {
         clearInterval(interval);
-        submitLocal(false);
+        run();
       }
     }, 1000);
     return () => clearInterval(interval);
