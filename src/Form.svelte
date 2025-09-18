@@ -43,8 +43,7 @@
       submitCloud(email, password, loginScope);
     }
   };
-  let lastUsed = $state(localStorage.lastUsed);
-  let cloudNotice = $derived(lastUsed == "cloud" ? " (last used)" : "");
+  let lastUsed = $state(localStorage.lastUsed); // TODO: use monoidentity memory and typing
 </script>
 
 {#snippet emailpassword()}
@@ -80,7 +79,7 @@
     {#if maybeRecognized}
       <Button variant="filled" name="method" value="cloud" iconType="left" disabled={!recognized}>
         <Icon icon={iconCloud} />
-        Sign in{cloudNotice}
+        Sign in
       </Button>
       <Button variant="tonal" name="method" value="local-create" disabled={!recognized}
         >Set up local storage</Button
@@ -93,7 +92,7 @@
     <details>
       <Button variant="filled" summary iconType="left">
         <Icon icon={iconCloud} />
-        Use cloud storage{cloudNotice}
+        Use cloud storage
       </Button>
       {@render emailpassword()}
       {#if maybeRecognized}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Form from "./Form.svelte";
-  import type { AppData, Callback, Scope } from "./lib";
+  import type { AppData, Callback, Memory, Scope } from "./lib";
 
   let {
     appData,
@@ -13,6 +13,11 @@
   } = $props();
 
   const redirectBack = (data: Callback) => {
+    let memory: Partial<Memory> = {};
+    if (localStorage.monoidentityMemory) memory = JSON.parse(localStorage.monoidentityMemory);
+    // todo: apply data.connect
+    localStorage.monoidentityMemory = JSON.stringify(memory);
+
     const url = new URL(redirectURI);
 
     const callback = new URLSearchParams();
@@ -22,14 +27,12 @@
     window.location.href = url.toString();
   };
   const submitCloud = (email: string, password: string, sharePW: boolean) => {
-    localStorage.lastUsed = "cloud";
     // TODO: verify storage, create storage, add password to storage, create a key for using it
   };
   const submitLocal = (create: boolean, email?: string, password?: string) => {
-    localStorage.lastUsed = "local";
     redirectBack({
-      storageMethod: "local",
-      localCreateTask: create ? { email, password } : undefined,
+      connect: { method: "local", createNew: create },
+      fileTasks: undefined // TODO
     });
   };
 </script>

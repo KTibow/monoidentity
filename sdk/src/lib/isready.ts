@@ -9,13 +9,19 @@ export const isReady = (app: string, scopes: Scope[]) => {
 
     const data = JSON.parse(callback) as Callback;
     console.log("got callback", data);
-    localStorage.monoidentityStorageMethod = data.storageMethod;
+
+    // todo: use same memory method as the app uses
+    if (data.connect.method == "cloud") {
+      localStorage.monoidentityConnectMethod = JSON.stringify(data.connect);
+    } else {
+      localStorage.monoidentityConnectMethod = JSON.stringify({ method: "local" });
+    }
     // TODO handle localCreateTask
     // and remove the console log
   }
 
-  const storageMethod = localStorage.monoidentityStorageMethod;
-  if (!storageMethod) {
+  const connectMethod = localStorage.monoidentityConnectMethod;
+  if (!connectMethod) {
     const params = new URLSearchParams();
     params.set("app", app);
     params.set("scopes", scopes.join(","));

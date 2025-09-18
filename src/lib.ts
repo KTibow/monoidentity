@@ -1,16 +1,13 @@
 export const domains: string[] = ["apps.nsd.org"];
 
 export type Scope = "login-recognized" | "storage";
+type BaseMemory = { method: "cloud"; jwt: string } | { method: "local"; createNew?: never };
+export type Memory = BaseMemory & { knownFiles: string[] };
 export type Callback = {
-  connect:
-    | {
-        method: "cloud";
-        jwt: string;
-      }
-    | {
-        method: "local";
-        createNew: boolean;
-      };
+  connect: Memory | {
+    method: "local";
+    createNew: boolean;
+  };
   fileTasks: Record<string, string> | undefined;
 };
 
