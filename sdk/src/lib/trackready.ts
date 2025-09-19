@@ -1,4 +1,4 @@
-import { rememberCallback, type Callback, type Memory, type Scope } from "../../../src/lib.js";
+import { rememberCallback, type Callback, type Memory, type Scope } from "./utils.js";
 import { init as initLocal } from "./storage-private-local.js";
 import { setup } from "./storage.js";
 
