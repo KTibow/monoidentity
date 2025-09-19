@@ -1,4 +1,4 @@
-export const supportsFile = "showSaveFilePicker" in window;
+export const supportsFile = false; // todo revert to "showSaveFilePicker" in window;
 type Setup =
   | { method: "cloud"; jwt: string }
   | { method: "file"; createNew?: never }
