@@ -2,7 +2,8 @@
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
-  import { domains, scopeDefs, supportsFile, type Memory, type Scope } from "./lib";
+  import { scopeDefs, supportsFile, type Memory, type Scope } from "../sdk/src/lib/utils";
+  import { domains } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   import FormCountdown from "./FormCountdown.svelte";
 

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Form from "./Form.svelte";
-  import { rememberCallback, type AppData, type Callback, type Memory, type Scope } from "./lib";
+  import { rememberCallback, type Callback, type Memory, type Scope } from "../sdk/src/lib/utils";
+  import type { AppData } from "./specific-utils";
 
   let {
     appData,
