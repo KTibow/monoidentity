@@ -75,7 +75,9 @@
     >
     <Button variant="tonal" name="method" value="file">Use preexisting local storage</Button>
   {:else}
-    <Button variant="tonal" name="method" value="local">Use local storage</Button>
+    <Button variant="tonal" name="method" value="local" disabled={waitingOnEmailPassword}
+      >Use local storage</Button
+    >
     <div class="spacer"></div>
     <p>⚠ We'd like to offer file-based local storage, but your browser isn't letting us</p>
   {/if}
