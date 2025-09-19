@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import type { Scope } from "./utils.js";
+  import type { Scope } from "./utils-scope.js";
   import { trackReady } from "./trackready.js";
 
   let { app, scopes, children }: { app: string; scopes: Scope[]; children: Snippet } = $props();

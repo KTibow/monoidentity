@@ -1,6 +1,6 @@
 import { mount } from "svelte";
 import App from "./App.svelte";
-import type { Scope } from "../sdk/src/lib/utils";
+import type { Scope } from "../sdk/src/lib/utils-scope";
 import { apps } from "./specific-utils";
 
 const params = new URLSearchParams(location.hash.slice(1));

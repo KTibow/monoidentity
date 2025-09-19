@@ -1,13 +1,3 @@
-export const scopeDefs = {
-  "login-recognized": {
-    files: [".config/login.encjson"],
-  },
-  storage: {
-    files: [],
-  },
-};
-export type Scope = keyof typeof scopeDefs;
-
 export const supportsFile = "showSaveFilePicker" in window;
 type Setup =
   | { method: "cloud"; jwt: string }
@@ -15,11 +5,12 @@ type Setup =
   | { method: "localStorage" };
 export type Memory = Setup & { knownFiles: string[] };
 export type Callback = {
+  scopes: string[];
   connect: Setup | { method: "file"; createNew: boolean };
   fileTasks: Record<string, string> | undefined;
 };
 export const rememberCallback = (data: Callback, pastMemory?: Memory): Memory => {
-  const { connect, fileTasks } = data;
+  const { scopes, connect, fileTasks } = data;
 
   const setup: Setup =
     connect.method == "cloud" ? { method: "cloud", jwt: connect.jwt } : { method: connect.method };
@@ -33,6 +24,15 @@ export const rememberCallback = (data: Callback, pastMemory?: Memory): Memory =>
   if (fileTasks) {
     for (const file of Object.keys(fileTasks)) {
       knownFilesSet.add(file);
+    }
+  }
+  if (scopes.includes("login-recognized")) {
+    const path = ".core/login.encjson";
+
+    if (connect.method == "cloud") {
+      knownFilesSet.add(path);
+    } else if (!knownFilesSet.has(path)) {
+      console.warn("unexpected login deficit");
     }
   }
   const knownFiles = Array.from(knownFilesSet);

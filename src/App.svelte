@@ -1,6 +1,8 @@
 <script lang="ts">
   import Form from "./Form.svelte";
-  import { rememberCallback, type Callback, type Memory, type Scope } from "../sdk/src/lib/utils";
+  import { encode, type Login } from "../sdk/src/lib/utils-login";
+  import type { Scope } from "../sdk/src/lib/utils-scope";
+  import { rememberCallback, type Callback, type Memory } from "../sdk/src/lib/utils-callback";
   import type { AppData } from "./specific-utils";
 
   let {
@@ -28,19 +30,25 @@
 
     window.location.href = url.toString();
   };
-  const submitCloud = (email: string, password: string, sharePW: boolean) => {
+  const genFileTasks = (login?: Login) => {
+    if (!login) return undefined;
+    return { ".core/login.encjson": encode(JSON.stringify(login)) };
+  };
+  const submitCloud = (login: Login, sharePW: boolean) => {
     // TODO: verify storage, create storage, add password to storage, create a key for using it
   };
-  const submitFile = (create: boolean, email?: string, password?: string) => {
+  const submitFile = (login?: Login, create?: boolean) => {
     redirectBack({
-      connect: { method: "file", createNew: create },
-      fileTasks: undefined, // TODO
+      scopes,
+      connect: { method: "file", createNew: Boolean(create) },
+      fileTasks: genFileTasks(login),
     });
   };
-  const submitLocal = (email?: string, password?: string) => {
+  const submitLocal = (login?: Login) => {
     redirectBack({
+      scopes,
       connect: { method: "localStorage" },
-      fileTasks: undefined, // TODO
+      fileTasks: genFileTasks(login),
     });
   };
 </script>

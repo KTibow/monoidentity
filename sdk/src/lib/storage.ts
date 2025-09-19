@@ -1,4 +1,5 @@
 import { stringify, parse } from "devalue";
+import { decode, type Login } from "./utils-login.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
@@ -7,6 +8,15 @@ export const setup = (i: Record<string, string>, a: string) => {
   app = a;
 };
 
+export const getLogin = (): Login => {
+  const storage = implementation;
+  if (!storage) throw new Error("No implementation set");
+
+  const login = storage[".core/login.encjson"];
+  if (!login) throw new Error("No login found");
+
+  return JSON.parse(decode(login));
+};
 export const getStorage = (realm: "cache") => {
   const prefix = (text: string) => `.${realm}/${app}/${text}`;
   const storage = implementation;

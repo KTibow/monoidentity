@@ -2,7 +2,9 @@
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
-  import { scopeDefs, supportsFile, type Memory, type Scope } from "../sdk/src/lib/utils";
+  import type { Login } from "../sdk/src/lib/utils-login";
+  import { scopeDefs, type Scope } from "../sdk/src/lib/utils-scope";
+  import { supportsFile, type Memory } from "../sdk/src/lib/utils-callback";
   import { domains } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   import FormCountdown from "./FormCountdown.svelte";
@@ -18,9 +20,9 @@
     appName: string;
     scopes: Scope[];
     savedMemory: Memory | undefined;
-    submitCloud: (email: string, password: string, sharePW: boolean) => void;
-    submitFile: (create: boolean, email?: string, password?: string) => void;
-    submitLocal: (email?: string, password?: string) => void;
+    submitCloud: (login: Login, sharePW: boolean) => void;
+    submitFile: (login?: Login, create?: boolean) => void;
+    submitLocal: (login?: Login) => void;
   } = $props();
 
   let email = $state("");
@@ -48,13 +50,13 @@
 
     const method = e.submitter?.getAttribute("value");
     if (method == "file-create") {
-      submitFile(true, email, password);
+      submitFile(email ? { email, password } : undefined, true);
     } else if (method == "file") {
-      submitFile(false);
+      submitFile();
     } else if (method == "local") {
-      submitLocal(email, password);
+      submitLocal(email ? { email, password } : undefined);
     } else {
-      submitCloud(email, password, loginScope);
+      submitCloud({ email, password }, loginScope);
     }
   };
 </script>
@@ -96,7 +98,7 @@
   {#if memory?.method == "file"}
     <FormCountdown
       method="Continuing locally"
-      run={() => submitFile(false)}
+      run={() => submitFile()}
       cancel={() => {
         memory = undefined;
         delete localStorage.monoidentityMemory;
