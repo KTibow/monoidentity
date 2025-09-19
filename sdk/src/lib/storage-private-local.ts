@@ -8,16 +8,10 @@ const unprefixed = (key: string) => {
 const target = {};
 
 const get = (_: unknown, key: string) => {
-  if (typeof key == "string") {
-    const value = localStorage.getItem(prefixed(key));
-    if (value == null) return undefined;
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
-  }
-  return undefined;
+  if (typeof key != "string") return undefined;
+  const value = localStorage.getItem(prefixed(key));
+  if (value == null) return undefined;
+  return value;
 };
 
 export const init = () =>
@@ -26,8 +20,7 @@ export const init = () =>
 
     set(_, key: string, value: any) {
       if (typeof key == "string") {
-        const serialized = typeof value == "string" ? value : JSON.stringify(value);
-        localStorage.setItem(prefixed(key), serialized);
+        localStorage.setItem(prefixed(key), value);
         return true;
       }
       return false;
