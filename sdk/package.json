@@ -1,6 +1,12 @@
 {
   "name": "monoidentity",
   "version": "0.0.1",
+  "repository": "KTibow/monoidentity",
+  "author": {
+    "name": "KTibow"
+  },
+  "homepage": "https://github.com/KTibow/monoidentity",
+  "funding": "https://github.com/sponsors/KTibow",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && pnpm run prepack",
