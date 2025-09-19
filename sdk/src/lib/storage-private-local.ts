@@ -1,8 +1,8 @@
-const prefix = "monoidentity";
-const prefixed = (key: string) => `${prefix}/${key}`;
+const prefix = "monoidentity/";
+const prefixed = (key: string) => `${prefix}${key}`;
 const unprefixed = (key: string) => {
-  if (!key.startsWith(`${prefix}/`)) throw new Error("Key is not prefixed");
-  return key.slice(prefix.length + 1);
+  if (!key.startsWith(prefix)) throw new Error("Key is not prefixed");
+  return key.slice(prefix.length);
 };
 
 const target = {};
@@ -49,7 +49,7 @@ export const init = () =>
       const keys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith(`${prefix}_`)) {
+        if (key && key.startsWith(prefix)) {
           keys.push(unprefixed(key));
         }
       }
