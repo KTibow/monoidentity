@@ -10,18 +10,21 @@ export const scopeDefs = {
 };
 export type Scope = keyof typeof scopeDefs;
 
-type Setup = { method: "cloud"; jwt: string } | { method: "local"; createNew?: never };
+export const supportsFile = "showSaveFilePicker" in window;
+type Setup =
+  | { method: "cloud"; jwt: string }
+  | { method: "file"; createNew?: never }
+  | { method: "localStorage" };
 export type Memory = Setup & { knownFiles: string[] };
 export type Callback = {
-  connect: Setup | { method: "local"; createNew: boolean };
+  connect: Setup | { method: "file"; createNew: boolean };
   fileTasks: Record<string, string> | undefined;
 };
-
 export const rememberCallback = (data: Callback, pastMemory?: Memory): Memory => {
   const { connect, fileTasks } = data;
 
   const setup: Setup =
-    connect.method == "cloud" ? { method: "cloud", jwt: connect.jwt } : { method: "local" };
+    connect.method == "cloud" ? { method: "cloud", jwt: connect.jwt } : { method: connect.method };
 
   let knownFilesSet = new Set<string>();
   if (pastMemory) {

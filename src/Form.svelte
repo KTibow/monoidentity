@@ -2,22 +2,24 @@
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
-  import { domains, scopeDefs, type Memory, type Scope } from "./lib";
+  import { domains, scopeDefs, supportsFile, type Memory, type Scope } from "./lib";
   import FormEmail from "./FormEmail.svelte";
-  import FormLocalCountdown from "./FormLocalCountdown.svelte";
+  import FormCountdown from "./FormCountdown.svelte";
 
   let {
     appName,
     scopes,
     savedMemory,
     submitCloud,
+    submitFile,
     submitLocal,
   }: {
     appName: string;
     scopes: Scope[];
     savedMemory: Memory | undefined;
     submitCloud: (email: string, password: string, sharePW: boolean) => void;
-    submitLocal: (create: boolean, email?: string, password?: string) => void;
+    submitFile: (create: boolean, email?: string, password?: string) => void;
+    submitLocal: (email?: string, password?: string) => void;
   } = $props();
 
   let email = $state("");
@@ -44,10 +46,12 @@
     e.preventDefault();
 
     const method = e.submitter?.getAttribute("value");
-    if (method == "local-create") {
-      submitLocal(true, email, password);
+    if (method == "file-create") {
+      submitFile(true, email, password);
+    } else if (method == "file") {
+      submitFile(false);
     } else if (method == "local") {
-      submitLocal(false);
+      submitLocal(email, password);
     } else {
       submitCloud(email, password, loginScope);
     }
@@ -63,6 +67,18 @@
     class="m3-font-body-large focus-inset"
   />
 {/snippet}
+{#snippet localOptions(waitingOnEmailPassword: boolean)}
+  {#if supportsFile}
+    <Button variant="tonal" name="method" value="file-create" disabled={waitingOnEmailPassword}
+      >Set up local storage</Button
+    >
+    <Button variant="tonal" name="method" value="file">Use preexisting local storage</Button>
+  {:else}
+    <Button variant="tonal" name="method" value="local">Use local storage</Button>
+    <div class="spacer"></div>
+    <p>⚠ We'd like to offer file-based local storage, but your browser isn't letting us</p>
+  {/if}
+{/snippet}
 
 <form onsubmit={submit}>
   <Icon icon={iconCable} width="1.5rem" height="1.5rem" />
@@ -74,9 +90,10 @@
     <p>Get {appName}'s storage working.</p>
   {/if}
   <div class="spacer"></div>
-  {#if memory?.method == "local"}
-    <FormLocalCountdown
-      run={() => submitLocal(false)}
+  {#if memory?.method == "file"}
+    <FormCountdown
+      method="Continuing locally"
+      run={() => submitFile(false)}
       cancel={() => {
         memory = undefined;
         delete localStorage.monoidentityMemory;
@@ -89,10 +106,7 @@
         <Icon icon={iconCloud} />
         Sign in
       </Button>
-      <Button variant="tonal" name="method" value="local-create" disabled={!recognized}
-        >Set up local storage</Button
-      >
-      <Button variant="tonal" name="method" value="local">Use preexisting local storage</Button>
+      {@render localOptions(!recognized)}
     {:else}
       <p class="m3-font-body-medium">This app doesn't work with your email.</p>
     {/if}
@@ -111,8 +125,7 @@
         <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
       {/if}
     </details>
-    <Button variant="tonal" name="method" value="local-create">Set up local storage</Button>
-    <Button variant="tonal" name="method" value="local">Use preexisting local storage</Button>
+    {@render localOptions(false)}
   {/if}
 </form>
 

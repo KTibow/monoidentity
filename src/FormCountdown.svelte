@@ -2,7 +2,7 @@
   import { Layer } from "m3-svelte";
   import { onMount } from "svelte";
 
-  let { run, cancel }: { run: () => void; cancel: () => void } = $props();
+  let { method, run, cancel }: { method: string; run: () => void; cancel: () => void } = $props();
   let countdown = $state(2);
 
   onMount(() => {
@@ -17,7 +17,7 @@
   });
 </script>
 
-<div class="first">Continuing locally in {countdown}.</div>
+<div class="first">{method} in {countdown}.</div>
 <button class="second m3-font-label-large" onclick={cancel}>
   <Layer />
   Cancel
