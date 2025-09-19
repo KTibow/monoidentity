@@ -21,7 +21,7 @@ const get = (_: unknown, key: string) => {
 };
 
 export const init = () =>
-  new Proxy(target, {
+  new Proxy<Record<string, string>>(target, {
     get,
 
     set(_, key: string, value: any) {
