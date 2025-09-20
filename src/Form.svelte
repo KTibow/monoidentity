@@ -3,8 +3,8 @@
   import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
   import type { Login } from "../sdk/src/lib/utils-login";
-  import { scopeDefs, type Scope } from "../sdk/src/lib/utils-scope";
-  import { supportBackups, type Memory } from "../sdk/src/lib/utils-callback";
+  import { type Scope } from "../sdk/src/lib/utils-scope";
+  import { supportBackups } from "../sdk/src/lib/utils-callback";
   import { domains } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   // import FormCountdown from "./FormCountdown.svelte";
