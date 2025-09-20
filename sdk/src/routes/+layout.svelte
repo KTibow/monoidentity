@@ -1,6 +1,7 @@
 <script lang="ts">
   import Monoidentity from "$lib/Monoidentity.svelte";
   import icon from "../../../icon.svg";
+  import "./app.css";
   let { children } = $props();
 </script>
 
