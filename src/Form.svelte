@@ -1,11 +1,10 @@
 <script lang="ts">
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
-  import iconCable from "@ktibow/iconset-material-symbols/cable-rounded";
   import { Icon, Button } from "m3-svelte";
   import type { Login } from "../sdk/src/lib/utils-login";
   import { type Scope } from "../sdk/src/lib/utils-scope";
   import { supportBackups } from "../sdk/src/lib/utils-callback";
-  import { domains } from "./specific-utils";
+  import { domains, logoMonoidentity } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   // import FormCountdown from "./FormCountdown.svelte";
 
@@ -76,7 +75,7 @@
 {/snippet}
 
 <form onsubmit={submit}>
-  <Icon icon={iconCable} width="1.5rem" height="1.5rem" />
+  <Icon icon={logoMonoidentity} width="1.5rem" height="1.5rem" />
   {#if loginScope}
     <h1 class="m3-font-headline-small">Sign in</h1>
     <p>Securely authorize {appName}.</p>
