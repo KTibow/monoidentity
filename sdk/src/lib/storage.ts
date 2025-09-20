@@ -10,29 +10,26 @@ export const setup = (i: Record<string, string>, a: string) => {
 };
 
 export const getLogin = (): Login => {
-  const storage = implementation;
-  if (!storage) throw new Error("No implementation set");
-
-  const login = storage[".core/login.encjson"];
+  if (!implementation) throw new Error("No implementation set");
+  const login = implementation[".core/login.encjson"];
   if (!login) throw new Error("No login found");
-
   return JSON.parse(decode(login));
 };
 export const getStorage = (realm: "cache") => {
   const prefix = (text: string) => `.${realm}/${app}/${text}`;
-  const storage = implementation;
   if (!app) throw new Error("No app set");
-  if (!storage) throw new Error("No implementation set");
 
   return createStore({
     get(key: string) {
-      const item = storage[prefix(key)];
+      if (!implementation) throw new Error("No implementation set");
+      const item = implementation[prefix(key)];
       if (!item) return undefined;
       return parse(item);
     },
 
     set(key: string, value) {
-      storage[prefix(key)] = stringify(value);
+      if (!implementation) throw new Error("No implementation set");
+      implementation[prefix(key)] = stringify(value);
       return true;
     },
   });
