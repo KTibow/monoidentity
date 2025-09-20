@@ -14,7 +14,7 @@ export const createStore = (implementation: ProxyHandlerWithoutTarget): Dict => 
 
   for (const key of Object.keys(implementation) as (keyof ProxyHandlerWithoutTarget)[]) {
     const trap = implementation[key] as any;
-    handler[key] = (...args: unknown[]) => trap(target, ...args);
+    handler[key] = (_, ...args: unknown[]) => trap(...args);
   }
 
   return new Proxy(target, handler);

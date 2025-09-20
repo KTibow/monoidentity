@@ -37,10 +37,10 @@
   const submitCloud = (login: Login, sharePW: boolean) => {
     // TODO: verify storage, create storage, add password to storage, create a key for using it
   };
-  const submitLocal = (login?: Login, useBackup?: boolean) => {
+  const submitLocal = (login?: Login) => {
     redirectBack({
       scopes,
-      connect: { method: "localStorage", useBackup: Boolean(useBackup) },
+      connect: { method: "localStorage" },
       fileTasks: genFileTasks(login),
     });
   };

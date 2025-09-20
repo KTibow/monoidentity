@@ -3,7 +3,7 @@
   import { Icon, Button } from "m3-svelte";
   import type { Login } from "../sdk/src/lib/utils-login";
   import { type Scope } from "../sdk/src/lib/utils-scope";
-  import { supportBackups } from "../sdk/src/lib/utils-callback";
+  import { canBackup } from "../sdk/src/lib/utils-callback";
   import { domains, logoMonoidentity } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   // import FormCountdown from "./FormCountdown.svelte";
@@ -19,7 +19,7 @@
     scopes: Scope[];
     // savedMemory: Memory | undefined;
     submitCloud: (login: Login, sharePW: boolean) => void;
-    submitLocal: (login?: Login, useBackup?: boolean) => void;
+    submitLocal: (login?: Login) => void;
   } = $props();
 
   let email = $state("");
@@ -49,7 +49,7 @@
     if (method == "local") {
       submitLocal(email ? { email, password } : undefined);
     } else if (method == "local-backup") {
-      submitLocal(undefined, true);
+      submitLocal();
     } else {
       submitCloud({ email, password }, loginScope);
     }
@@ -69,8 +69,8 @@
   <Button variant="tonal" name="method" value="local" disabled={waitingOnEmailPassword}
     >Use local storage</Button
   >
-  {#if supportBackups}
-    <Button variant="tonal" name="method" value="local-backup">Use local backup</Button>
+  {#if canBackup && waitingOnEmailPassword && !email && !password}
+    <Button variant="text" name="method" value="local-backup">Use local backup</Button>
   {/if}
 {/snippet}
 

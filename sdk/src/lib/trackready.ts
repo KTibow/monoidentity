@@ -1,9 +1,14 @@
 import { rememberCallback, type Callback, type Memory } from "./utils-callback.js";
 import { type Scope } from "./utils-scope.js";
-import { init as initLocal } from "./_localstorage.js";
+import { init as initLocal, wrapWithBackup } from "./_localstorage.js";
 import { setup } from "./storage.js";
 
-export const trackReady = (app: string, scopes: Scope[], callback: () => void) => {
+export const trackReady = (
+  app: string,
+  scopes: Scope[],
+  requestBackup: (callback: () => void) => void,
+  callback: () => void,
+) => {
   const params = new URLSearchParams(location.hash.slice(1));
 
   let memory = localStorage.monoidentityMemory
@@ -16,7 +21,7 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
     history.replaceState(null, "", location.pathname);
 
     const cb = JSON.parse(paramCB) as Callback;
-    console.log("got callback", cb); // todo remove
+    // console.debug("[monoidentity] callback", cb);
 
     memory = rememberCallback(cb, memory);
     localStorage.monoidentityMemory = JSON.stringify(memory);
@@ -38,8 +43,8 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
     // TODO
     throw new Error("unimplemented");
   } else if (memory.method == "localStorage") {
-    // TODO handle backups
     storage = initLocal();
+    storage = wrapWithBackup(storage, requestBackup);
   } else {
     throw new Error("unreachable");
   }

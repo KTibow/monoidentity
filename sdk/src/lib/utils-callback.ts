@@ -1,11 +1,12 @@
-type Setup = { method: "cloud"; jwt: string } | { method: "localStorage"; useBackup?: never };
+type Setup = { method: "cloud"; jwt: string } | { method: "localStorage" };
 export type Memory = Setup;
 export type Callback = {
   scopes: string[];
-  connect: Setup | { method: "localStorage"; useBackup: boolean };
+  connect: Setup | { method: "localStorage" };
   fileTasks: Record<string, string> | undefined;
 };
-export const supportBackups = navigator.userAgent.includes("CrOS") && window.showSaveFilePicker;
+export const canBackup =
+  navigator.userAgent.includes("CrOS") && Boolean(window.showDirectoryPicker);
 export const rememberCallback = (data: Callback, pastMemory?: Memory): Memory => {
   const { connect } = data;
 
