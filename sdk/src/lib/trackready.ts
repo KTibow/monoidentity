@@ -50,8 +50,10 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
     throw new Error("unreachable");
   }
   setup(storage, app);
-  for (const file in fileTasks) {
-    storage[file] = fileTasks[file];
+  if (fileTasks) {
+    for (const file in fileTasks) {
+      storage[file] = fileTasks[file];
+    }
   }
 
   callback();
