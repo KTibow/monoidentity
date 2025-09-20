@@ -9,7 +9,6 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
   let memory = localStorage.monoidentityMemory
     ? (JSON.parse(localStorage.monoidentityMemory) as Memory)
     : undefined;
-  let createNew = false;
   let fileTasks: Record<string, string> | undefined = undefined;
 
   const paramCB = params.get("monoidentitycallback");
@@ -22,9 +21,6 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
     memory = rememberCallback(cb, memory);
     localStorage.monoidentityMemory = JSON.stringify(memory);
 
-    if (cb.connect.method == "file" && cb.connect.createNew) {
-      createNew = true;
-    }
     fileTasks = cb.fileTasks;
   }
 
@@ -41,10 +37,8 @@ export const trackReady = (app: string, scopes: Scope[], callback: () => void) =
   if (memory.method == "cloud") {
     // TODO
     throw new Error("unimplemented");
-  } else if (memory.method == "file") {
-    // TODO (use createNew here)
-    throw new Error("unimplemented");
   } else if (memory.method == "localStorage") {
+    // TODO handle backups
     storage = initLocal();
   } else {
     throw new Error("unreachable");

@@ -16,6 +16,7 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.0",
     "@tsconfig/svelte": "^5.0.5",
     "@tsndr/cloudflare-worker-jwt": "^3.2.0",
+    "@types/wicg-file-system-access": "^2023.10.6",
     "@unocss/reset": "^66.5.1",
     "m3-svelte": "^5.7.3",
     "prettier": "^3.6.2",

@@ -4,37 +4,35 @@
   import { Icon, Button } from "m3-svelte";
   import type { Login } from "../sdk/src/lib/utils-login";
   import { scopeDefs, type Scope } from "../sdk/src/lib/utils-scope";
-  import { supportsFile, type Memory } from "../sdk/src/lib/utils-callback";
+  import { supportBackups, type Memory } from "../sdk/src/lib/utils-callback";
   import { domains } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
-  import FormCountdown from "./FormCountdown.svelte";
+  // import FormCountdown from "./FormCountdown.svelte";
 
   let {
     appName,
     scopes,
-    savedMemory,
+    // savedMemory,
     submitCloud,
-    submitFile,
     submitLocal,
   }: {
     appName: string;
     scopes: Scope[];
-    savedMemory: Memory | undefined;
+    // savedMemory: Memory | undefined;
     submitCloud: (login: Login, sharePW: boolean) => void;
-    submitFile: (login?: Login, create?: boolean) => void;
-    submitLocal: (login?: Login) => void;
+    submitLocal: (login?: Login, useBackup?: boolean) => void;
   } = $props();
 
   let email = $state("");
   let password = $state("");
   let loginScope = $derived(scopes.includes("login-recognized"));
-  let memory = $derived.by(() => {
-    const memory = savedMemory;
-    if (!memory) return undefined;
-    if (scopes.some((s) => scopeDefs[s].files.some((f) => !memory.knownFiles?.includes(f))))
-      return undefined;
-    return memory;
-  });
+  // let memory = $derived.by(() => {
+  //   const memory = savedMemory;
+  //   if (!memory) return undefined;
+  //   if (scopes.some((s) => scopeDefs[s].files.some((f) => !memory.knownFiles?.includes(f))))
+  //     return undefined;
+  //   return memory;
+  // });
   let recognized = $derived.by(() => {
     const domain = email.split("@")[1];
     return domains.includes(domain);
@@ -49,12 +47,10 @@
     e.preventDefault();
 
     const method = e.submitter?.getAttribute("value");
-    if (method == "file-create") {
-      submitFile(email ? { email, password } : undefined, true);
-    } else if (method == "file") {
-      submitFile();
-    } else if (method == "local") {
+    if (method == "local") {
       submitLocal(email ? { email, password } : undefined);
+    } else if (method == "local-backup") {
+      submitLocal(undefined, true);
     } else {
       submitCloud({ email, password }, loginScope);
     }
@@ -71,17 +67,11 @@
   />
 {/snippet}
 {#snippet localOptions(waitingOnEmailPassword: boolean)}
-  {#if supportsFile}
-    <Button variant="tonal" name="method" value="file-create" disabled={waitingOnEmailPassword}
-      >Set up local storage</Button
-    >
-    <Button variant="tonal" name="method" value="file">Use preexisting local storage</Button>
-  {:else}
-    <Button variant="tonal" name="method" value="local" disabled={waitingOnEmailPassword}
-      >Use local storage</Button
-    >
-    <div class="spacer"></div>
-    <p>⚠ We'd like to offer file-based local storage, but your browser isn't letting us</p>
+  <Button variant="tonal" name="method" value="local" disabled={waitingOnEmailPassword}
+    >Use local storage</Button
+  >
+  {#if supportBackups}
+    <Button variant="tonal" name="method" value="local-backup">Use local backup</Button>
   {/if}
 {/snippet}
 
@@ -95,16 +85,7 @@
     <p>Get {appName}'s storage working.</p>
   {/if}
   <div class="spacer"></div>
-  {#if memory?.method == "file"}
-    <FormCountdown
-      method="Continuing locally"
-      run={() => submitFile()}
-      cancel={() => {
-        memory = undefined;
-        delete localStorage.monoidentityMemory;
-      }}
-    />
-  {:else if loginScope}
+  {#if loginScope}
     {@render emailpassword()}
     {#if maybeRecognized}
       <Button variant="filled" name="method" value="cloud" iconType="left" disabled={!recognized}>
