@@ -1,6 +1,6 @@
 import { rememberCallback, type Callback, type Memory } from "./utils-callback.js";
 import { type Scope } from "./utils-scope.js";
-import { init as initLocal } from "./storage-private-local.js";
+import { init as initLocal } from "./_localstorage.js";
 import { setup } from "./storage.js";
 
 export const trackReady = (app: string, scopes: Scope[], callback: () => void) => {
