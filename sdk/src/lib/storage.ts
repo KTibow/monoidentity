@@ -1,5 +1,6 @@
 import { stringify, parse } from "devalue";
 import { decode, type Login } from "./utils-login.js";
+import { createStore } from "./_stores.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
@@ -23,13 +24,14 @@ export const getStorage = (realm: "cache") => {
   if (!app) throw new Error("No app set");
   if (!storage) throw new Error("No implementation set");
 
-  return new Proxy({} as Record<string, any>, {
-    get(_, key: string) {
+  return createStore({
+    get(key: string) {
       const item = storage[prefix(key)];
       if (!item) return undefined;
       return parse(item);
     },
-    set(_, key: string, value: unknown) {
+
+    set(key: string, value) {
       storage[prefix(key)] = stringify(value);
       return true;
     },

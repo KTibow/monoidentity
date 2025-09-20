@@ -1,3 +1,5 @@
+import { createStore } from "./_stores.js";
+
 const prefix = "monoidentity/";
 const prefixed = (key: string) => `${prefix}${key}`;
 const unprefixed = (key: string) => {
@@ -5,9 +7,7 @@ const unprefixed = (key: string) => {
   return key.slice(prefix.length);
 };
 
-const target = {};
-
-const get = (_: unknown, key: string) => {
+const get = (key: string) => {
   if (typeof key != "string") return undefined;
   const value = localStorage.getItem(prefixed(key));
   if (value == null) return undefined;
@@ -15,10 +15,14 @@ const get = (_: unknown, key: string) => {
 };
 
 export const init = () =>
-  new Proxy<Record<string, string>>(target, {
+  createStore({
+    has(key: string) {
+      return typeof key == "string" && localStorage.getItem(prefixed(key)) !== null;
+    },
+
     get,
 
-    set(_, key: string, value: any) {
+    set(key: string, value: any) {
       if (typeof key == "string") {
         localStorage.setItem(prefixed(key), value);
         return true;
@@ -26,7 +30,7 @@ export const init = () =>
       return false;
     },
 
-    deleteProperty(_, key: string) {
+    deleteProperty(key: string) {
       if (typeof key == "string") {
         localStorage.removeItem(prefixed(key));
         return true;
@@ -34,11 +38,7 @@ export const init = () =>
       return false;
     },
 
-    has(_, key: string) {
-      return typeof key == "string" && localStorage.getItem(prefixed(key)) !== null;
-    },
-
-    ownKeys(_) {
+    ownKeys() {
       const keys: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -47,16 +47,5 @@ export const init = () =>
         }
       }
       return keys;
-    },
-
-    getOwnPropertyDescriptor(_, key: string) {
-      if (typeof key == "string" && localStorage.getItem(prefixed(key)) !== null) {
-        return {
-          enumerable: true,
-          configurable: true,
-          value: get(target, key),
-        };
-      }
-      return undefined;
     },
   });
