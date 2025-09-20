@@ -1,9 +1,8 @@
 <script lang="ts">
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import { Icon, Button } from "m3-svelte";
-  import type { Login } from "../sdk/src/lib/utils-login";
   import { type Scope } from "../sdk/src/lib/utils-scope";
-  import { canBackup } from "../sdk/src/lib/utils-callback";
+  import { canBackup, type Login } from "../sdk/src/lib/utils-callback";
   import { domains, logoMonoidentity } from "./specific-utils";
   import FormEmail from "./FormEmail.svelte";
   // import FormCountdown from "./FormCountdown.svelte";

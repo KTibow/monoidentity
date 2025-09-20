@@ -1,5 +1,4 @@
 // This isn't encryption, it's just to prevent casual observation of sensitive data
-export type Login = { email: string; password: string };
 export const encode = (text: string) => {
   let output = "";
   for (let i = 0; i < text.length; i++) {

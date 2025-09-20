@@ -1,8 +1,13 @@
 <script lang="ts">
   import Form from "./Form.svelte";
-  import { encode, type Login } from "../sdk/src/lib/utils-login";
+  import { encode } from "../sdk/src/lib/utils-base36";
   import type { Scope } from "../sdk/src/lib/utils-scope";
-  import { rememberCallback, type Callback, type Memory } from "../sdk/src/lib/utils-callback";
+  import {
+    rememberCallback,
+    type Callback,
+    type Memory,
+    type Login,
+  } from "../sdk/src/lib/utils-callback";
   import type { AppData } from "./specific-utils";
 
   let {

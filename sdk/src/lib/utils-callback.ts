@@ -5,6 +5,7 @@ export type Callback = {
   connect: Setup | { method: "localStorage" };
   fileTasks: Record<string, string> | undefined;
 };
+export type Login = { email: string; password: string };
 export const canBackup =
   navigator.userAgent.includes("CrOS") && Boolean(window.showDirectoryPicker);
 export const rememberCallback = (data: Callback, pastMemory?: Memory): Memory => {
