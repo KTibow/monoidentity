@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "repository": "KTibow/monoidentity",
   "author": {
     "name": "KTibow"
@@ -31,7 +31,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./Monoidentity": {
+    "./Monoidentity.svelte": {
       "types": "./dist/Monoidentity.svelte.d.ts",
       "svelte": "./dist/Monoidentity.svelte"
     }
