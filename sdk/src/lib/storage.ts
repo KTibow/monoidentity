@@ -20,7 +20,7 @@ export const getStorage = (realm: "config" | "cache") => {
   const prefix = (text: string) => `.${realm}/${app}/${text}.devalue`;
   if (!app) throw new Error("No app set");
 
-  return createStore({
+  return createStore<any>({
     get(key: string) {
       if (!implementation) throw new Error("No implementation set");
       const item = implementation[prefix(key)];

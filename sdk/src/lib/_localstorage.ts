@@ -18,7 +18,7 @@ const get = (key: string) => {
 };
 
 export const init = () =>
-  createStore({
+  createStore<string>({
     has(key: string) {
       return typeof key == "string" && localStorage.getItem(prefixed(key)) !== null;
     },

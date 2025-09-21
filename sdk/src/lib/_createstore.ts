@@ -8,9 +8,9 @@ type ProxyHandlerWithoutTarget = {
   ownKeys?(): ArrayLike<string | symbol>;
 };
 
-export const createStore = (implementation: ProxyHandlerWithoutTarget): Dict => {
-  const target = {} as Dict;
-  const handler: ProxyHandler<Dict> = {};
+export const createStore = <T>(implementation: ProxyHandlerWithoutTarget) => {
+  const target = {} as Record<string, T>;
+  const handler: ProxyHandler<typeof target> = {};
 
   for (const key of Object.keys(implementation) as (keyof ProxyHandlerWithoutTarget)[]) {
     const trap = implementation[key] as any;
