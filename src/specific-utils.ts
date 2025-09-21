@@ -1,4 +1,5 @@
-export const domains: string[] = ["apps.nsd.org"];
+import districts from "school-districts";
+export const domains: string[] = Object.keys(districts);
 export type AppData = { name: string; redirectURIs: string[] };
 export const apps: Record<string, AppData> = {
   // TODO: in the future allow app federation

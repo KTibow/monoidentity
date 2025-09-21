@@ -35,6 +35,9 @@ importers:
       prettier-plugin-svelte:
         specifier: ^3.4.0
         version: 3.4.0(prettier@3.6.2)(svelte@5.39.2)
+      school-districts:
+        specifier: ^1.0.6
+        version: 1.0.6
       svelte:
         specifier: ^5.39.2
         version: 5.39.2
@@ -492,6 +495,9 @@ packages:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
 
+  school-districts@1.0.6:
+    resolution: {integrity: sha512-UIp1/BOqynuuU4heAa+RfXdTIxhIUnMqLoSUvDY7hBJOL29Rdus0BGM79X88AwrwYtNj+fkrXbkhxlq55lqftQ==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -909,6 +915,8 @@ snapshots:
   sade@1.8.1:
     dependencies:
       mri: 1.2.0
+
+  school-districts@1.0.6: {}
 
   source-map-js@1.2.1: {}
 
