@@ -33,5 +33,16 @@ export const getStorage = (realm: "config" | "cache") => {
       implementation[prefix(key)] = stringify(value);
       return true;
     },
+
+    has(key: string) {
+      if (!implementation) throw new Error("No implementation set");
+      return prefix(key) in implementation;
+    },
+
+    deleteProperty(key: string) {
+      if (!implementation) throw new Error("No implementation set");
+      const k = prefix(key);
+      return delete implementation[k];
+    },
   });
 };
