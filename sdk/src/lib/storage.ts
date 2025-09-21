@@ -16,8 +16,8 @@ export const getLogin = () => {
   if (!login) throw new Error("No login found");
   return JSON.parse(decode(login)) as Login;
 };
-export const getStorage = (realm: "cache") => {
-  const prefix = (text: string) => `.${realm}/${app}/${text}`;
+export const getStorage = (realm: "config" | "cache") => {
+  const prefix = (text: string) => `.${realm}/${app}/${text}.devalue`;
   if (!app) throw new Error("No app set");
 
   return createStore({
