@@ -2,12 +2,7 @@
   import Form from "./Form.svelte";
   import { encode } from "../sdk/src/lib/utils-base36";
   import type { Scope } from "../sdk/src/lib/utils-scope";
-  import {
-    rememberCallback,
-    type Callback,
-    type Memory,
-    type Login,
-  } from "../sdk/src/lib/utils-callback";
+  import { type Login, type Callback } from "../sdk/src/lib/utils-callback";
   import type { AppData } from "./specific-utils";
 
   let {
@@ -20,34 +15,27 @@
     redirectURI: string;
   } = $props();
 
-  const savedMemory = localStorage.monoidentityMemory
-    ? (JSON.parse(localStorage.monoidentityMemory) as Memory)
-    : undefined;
-  const redirectBack = (data: Callback) => {
-    const memory = rememberCallback(data, savedMemory);
-    localStorage.monoidentityMemory = JSON.stringify(memory);
-
+  const redirectBack = (cb: Callback) => {
     const url = new URL(redirectURI);
 
     const callback = new URLSearchParams();
-    callback.set("monoidentitycallback", JSON.stringify(data));
+    callback.set("monoidentitycallback", JSON.stringify(cb));
     url.hash = callback.toString();
 
     window.location.href = url.toString();
   };
   const genFileTasks = (login?: Login) => {
-    if (!login) return undefined;
-    return { ".core/login.encjson": encode(JSON.stringify(login)) };
+    const tasks: Callback = [];
+    if (login) {
+      tasks.push({ createLoginRecognized: encode(JSON.stringify(login)) });
+    }
+    return tasks;
   };
   const submitCloud = (login: Login, sharePW: boolean) => {
     // TODO: verify storage, create storage, add password to storage, create a key for using it
   };
   const submitLocal = (login?: Login) => {
-    redirectBack({
-      scopes,
-      connect: { method: "localStorage" },
-      fileTasks: genFileTasks(login),
-    });
+    redirectBack([{ setup: { method: "localStorage" } }, ...genFileTasks(login)]);
   };
 </script>
 

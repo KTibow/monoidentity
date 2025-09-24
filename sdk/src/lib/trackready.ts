@@ -1,7 +1,7 @@
-import { rememberCallback, type Callback, type Memory } from "./utils-callback.js";
+import { type Setup, type Callback } from "./utils-callback.js";
 import { type Scope } from "./utils-scope.js";
 import { init as initLocal, wrapWithBackup } from "./_localstorage.js";
-import { setup } from "./storage.js";
+import { LOGIN_RECOGNIZED_PATH, setup } from "./storage.js";
 
 export const trackReady = (
   app: string,
@@ -12,21 +12,20 @@ export const trackReady = (
   const params = new URLSearchParams(location.hash.slice(1));
 
   let memory = localStorage.monoidentityMemory
-    ? (JSON.parse(localStorage.monoidentityMemory) as Memory)
+    ? (JSON.parse(localStorage.monoidentityMemory) as Setup)
     : undefined;
-  let fileTasks: Record<string, string> | undefined = undefined;
 
   const paramCB = params.get("monoidentitycallback");
+  let cb: Callback = [];
   if (paramCB) {
     history.replaceState(null, "", location.pathname);
-
-    const cb = JSON.parse(paramCB) as Callback;
-    // console.debug("[monoidentity] callback", cb);
-
-    memory = rememberCallback(cb, memory);
-    localStorage.monoidentityMemory = JSON.stringify(memory);
-
-    fileTasks = cb.fileTasks;
+    cb = JSON.parse(paramCB);
+  }
+  for (const task of cb) {
+    if ("setup" in task) {
+      memory = task.setup;
+      localStorage.monoidentityMemory = JSON.stringify(memory);
+    }
   }
 
   if (!memory) {
@@ -49,9 +48,11 @@ export const trackReady = (
     throw new Error("unreachable");
   }
   setup(storage, app);
-  if (fileTasks) {
-    for (const file in fileTasks) {
-      storage[file] = fileTasks[file];
+  for (const task of cb) {
+    if ("createLoginRecognized" in task) {
+      storage[LOGIN_RECOGNIZED_PATH] = task.createLoginRecognized;
+    } else if ("createVerification" in task) {
+      storage[".core/verification.jwt"] = task.createVerification;
     }
   }
 

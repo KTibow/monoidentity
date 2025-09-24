@@ -10,9 +10,10 @@ export const setup = (i: Record<string, string>, a: string) => {
   app = a;
 };
 
-export const getLogin = () => {
+export const LOGIN_RECOGNIZED_PATH = ".core/login.encjson";
+export const getLoginRecognized = () => {
   if (!implementation) throw new Error("No implementation set");
-  const login = implementation[".core/login.encjson"];
+  const login = implementation[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
   return JSON.parse(decode(login)) as Login;
 };

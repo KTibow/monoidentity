@@ -1,9 +1,6 @@
+/** @knipexternal */
 export const scopeDefs = {
-  "login-recognized": {
-    files: [".core/login.encjson"],
-  },
-  storage: {
-    files: [],
-  },
+  "login-recognized": {},
+  storage: {},
 };
 export type Scope = keyof typeof scopeDefs;
