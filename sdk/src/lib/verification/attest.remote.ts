@@ -1,10 +1,10 @@
-import { fn } from "monoserve";
 import { sign } from "@tsndr/cloudflare-worker-jwt";
+import { fn } from "monoserve";
 import districts from "school-districts";
-import { login } from "../utils-transport.js";
-import studentvue from "./studentvue.js";
 import { VERIFICATION_PRIVATE_KEY } from "$env/static/private";
-import { decodeShallow } from "$lib/utils-base36.js";
+import { login } from "../utils-transport.js";
+import { decodeShallow } from "../utils-base36.js";
+import studentvue from "./studentvue.js";
 
 export default fn(login, async (login) => {
   const { email, password } = decodeShallow(login);
