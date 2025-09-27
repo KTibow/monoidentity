@@ -16,7 +16,6 @@
     provisionEnvelope.provisions.map((p) => {
       if ("setup" in p) return "set up storage";
       if ("createLoginRecognized" in p) return "use your login";
-      if ("createVerification" in p) return "verify your identity";
       return "???";
     }),
   );

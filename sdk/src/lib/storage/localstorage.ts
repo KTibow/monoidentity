@@ -1,6 +1,6 @@
-import { createStore, type Dict } from "./_createstore.js";
+import { createStore, type Dict } from "./createstore.js";
 import { wrapWithReplay } from "./_replay.js";
-import { canBackup } from "./utils-transport.js";
+import { canBackup } from "../utils-transport.js";
 import { openDB } from "idb";
 
 const prefix = "monoidentity/";

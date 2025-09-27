@@ -1,6 +1,6 @@
 import { defineConfig } from "rolldown";
-import { globSync } from "tinyglobby";
-import { cp, mkdir } from "node:fs/promises";
+import { glob, globSync } from "tinyglobby";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { monoserve } from "monoserve/plugin";
 
@@ -24,9 +24,14 @@ function copyRemainingAssetsPlugin({
         filesToCopy.map(async (file) => {
           const relativePath = path.relative(from, file);
           const destPath = path.join(to, relativePath);
+          const content = await readFile(file, "utf8");
 
-          // Ensure the destination directory exists before copying the file.
           await mkdir(path.dirname(destPath), { recursive: true });
+          if (content.includes(".remote.js")) {
+            const modified = content.replace(/\.remote\.js\b/g, "-remote.js");
+            await writeFile(destPath, modified, "utf8");
+            return;
+          }
           await cp(file, destPath);
         }),
       );
@@ -38,12 +43,20 @@ function copyRemainingAssetsPlugin({
 const sourceDir = "src/lib";
 const outputDir = "predist";
 const remoteFilesPattern = `${sourceDir}/**/*.remote.ts`;
+const inputFiles = await glob(remoteFilesPattern);
+const input = Object.fromEntries(
+  inputFiles.map((file) => {
+    const name = path.relative(sourceDir, file).replace(/\.remote\.ts$/, "-remote");
+    return [name, path.resolve(file)];
+  }),
+);
 export default defineConfig({
-  input: globSync(remoteFilesPattern),
+  input,
 
   plugins: [
     monoserve({
       monoserverURL: "https://benignmonoserver.fly.dev",
+      env: process.env as Record<string, string>,
     }),
     copyRemainingAssetsPlugin({
       from: sourceDir,

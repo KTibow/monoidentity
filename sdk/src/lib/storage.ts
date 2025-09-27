@@ -1,7 +1,11 @@
 import { stringify, parse } from "devalue";
+import { parse as loginSchemaParse } from "valibot";
 import { decode } from "./utils-base36.js";
-import { createStore } from "./_createstore.js";
-import type { Login } from "./utils-transport.js";
+import { createStore } from "./storage/createstore.js";
+import { login as loginSchema } from "./utils-transport.js";
+import { verify } from "@tsndr/cloudflare-worker-jwt";
+import publicKey from "./verification/public-key.js";
+import attest from "./verification/attest.remote.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
@@ -15,8 +19,30 @@ export const getLoginRecognized = () => {
   if (!implementation) throw new Error("No implementation set");
   const login = implementation[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
-  return JSON.parse(decode(login)) as Login;
+  return loginSchemaParse(loginSchema, JSON.parse(decode(login)));
 };
+export const VERIFICATION_PATH = ".core/verification.jwt";
+export const getVerification = async () => {
+  if (!implementation) throw new Error("No implementation set");
+
+  const jwt = implementation[VERIFICATION_PATH];
+  if (!jwt) throw new Error("No verification found");
+  await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
+  return jwt;
+};
+export const retrieveVerification = async () => {
+  if (!implementation) throw new Error("No implementation set");
+  let jwt;
+  try {
+    jwt = await getVerification();
+  } catch {
+    jwt = await attest(getLoginRecognized());
+    implementation[VERIFICATION_PATH] = jwt;
+  }
+  return jwt;
+};
+export const useVerification = (jwt: string) =>
+  verify(jwt, publicKey, { algorithm: "ES256", throwError: true })!;
 export const getStorage = (realm: "config" | "cache") => {
   const prefix = (text: string) => `.${realm}/${app}/${text}.devalue`;
   if (!app) throw new Error("No app set");

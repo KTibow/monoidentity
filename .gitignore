@@ -1,6 +1,7 @@
-node_modules
 predist
 dist
 build
-.svelte-kit
 functions
+.svelte-kit
+node_modules
+.env

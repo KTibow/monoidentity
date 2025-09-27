@@ -4,7 +4,7 @@ import {
   type StorageSetup,
   type Provision,
 } from "./utils-transport.js";
-import { init as initLocal, wrapWithBackup } from "./_localstorage.js";
+import { init as initLocal, wrapWithBackup } from "./storage/localstorage.js";
 import { LOGIN_RECOGNIZED_PATH, setup } from "./storage.js";
 
 export const trackReady = (
@@ -56,8 +56,6 @@ export const trackReady = (
   for (const provision of provisions) {
     if ("createLoginRecognized" in provision) {
       storage[LOGIN_RECOGNIZED_PATH] = provision.createLoginRecognized;
-    } else if ("createVerification" in provision) {
-      storage[".core/verification.jwt"] = provision.createVerification;
     }
   }
 

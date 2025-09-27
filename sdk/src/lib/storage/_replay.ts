@@ -1,5 +1,5 @@
-import type { Dict } from "./_createstore.js";
-import { throttle } from "./utils-timing.js";
+import type { Dict } from "./createstore.js";
+import { throttle } from "./_timing.js";
 
 type Modification = { type: "set"; old?: string; new: string } | { type: "delete" };
 type Modifications = Record<string, Modification>;
