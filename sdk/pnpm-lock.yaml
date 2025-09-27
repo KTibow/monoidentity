@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@tsndr/cloudflare-worker-jwt':
+        specifier: ^3.2.0
+        version: 3.2.0
       devalue:
         specifier: ^5.3.2
         version: 5.3.2
@@ -30,9 +33,6 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
         version: 6.2.1(svelte@5.39.6)(vite@7.1.7(@types/node@24.5.2)(jiti@2.6.0))
-      '@tsndr/cloudflare-worker-jwt':
-        specifier: ^3.2.0
-        version: 3.2.0
       '@types/wicg-file-system-access':
         specifier: ^2023.10.6
         version: 2023.10.6
