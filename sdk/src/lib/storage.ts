@@ -1,6 +1,6 @@
 import { stringify, parse } from "devalue";
 import { parse as loginSchemaParse } from "valibot";
-import { decode } from "./utils-base36.js";
+import { decode, encodeShallow } from "./utils-base36.js";
 import { createStore } from "./storage/createstore.js";
 import { login as loginSchema } from "./utils-transport.js";
 import { verify } from "@tsndr/cloudflare-worker-jwt";
@@ -36,7 +36,7 @@ export const retrieveVerification = async () => {
   try {
     jwt = await getVerification();
   } catch {
-    jwt = await attest(getLoginRecognized());
+    jwt = await attest(encodeShallow(getLoginRecognized()));
     implementation[VERIFICATION_PATH] = jwt;
   }
   return jwt;

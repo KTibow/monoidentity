@@ -4,8 +4,11 @@ import districts from "school-districts";
 import { login } from "../utils-transport.js";
 import studentvue from "./studentvue.js";
 import { VERIFICATION_PRIVATE_KEY } from "$env/static/private";
+import { decodeShallow } from "$lib/utils-base36.js";
 
-export default fn(login, async ({ email, password }) => {
+export default fn(login, async (login) => {
+  const { email, password } = decodeShallow(login);
+
   const userID = email.split("@")[0];
   const domain = email.split("@")[1];
   const district = districts[domain];
