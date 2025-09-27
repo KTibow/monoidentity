@@ -1,13 +1,14 @@
 import { sign } from "@tsndr/cloudflare-worker-jwt";
 import { fn } from "monoserve";
 import districts from "school-districts";
+import { string, parse as useSchema } from "valibot";
 import { VERIFICATION_PRIVATE_KEY } from "$env/static/private";
-import { login } from "../utils-transport.js";
-import { decodeShallow } from "../utils-base36.js";
+import { decode } from "../utils-base36.js";
+import { login as loginSchema } from "../utils-transport.js";
 import studentvue from "./studentvue.js";
 
-export default fn(login, async (login) => {
-  const { email, password } = decodeShallow(login);
+export default fn(string(), async (login) => {
+  const { email, password } = useSchema(loginSchema, JSON.parse(decode(login)));
 
   const userID = email.split("@")[0];
   const domain = email.split("@")[1];

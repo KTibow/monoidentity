@@ -15,17 +15,3 @@ export const decode = (text: string) => {
   }
   return output;
 };
-export const encodeShallow = <T extends Record<string, string>>(obj: T) => {
-  const result: Record<string, string> = {};
-  for (const key in obj) {
-    result[key] = encode(obj[key]);
-  }
-  return result as T;
-};
-export const decodeShallow = <T extends Record<string, string>>(obj: T) => {
-  const result: Record<string, string> = {};
-  for (const key in obj) {
-    result[key] = decode(obj[key]);
-  }
-  return result as T;
-};

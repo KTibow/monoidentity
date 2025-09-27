@@ -1,6 +1,6 @@
 import { stringify, parse } from "devalue";
-import { parse as loginSchemaParse } from "valibot";
-import { decode, encodeShallow } from "./utils-base36.js";
+import { parse as useSchema } from "valibot";
+import { decode, encode } from "./utils-base36.js";
 import { createStore } from "./storage/createstore.js";
 import { login as loginSchema } from "./utils-transport.js";
 import { verify } from "@tsndr/cloudflare-worker-jwt";
@@ -19,7 +19,7 @@ export const getLoginRecognized = () => {
   if (!implementation) throw new Error("No implementation set");
   const login = implementation[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
-  return loginSchemaParse(loginSchema, JSON.parse(decode(login)));
+  return useSchema(loginSchema, JSON.parse(decode(login)));
 };
 export const VERIFICATION_PATH = ".core/verification.jwt";
 export const getVerification = async () => {
@@ -36,7 +36,7 @@ export const retrieveVerification = async () => {
   try {
     jwt = await getVerification();
   } catch {
-    jwt = await attest(encodeShallow(getLoginRecognized()));
+    jwt = await attest(encode(JSON.stringify(getLoginRecognized())));
     implementation[VERIFICATION_PATH] = jwt;
   }
   return jwt;
