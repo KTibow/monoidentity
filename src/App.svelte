@@ -1,42 +1,23 @@
 <script lang="ts">
-  import Form from "./Form.svelte";
-  import { encode } from "../sdk/src/lib/utils-base36";
-  import type { Scope } from "../sdk/src/lib/utils-scope";
-  import { type Login, type Callback } from "../sdk/src/lib/utils-callback";
-  import type { AppData } from "./specific-utils";
+  import type { IntentEnvelope, ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import { knownApps } from "./specific-utils";
+  import RedirectGo from "./RedirectGo.svelte";
+  import RedirectPause from "./RedirectPause.svelte";
+  import CompleteTasks from "./CompleteTasks.svelte";
 
-  let {
-    appData,
-    scopes,
-    redirectURI,
-  }: {
-    appData: AppData;
-    scopes: Scope[];
-    redirectURI: string;
-  } = $props();
+  let { intents: _intents, redirectURI }: IntentEnvelope = $props();
 
-  const redirectBack = (cb: Callback) => {
-    const url = new URL(redirectURI);
-
-    const callback = new URLSearchParams();
-    callback.set("monoidentitycallback", JSON.stringify(cb));
-    url.hash = callback.toString();
-
-    window.location.href = url.toString();
-  };
-  const genFileTasks = (login?: Login) => {
-    const tasks: Callback = [];
-    if (login) {
-      tasks.push({ createLoginRecognized: encode(JSON.stringify(login)) });
-    }
-    return tasks;
-  };
-  const submitCloud = (login: Login, sharePW: boolean) => {
-    // TODO: verify storage, create storage, add password to storage, create a key for using it
-  };
-  const submitLocal = (login?: Login) => {
-    redirectBack([{ setup: { method: "localStorage" } }, ...genFileTasks(login)]);
-  };
+  const appData = knownApps[redirectURI];
+  const appName = appData || new URL(redirectURI).hostname;
+  let intents = $state(_intents);
+  let provisionEnvelope: ProvisionEnvelope = $state({ provisions: [] });
+  let canProvision = $state(!!appData || new URL(redirectURI).hostname == "localhost");
 </script>
 
-<Form appName={appData.name} {scopes} {submitCloud} {submitLocal} />
+{#if intents.length == 0 && canProvision}
+  <RedirectGo {provisionEnvelope} {redirectURI} />
+{:else if intents.length == 0}
+  <RedirectPause {provisionEnvelope} {appName} allow={() => (canProvision = true)} />
+{:else if intents.some((t) => "storage" in t)}
+  <CompleteTasks {intents} {provisionEnvelope} {appName} />
+{/if}

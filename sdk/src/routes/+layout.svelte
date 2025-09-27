@@ -9,6 +9,6 @@
   <link rel="icon" href={icon} />
 </svelte:head>
 
-<Monoidentity app="monoidentity-demo" scopes={["storage"]}>
+<Monoidentity app="monoidentity-demo">
   {@render children()}
 </Monoidentity>

@@ -1,21 +1,20 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import type { Scope } from "./utils-scope.js";
   import { trackReady } from "./trackready.js";
+  import type { Intent } from "./utils-transport.js";
 
-  let { app, scopes, children }: { app: string; scopes: Scope[]; children: Snippet } = $props();
+  let { app, intents, children }: { app: string; intents?: Intent[]; children: Snippet } = $props();
 
   let ready = $state(false);
   let backup: (() => void) | undefined = $state();
   trackReady(
     app,
-    scopes,
-    (callback) => {
-      backup = () => {
-        callback();
+    intents || [],
+    (startBackup) =>
+      (backup = () => {
+        startBackup();
         backup = undefined;
-      };
-    },
+      }),
     () => (ready = true),
   );
 </script>

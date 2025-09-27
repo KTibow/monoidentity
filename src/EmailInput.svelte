@@ -51,6 +51,15 @@
     flex-direction: column;
     position: relative;
   }
+  input {
+    height: 3rem;
+    padding: 0 0.75rem;
+    border-radius: var(--m3-util-rounding-medium);
+    background-color: rgb(var(--m3-scheme-surface-container));
+    color: rgb(var(--m3-scheme-on-surface));
+    width: 100%;
+    box-sizing: border-box;
+  }
   span {
     display: flex;
     align-items: center;

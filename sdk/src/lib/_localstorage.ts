@@ -1,6 +1,6 @@
 import { createStore, type Dict } from "./_createstore.js";
 import { wrapWithReplay } from "./_replay.js";
-import { canBackup } from "./utils-callback.js";
+import { canBackup } from "./utils-transport.js";
 import { openDB } from "idb";
 
 const prefix = "monoidentity/";
@@ -52,7 +52,7 @@ export const init = () =>
       return keys;
     },
   });
-export const wrapWithBackup = (storage: Dict, requestBackup: (callback: () => void) => void) => {
+export const wrapWithBackup = (storage: Dict, requestBackup: (startBackup: () => void) => void) => {
   if (!canBackup) return storage;
   if (localStorage["monoidentity-x/backup"] == "off") return storage;
 

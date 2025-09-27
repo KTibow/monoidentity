@@ -1,39 +1,44 @@
-import { type Setup, type Callback } from "./utils-callback.js";
-import { type Scope } from "./utils-scope.js";
+import {
+  type Intent,
+  type IntentEnvelope,
+  type StorageSetup,
+  type Provision,
+} from "./utils-transport.js";
 import { init as initLocal, wrapWithBackup } from "./_localstorage.js";
 import { LOGIN_RECOGNIZED_PATH, setup } from "./storage.js";
 
 export const trackReady = (
   app: string,
-  scopes: Scope[],
-  requestBackup: (callback: () => void) => void,
-  callback: () => void,
+  intents: Intent[],
+  requestBackup: (startBackup: () => void) => void,
+  ready: () => void,
 ) => {
   const params = new URLSearchParams(location.hash.slice(1));
 
   let memory = localStorage.monoidentityMemory
-    ? (JSON.parse(localStorage.monoidentityMemory) as Setup)
+    ? (JSON.parse(localStorage.monoidentityMemory) as StorageSetup)
     : undefined;
 
-  const paramCB = params.get("monoidentitycallback");
-  let cb: Callback = [];
-  if (paramCB) {
+  let provisions: Provision[] = [];
+  const cb = params.get("monoidentitycallback");
+  if (cb) {
     history.replaceState(null, "", location.pathname);
-    cb = JSON.parse(paramCB);
+    ({ provisions } = JSON.parse(cb));
   }
-  for (const task of cb) {
-    if ("setup" in task) {
-      memory = task.setup;
+  for (const provision of provisions) {
+    if ("setup" in provision) {
+      memory = provision.setup;
       localStorage.monoidentityMemory = JSON.stringify(memory);
     }
   }
 
   if (!memory) {
-    const params = new URLSearchParams();
-    params.set("app", app);
-    params.set("scopes", scopes.join(","));
-    params.set("redirectURI", location.origin);
-    location.href = `https://usemonoidentity.web.app/#${params.toString()}`;
+    const target = new URL("https://usemonoidentity.web.app");
+    target.hash = JSON.stringify({
+      intents: [{ storage: true }, ...intents],
+      redirectURI: location.origin,
+    } satisfies IntentEnvelope);
+    location.href = target.toString();
     return;
   }
 
@@ -48,13 +53,13 @@ export const trackReady = (
     throw new Error("unreachable");
   }
   setup(storage, app);
-  for (const task of cb) {
-    if ("createLoginRecognized" in task) {
-      storage[LOGIN_RECOGNIZED_PATH] = task.createLoginRecognized;
-    } else if ("createVerification" in task) {
-      storage[".core/verification.jwt"] = task.createVerification;
+  for (const provision of provisions) {
+    if ("createLoginRecognized" in provision) {
+      storage[LOGIN_RECOGNIZED_PATH] = provision.createLoginRecognized;
+    } else if ("createVerification" in provision) {
+      storage[".core/verification.jwt"] = provision.createVerification;
     }
   }
 
-  callback();
+  ready();
 };

@@ -1,7 +1,7 @@
 import { stringify, parse } from "devalue";
 import { decode } from "./utils-base36.js";
 import { createStore } from "./_createstore.js";
-import type { Login } from "./utils-callback.js";
+import type { Login } from "./utils-transport.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
