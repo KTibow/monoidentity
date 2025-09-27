@@ -9,7 +9,7 @@ import attest from "./verification/attest.remote.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
-export const setup = (i: Record<string, string>, a: string) => {
+export const conf = (i: Record<string, string>, a: string) => {
   implementation = i;
   app = a;
 };
