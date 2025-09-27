@@ -41,8 +41,10 @@ export const retrieveVerification = async () => {
   }
   return jwt;
 };
-export const useVerification = (jwt: string) =>
-  verify(jwt, publicKey, { algorithm: "ES256", throwError: true })!;
+export const useVerification = async (jwt: string) => {
+  const result = await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
+  return result!;
+};
 export const getStorage = (realm: "config" | "cache") => {
   const prefix = (text: string) => `.${realm}/${app}/${text}.devalue`;
   if (!app) throw new Error("No app set");
