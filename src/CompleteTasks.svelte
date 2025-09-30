@@ -105,12 +105,7 @@
       </div>
     </details>
 
-    <div class="local-row">
-      <Button variant="filled" value="local">Use local storage</Button>
-      {#if canBackup}
-        <Button variant="text" value="local-backup">Use local backup</Button>
-      {/if}
-    </div>
+    <Button variant="filled" value="local">Use local storage</Button>
   </AppBase>
 {/if}
 
@@ -130,7 +125,6 @@
     grid-auto-columns: 1fr;
     grid-auto-flow: column;
     gap: 0.5rem;
-    align-items: center;
   }
 
   details {
