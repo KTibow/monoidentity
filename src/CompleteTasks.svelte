@@ -135,7 +135,10 @@
 
   details {
     display: contents;
-    &:not([open]) > :global(summary) {
+    &:open ~ :global(*) {
+      display: none;
+    }
+    &:not(:open) > :global(summary) {
       margin-bottom: -0.5rem;
     }
   }
