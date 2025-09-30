@@ -128,9 +128,12 @@ export const wrapWithBackup = (storage: Dict, requestBackup: (startBackup: () =>
         }
       };
       await traverse(dir, "");
-      await load(backup);
+      const hasBackup = Boolean(Object.keys(backup).length);
+      if (hasBackup) await load(backup);
 
       localStorage["monoidentity-x/backup"] = "on";
+
+      if (hasBackup) location.reload();
     });
   }
 
