@@ -33,7 +33,7 @@ export const trackReady = (
   }
 
   if (!setup) {
-    const target = new URL("https://usemonoidentity.web.app");
+    const target = new URL("https://monoidentity.web.app");
     target.hash = JSON.stringify({
       intents: [{ storage: true }, ...intents],
       redirectURI: location.origin,

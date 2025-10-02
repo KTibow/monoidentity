@@ -24,9 +24,9 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_USEMONOIDENTITY }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MONOIDENTITY }}
           channelId: live
-          projectId: usemonoidentity
+          projectId: monoidentity
       - name: Build SDK
         run: pnpm prepack
         working-directory: ./sdk
