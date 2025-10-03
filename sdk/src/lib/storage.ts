@@ -1,11 +1,10 @@
 import { stringify, parse } from "devalue";
 import { parse as useSchema } from "valibot";
-import { decode, encode } from "./utils-base36.js";
+import { decode } from "./utils-base36.js";
 import { createStore } from "./storage/createstore.js";
 import { login as loginSchema } from "./utils-transport.js";
 import { verify } from "@tsndr/cloudflare-worker-jwt";
 import publicKey from "./verification/public-key.js";
-import attest from "./verification/attest.remote.js";
 
 let implementation: Record<string, string> | undefined;
 let app = "";
@@ -30,24 +29,20 @@ export const getVerification = async () => {
   await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
   return jwt;
 };
-export const retrieveVerification = async () => {
+export const setVerification = (jwt: string) => {
   if (!implementation) throw new Error("No implementation set");
-  let jwt;
-  try {
-    jwt = await getVerification();
-  } catch {
-    jwt = await attest(encode(JSON.stringify(getLoginRecognized())));
-    implementation[VERIFICATION_PATH] = jwt;
-  }
-  return jwt;
+  implementation[VERIFICATION_PATH] = jwt;
 };
 export const useVerification = async (jwt: string) => {
   const result = await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
   return result!;
 };
+
 export const getStorage = (realm: "config" | "cache") => {
-  const prefix = (text: string) => `.${realm}/${app}/${text}.devalue`;
-  if (!app) throw new Error("No app set");
+  const prefix = (text: string) => {
+    if (!app) throw new Error("No app set");
+    return `.${realm}/${app}/${text}.devalue`;
+  };
 
   return createStore<any>({
     get(key: string) {

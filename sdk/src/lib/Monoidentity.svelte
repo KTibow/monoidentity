@@ -5,17 +5,18 @@
 
   let { app, intents, children }: { app: string; intents?: Intent[]; children: Snippet } = $props();
 
-  let ready = $state(false);
   let backup: (() => void) | undefined = $state();
-  trackReady(
-    app,
-    intents || [],
-    (startBackup) =>
-      (backup = () => {
-        startBackup();
-        backup = undefined;
-      }),
-    () => (ready = true),
+  const ready = new Promise<void>((res) =>
+    trackReady(
+      app,
+      intents || [],
+      (startBackup) =>
+        (backup = () => {
+          startBackup();
+          backup = undefined;
+        }),
+      res,
+    ),
   );
 </script>
 
@@ -27,19 +28,15 @@
   </div>
 {/snippet}
 
-{#if ready}
+{#await ready}
+  <p class="center">Setting up</p>
+{:then}
   {@render children()}
-  {#if backup}
-    <div class="backup toast">
-      {@render backupUI(backup, () => (backup = undefined))}
-    </div>
-  {/if}
-{:else if backup}
-  <div class="backup center">
+{/await}
+{#if backup}
+  <div class="backup toast">
     {@render backupUI(backup, () => (backup = undefined))}
   </div>
-{:else}
-  <p class="center">Setting up</p>
 {/if}
 
 <style>

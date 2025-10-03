@@ -47,8 +47,8 @@
     "valibot": "^1.1.0"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^3.0.9",
-    "@sveltejs/kit": "^2.43.5",
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.43.7",
     "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/wicg-file-system-access": "^2023.10.6",
@@ -58,11 +58,11 @@
     "publint": "^0.3.13",
     "rolldown": "1.0.0-beta.40",
     "school-districts": "^2.0.0",
-    "svelte": "^5.39.6",
+    "svelte": "^5.39.8",
     "svelte-check": "^4.3.2",
     "tinyglobby": "^0.2.15",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7"
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   },
   "keywords": [
     "svelte"
