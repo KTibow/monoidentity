@@ -9,19 +9,19 @@ const unprefixed = (key: string) => {
 export const createLocalStorage = () =>
   createStore<string>({
     has(key: string) {
-      return typeof key == "string" && localStorage.getItem(prefixed(key)) !== null;
+      return typeof key == "string" && localStorage[prefixed(key)] !== null;
     },
 
     get(key: string) {
       if (typeof key != "string") return undefined;
-      const value = localStorage.getItem(prefixed(key));
+      const value = localStorage[prefixed(key)];
       if (value == null) return undefined;
       return value;
     },
 
     set(key: string, value: any) {
       if (typeof key == "string") {
-        localStorage.setItem(prefixed(key), value);
+        localStorage[prefixed(key)] = value;
         return true;
       }
       return false;
@@ -29,7 +29,7 @@ export const createLocalStorage = () =>
 
     deleteProperty(key: string) {
       if (typeof key == "string") {
-        localStorage.removeItem(prefixed(key));
+        delete localStorage[prefixed(key)];
         return true;
       }
       return false;

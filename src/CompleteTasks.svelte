@@ -13,13 +13,13 @@
   let {
     intents,
     provisionEnvelope,
-    submit: confirmSubmit,
     appName,
+    submissionState = $bindable(),
   }: {
     intents: Intent[];
     provisionEnvelope: ProvisionEnvelope;
-    submit: () => void;
     appName: string;
+    submissionState: "submitting" | "submitted" | "error";
   } = $props();
 
   let email = $state("");
@@ -64,10 +64,7 @@
     localStorage["cloud-bucket"] = bucketEncoded;
     return decodeBucket(bucketEncoded);
   };
-  const submit = async (e: SubmitEvent) => {
-    e.preventDefault();
-    const method = (e.submitter as HTMLElement | null)?.getAttribute("value");
-
+  const submitLogic = async (method: string | undefined) => {
     if (eat((i) => "loginRecognized" in i)) {
       // if not backup recovery
       if (email && password) {
@@ -85,7 +82,18 @@
         provisionEnvelope.provisions.push({ setup: { method: "cloud", ...bucket } });
       }
     }
-    confirmSubmit();
+  };
+  const submit = async (e: SubmitEvent) => {
+    e.preventDefault();
+    const method = e.submitter?.getAttribute("value") || undefined;
+
+    try {
+      await submitLogic(method);
+      submissionState = "submitted";
+    } catch (e) {
+      console.error(e);
+      submissionState = "error";
+    }
   };
 </script>
 
@@ -94,21 +102,23 @@
     <EmailInput bind:email />
     <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
 
-    <Button variant="filled" disabled={!maybeRecognized || !email || !password} iconType="left">
-      <Icon icon={iconCloud} />
-      Sign in with cloud (WIP)
-    </Button>
-
-    <div class="local-row">
-      <Button variant="tonal" value="local" disabled={!email || !password}>
-        Use local storage
+    {#if maybeRecognized}
+      <Button variant="filled" disabled={!recognized || !password} iconType="left">
+        <Icon icon={iconCloud} />
+        Sign in with cloud (WIP)
       </Button>
-
-      {#if canBackup && !email && !password}
-        <!-- skip sign in -->
-        <Button variant="text" value="local-backup">Use local backup</Button>
-      {/if}
-    </div>
+      <div class="row">
+        <Button variant="tonal" value="local" disabled={!recognized || !password}>
+          Use local storage
+        </Button>
+        {#if canBackup && !email && !password}
+          <!-- skip sign in -->
+          <Button variant="text" value="local-backup">Use local backup</Button>
+        {/if}
+      </div>
+    {:else}
+      <p class="m3-font-body-medium">This app doesn't work with your email.</p>
+    {/if}
   </AppBase>
 {:else if intents.some((i) => "storage" in i)}
   <AppBase header="Set up {appName}" subheader="Get {appName}'s storage working." {submit}>
@@ -119,9 +129,11 @@
       <div class="cloud-panel">
         <EmailInput bind:email />
         <input class="focus-inset" type="password" placeholder="Password" bind:value={password} />
-        <Button variant="filled" disabled={!maybeRecognized || !email || !password}>
-          Continue (WIP)
-        </Button>
+        {#if maybeRecognized}
+          <Button variant="filled" disabled={!recognized || !password}>Continue (WIP)</Button>
+        {:else}
+          <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
+        {/if}
       </div>
     </details>
 
@@ -140,7 +152,7 @@
     box-sizing: border-box;
   }
 
-  .local-row {
+  .row {
     display: grid;
     grid-auto-columns: 1fr;
     grid-auto-flow: column;

@@ -34,7 +34,6 @@ export const wrapWithReplay = (storage: Dict) => {
             delete modifications[path];
             return;
           }
-          console.log("transmitting", mod);
           await tx(path, mod);
         })()
           .catch((err) => {
