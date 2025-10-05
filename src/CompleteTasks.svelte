@@ -68,6 +68,13 @@
     e.preventDefault();
     const method = (e.submitter as HTMLElement | null)?.getAttribute("value");
 
+    if (eat((i) => "loginRecognized" in i)) {
+      // if not backup recovery
+      if (email && password) {
+        const payload = encode(JSON.stringify({ email, password }));
+        provisionEnvelope.provisions.push({ createLoginRecognized: payload });
+      }
+    }
     if (method?.startsWith("local")) {
       if (eat((i) => "storage" in i)) {
         provisionEnvelope.provisions.push({ setup: { method: "localStorage" } });
@@ -76,13 +83,6 @@
       if (eat((i) => "storage" in i)) {
         const bucket = await getCloudBucket();
         provisionEnvelope.provisions.push({ setup: { method: "cloud", ...bucket } });
-      }
-    }
-    if (eat((i) => "loginRecognized" in i)) {
-      // if not backup recovery
-      if (email && password) {
-        const payload = encode(JSON.stringify({ email, password }));
-        provisionEnvelope.provisions.push({ createLoginRecognized: payload });
       }
     }
     confirmSubmit();
