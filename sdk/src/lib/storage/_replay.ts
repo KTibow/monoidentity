@@ -27,22 +27,23 @@ export const wrapWithReplay = (storage: Dict) => {
       const tx = transmit;
       if (!tx) return;
       const paths = Object.keys(modifications);
-      const tasks = paths
-        .map(async (path) => {
+      const tasks = paths.map((path) =>
+        (async () => {
           const mod = modifications[path];
+          if (mod.type == "set" && mod.old == mod.new) {
+            delete modifications[path];
+            return;
+          }
+          console.log("transmitting", mod);
           await tx(path, mod);
-        })
-        .map((task, i) =>
-          task
-            .then(() => {
-              const path = paths[i];
-              delete modifications[path];
-            })
-            .catch((err) => {
-              const path = paths[i];
-              console.warn("[monoidentity] transmit failed, will retry later", { path, err });
-            }),
-        );
+        })()
+          .catch((err) => {
+            console.warn(`[monoidentity] transmitting "${path}" failed`, err);
+          })
+          .finally(() => {
+            delete modifications[path];
+          }),
+      );
       await Promise.all(tasks);
     } finally {
       save();
@@ -78,8 +79,9 @@ export const wrapWithReplay = (storage: Dict) => {
     },
     // load() just resets to the external version
     // if you have modifications, flush() them first
-    async load(external: Dict) {
+    load(external: Dict) {
       modifications = {};
+      save();
       for (const [key, value] of Object.entries(external)) {
         storage[key] = value;
       }

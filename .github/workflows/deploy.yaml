@@ -18,6 +18,11 @@ jobs:
       - name: Install SDK
         run: pnpm install
         working-directory: ./sdk
+      - name: Build SDK
+        run: pnpm prepack
+        working-directory: ./sdk
+        env:
+          VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
       - name: Build
         run: pnpm build
       - name: Firebase
@@ -27,13 +32,12 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MONOIDENTITY }}
           channelId: live
           projectId: monoidentity
-      - name: Build SDK
-        run: pnpm prepack
-        working-directory: ./sdk
-        env:
-          VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
       - name: Monoserve SDK
         uses: KTibow/monoserve/deploy@main
         with:
           config-broker-url: "https://config-broker.ktibow.workers.dev"
           workdir: sdk
+      - name: Monoserve main
+        uses: KTibow/monoserve/deploy@main
+        with:
+          config-broker-url: "https://config-broker.ktibow.workers.dev"

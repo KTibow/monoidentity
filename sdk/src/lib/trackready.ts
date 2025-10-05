@@ -4,14 +4,15 @@ import {
   type StorageSetup,
   type Provision,
 } from "./utils-transport.js";
-import { init as initLocal, wrapWithBackup } from "./storage/localstorage.js";
+import { createLocalStorage } from "./storage/createlocalstorage.js";
+import { wrapBackup } from "./storage/wrapbackup.js";
+import { wrapCloud } from "./storage/wrapcloud.js";
 import { LOGIN_RECOGNIZED_PATH, conf } from "./storage.js";
 
-export const trackReady = (
+export const trackReady = async (
   app: string,
   intents: Intent[],
   requestBackup: (startBackup: () => void) => void,
-  ready: () => void,
 ) => {
   const params = new URLSearchParams(location.hash.slice(1));
 
@@ -44,11 +45,11 @@ export const trackReady = (
 
   let storage: Record<string, string>;
   if (setup.method == "cloud") {
-    // TODO
-    throw new Error("unimplemented");
+    storage = createLocalStorage();
+    storage = wrapCloud(storage, setup);
   } else if (setup.method == "localStorage") {
-    storage = initLocal();
-    storage = wrapWithBackup(storage, requestBackup);
+    storage = createLocalStorage();
+    storage = wrapBackup(storage, requestBackup);
   } else {
     throw new Error("unreachable");
   }
@@ -58,6 +59,4 @@ export const trackReady = (
       storage[LOGIN_RECOGNIZED_PATH] = provision.createLoginRecognized;
     }
   }
-
-  ready();
 };

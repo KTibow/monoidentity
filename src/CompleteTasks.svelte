@@ -1,17 +1,26 @@
 <script lang="ts">
   import iconCloud from "@ktibow/iconset-material-symbols/cloud";
   import { Icon, Button } from "m3-svelte";
+  import { rawAttest as attest } from "monoidentity";
   import EmailInput from "./EmailInput.svelte";
   import { canBackup, type Intent, type ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
   import { encode } from "../sdk/src/lib/utils-base36";
+  import { decodeBucket } from "../sdk/src/lib/utils-bucket";
   import { domains } from "./specific-utils";
   import AppBase from "./AppBase.svelte";
+  import bucketCreate from "./bucket-create.remote";
 
   let {
     intents,
     provisionEnvelope,
+    submit: confirmSubmit,
     appName,
-  }: { intents: Intent[]; provisionEnvelope: ProvisionEnvelope; appName: string } = $props();
+  }: {
+    intents: Intent[];
+    provisionEnvelope: ProvisionEnvelope;
+    submit: () => void;
+    appName: string;
+  } = $props();
 
   let email = $state("");
   let password = $state("");
@@ -28,55 +37,66 @@
     return recognized;
   });
 
-  // remove every matching intent and call action for each removal
-  const eat = (predicate: (i: Intent) => boolean, action: () => void) => {
-    let idx;
-    while ((idx = intents.findIndex(predicate)) != -1) {
-      intents.splice(idx, 1);
-      action();
+  // try to remove all matching and return if any were
+  const eat = (predicate: (i: Intent) => boolean) => {
+    let found = false;
+    for (let i = intents.length - 1; i >= 0; i--) {
+      if (predicate(intents[i])) {
+        intents.splice(i, 1);
+        found = true;
+      }
     }
+    return found;
   };
 
-  const submit = (e: SubmitEvent) => {
+  const getCloudBucket = async () => {
+    const saved = localStorage["cloud-bucket"];
+    if (saved) {
+      return decodeBucket(saved);
+    }
+
+    if (!email) throw new Error("Email is required");
+    if (!password) throw new Error("Password is required");
+    const login = { email, password };
+    const jwt: string = await attest(encode(JSON.stringify(login)), undefined);
+    const bucketEncoded = await bucketCreate(jwt);
+
+    localStorage["cloud-bucket"] = bucketEncoded;
+    return decodeBucket(bucketEncoded);
+  };
+  const submit = async (e: SubmitEvent) => {
     e.preventDefault();
     const method = (e.submitter as HTMLElement | null)?.getAttribute("value");
 
     if (method?.startsWith("local")) {
-      eat(
-        (i) => "storage" in i,
-        () => {
-          provisionEnvelope.provisions.push({ setup: { method: "localStorage" } });
-        },
-      );
-      eat(
-        (i) => "loginRecognized" in i,
-        () => {
-          // if not backup recovery
-          if (email && password) {
-            const payload = encode(JSON.stringify({ email, password }));
-            provisionEnvelope.provisions.push({ createLoginRecognized: payload });
-          }
-        },
-      );
+      if (eat((i) => "storage" in i)) {
+        provisionEnvelope.provisions.push({ setup: { method: "localStorage" } });
+      }
     } else {
-      // TODO: cloud
+      if (eat((i) => "storage" in i)) {
+        const bucket = await getCloudBucket();
+        provisionEnvelope.provisions.push({ setup: { method: "cloud", ...bucket } });
+      }
     }
+    if (eat((i) => "loginRecognized" in i)) {
+      // if not backup recovery
+      if (email && password) {
+        const payload = encode(JSON.stringify({ email, password }));
+        provisionEnvelope.provisions.push({ createLoginRecognized: payload });
+      }
+    }
+    confirmSubmit();
   };
 </script>
 
 {#if intents.some((i) => "loginRecognized" in i)}
   <AppBase header="Sign in" subheader="Securely authorize {appName}." {submit}>
     <EmailInput bind:email />
-    <input
-      type="password"
-      placeholder="Password"
-      bind:value={password}
-      class="m3-font-body-large focus-inset"
-    />
+    <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
 
     <Button variant="filled" disabled={!maybeRecognized || !email || !password} iconType="left">
       <Icon icon={iconCloud} />
-      Sign in with cloud (coming soon)
+      Sign in with cloud (WIP)
     </Button>
 
     <div class="local-row">
@@ -94,13 +114,13 @@
   <AppBase header="Set up {appName}" subheader="Get {appName}'s storage working." {submit}>
     <details>
       <Button variant="filled" summary iconType="left">
-        <Icon icon={iconCloud} /> Use cloud storage (coming soon)
+        <Icon icon={iconCloud} /> Use cloud storage (WIP)
       </Button>
       <div class="cloud-panel">
         <EmailInput bind:email />
-        <input type="password" placeholder="Password (cloud)" bind:value={password} />
+        <input class="focus-inset" type="password" placeholder="Password" bind:value={password} />
         <Button variant="filled" disabled={!maybeRecognized || !email || !password}>
-          Continue (cloud not implemented)
+          Continue (WIP)
         </Button>
       </div>
     </details>

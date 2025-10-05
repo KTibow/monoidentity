@@ -6,17 +6,14 @@
   let { app, intents, children }: { app: string; intents?: Intent[]; children: Snippet } = $props();
 
   let backup: (() => void) | undefined = $state();
-  const ready = new Promise<void>((res) =>
-    trackReady(
-      app,
-      intents || [],
-      (startBackup) =>
-        (backup = () => {
-          startBackup();
-          backup = undefined;
-        }),
-      res,
-    ),
+  const ready = trackReady(
+    app,
+    intents || [],
+    (startBackup) =>
+      (backup = () => {
+        startBackup();
+        backup = undefined;
+      }),
   );
 </script>
 

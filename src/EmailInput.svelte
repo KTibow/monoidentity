@@ -26,7 +26,7 @@
     type="email"
     placeholder="Email"
     bind:value={email}
-    class="m3-font-body-large focus-inset"
+    class="focus-inset"
     use:focusOnVisible
     onkeydown={(e) => {
       if (!completion) return;

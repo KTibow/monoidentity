@@ -1,4 +1,5 @@
 import { object, pipe, email, string } from "valibot";
+import type { Bucket } from "./utils-bucket.js";
 
 export type Intent =
   | {
@@ -9,7 +10,7 @@ export type Intent =
     };
 export type IntentEnvelope = { intents: Intent[]; redirectURI: string };
 
-export type StorageSetup = { method: "cloud"; verification: string } | { method: "localStorage" };
+export type StorageSetup = ({ method: "cloud" } & Bucket) | { method: "localStorage" };
 export type Provision =
   | {
       setup: StorageSetup;

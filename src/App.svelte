@@ -4,6 +4,7 @@
   import RedirectGo from "./RedirectGo.svelte";
   import RedirectPause from "./RedirectPause.svelte";
   import CompleteTasks from "./CompleteTasks.svelte";
+  import Loader from "./Loader.svelte";
 
   let { intents: _intents, redirectURI }: IntentEnvelope = $props();
 
@@ -11,13 +12,19 @@
   const appName = appData || new URL(redirectURI).hostname;
   let intents = $state(_intents);
   let provisionEnvelope: ProvisionEnvelope = $state({ provisions: [] });
-  let canProvision = $state(!!appData || new URL(redirectURI).hostname == "localhost");
+
+  let isTrusted = $state(!!appData || new URL(redirectURI).hostname == "localhost");
+  let submitted = $state(false);
 </script>
 
-{#if intents.length == 0 && canProvision}
-  <RedirectGo {provisionEnvelope} {redirectURI} />
+{#if submitted}
+  {#if isTrusted}
+    <RedirectGo {provisionEnvelope} {redirectURI} />
+  {:else}
+    <RedirectPause {provisionEnvelope} {appName} allow={() => (isTrusted = true)} />
+  {/if}
 {:else if intents.length == 0}
-  <RedirectPause {provisionEnvelope} {appName} allow={() => (canProvision = true)} />
-{:else if intents.some((t) => "storage" in t)}
-  <CompleteTasks {intents} {provisionEnvelope} {appName} />
+  <Loader />
+{:else}
+  <CompleteTasks {intents} {provisionEnvelope} submit={() => (submitted = true)} {appName} />
 {/if}

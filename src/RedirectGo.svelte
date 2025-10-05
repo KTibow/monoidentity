@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { onward } from "kreations";
-  import { Icon } from "m3-svelte";
   import type { ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import Loader from "./Loader.svelte";
 
   let {
     provisionEnvelope,
@@ -15,4 +14,4 @@
   window.location.href = url.toString();
 </script>
 
-<Icon icon={onward} size={48} style="margin:auto" />
+<Loader />
