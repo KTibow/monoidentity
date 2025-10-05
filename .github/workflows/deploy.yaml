@@ -25,6 +25,9 @@ jobs:
           VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
       - name: Build
         run: pnpm build
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_KEY: ${{ secrets.CF_KEY }}
       - name: Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
