@@ -30,17 +30,14 @@ export const wrapWithReplay = (storage: Dict) => {
       const tasks = paths.map((path) =>
         (async () => {
           const mod = modifications[path];
+          delete modifications[path];
           if (mod.type == "set" && mod.old == mod.new) {
-            delete modifications[path];
             return;
           }
           await tx(path, mod);
         })()
           .catch((err) => {
             console.warn(`[monoidentity] transmitting "${path}" failed`, err);
-          })
-          .finally(() => {
-            delete modifications[path];
           }),
       );
       await Promise.all(tasks);
