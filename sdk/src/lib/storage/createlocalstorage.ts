@@ -9,7 +9,7 @@ const unprefixed = (key: string) => {
 export const createLocalStorage = () =>
   createStore<string>({
     has(key: string) {
-      return typeof key == "string" && localStorage[prefixed(key)] !== null;
+      return typeof key == "string" && localStorage[prefixed(key)] !== undefined;
     },
 
     get(key: string) {
