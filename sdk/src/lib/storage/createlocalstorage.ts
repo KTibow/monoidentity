@@ -14,9 +14,7 @@ export const createLocalStorage = () =>
 
     get(key: string) {
       if (typeof key != "string") return undefined;
-      const value = localStorage[prefixed(key)];
-      if (value == null) return undefined;
-      return value;
+      return localStorage[prefixed(key)];
     },
 
     set(key: string, value: any) {
@@ -44,5 +42,9 @@ export const createLocalStorage = () =>
         }
       }
       return keys;
+    },
+
+    getOwnPropertyDescriptor(key: string) {
+      return Reflect.getOwnPropertyDescriptor(localStorage, prefixed(key));
     },
   });

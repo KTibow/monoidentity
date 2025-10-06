@@ -38,35 +38,93 @@ export const useVerification = async (jwt: string) => {
   return result!;
 };
 
-export const getStorage = (realm: "config" | "cache") => {
-  const prefix = (text: string) => {
-    if (!app) throw new Error("No app set");
-    return `.${realm}/${app}/${text}.devalue`;
-  };
-
-  return createStore<any>({
-    get(key: string) {
-      if (!implementation) throw new Error("No implementation set");
-      const item = implementation[prefix(key)];
-      if (!item) return undefined;
-      return parse(item);
+const withPrefix = <T>(
+  obj: Record<string, T>,
+  prefix: (text: string) => string,
+  unprefix?: (text: string) => string | undefined,
+) =>
+  new Proxy(obj, {
+    get(target, prop: string) {
+      return target[prefix(prop)];
     },
-
-    set(key: string, value) {
-      if (!implementation) throw new Error("No implementation set");
-      implementation[prefix(key)] = stringify(value);
+    set(target, prop: string, value) {
+      target[prefix(prop)] = value;
       return true;
     },
-
-    has(key: string) {
-      if (!implementation) throw new Error("No implementation set");
-      return prefix(key) in implementation;
+    has(target, prop: string) {
+      return prefix(prop) in target;
     },
-
-    deleteProperty(key: string) {
-      if (!implementation) throw new Error("No implementation set");
-      const k = prefix(key);
-      return delete implementation[k];
+    deleteProperty(target, prop: string) {
+      return delete target[prefix(prop)];
+    },
+    ownKeys(target) {
+      if (typeof unprefix != "function") {
+        throw new Error("unprefix must be a function");
+      }
+      return Object.keys(target)
+        .map((key) => unprefix(key))
+        .filter((key): key is string => typeof key == "string");
+    },
+    getOwnPropertyDescriptor(target, prop: string) {
+      return Reflect.getOwnPropertyDescriptor(target, prefix(prop));
     },
   });
-};
+export const getStorage = (realm: "config" | "cache") =>
+  withPrefix(
+    createStore<any>({
+      get(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        const item = implementation[key];
+        return item ? parse(item) : undefined;
+      },
+      set(key: string, value) {
+        if (!implementation) throw new Error("No implementation set");
+        implementation[key] = stringify(value);
+        return true;
+      },
+      has(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return key in implementation;
+      },
+      deleteProperty(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return delete implementation[key];
+      },
+    }),
+    (text: string) => {
+      if (!app) throw new Error("No app set");
+      return `.${realm}/${app}/${text}.devalue`;
+    },
+  );
+export const getScopedFS = (dir: string) =>
+  withPrefix(
+    createStore<string>({
+      get(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return implementation[key];
+      },
+      set(key: string, value) {
+        if (!implementation) throw new Error("No implementation set");
+        implementation[key] = value;
+        return true;
+      },
+      has(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return key in implementation;
+      },
+      deleteProperty(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return delete implementation[key];
+      },
+      ownKeys() {
+        if (!implementation) throw new Error("No implementation set");
+        return Object.keys(implementation);
+      },
+      getOwnPropertyDescriptor(key: string) {
+        if (!implementation) throw new Error("No implementation set");
+        return Reflect.getOwnPropertyDescriptor(implementation, key);
+      },
+    }),
+    (text: string) => `${dir}/${text}`,
+    (text: string) => (text.startsWith(`${dir}/`) ? text.slice(dir.length + 1) : undefined),
+  );

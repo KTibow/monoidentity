@@ -6,6 +6,7 @@ type ProxyHandlerWithoutTarget = {
   set?(p: string | symbol, newValue: any, receiver: any): boolean;
   deleteProperty?(p: string | symbol): boolean;
   ownKeys?(): ArrayLike<string | symbol>;
+  getOwnPropertyDescriptor?(p: string | symbol): PropertyDescriptor | undefined;
 };
 
 export const createStore = <T>(implementation: ProxyHandlerWithoutTarget) => {

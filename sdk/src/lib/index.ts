@@ -1,4 +1,10 @@
-export { getLoginRecognized, getVerification, useVerification, getStorage } from "./storage.js";
+export {
+  getLoginRecognized,
+  getVerification,
+  useVerification,
+  getStorage,
+  getScopedFS,
+} from "./storage.js";
 export { retrieveVerification } from "./storage-attest.js";
 export { default as rawAttest } from "./verification/attest.remote.js";
 export { trackReady } from "./trackready.js";
