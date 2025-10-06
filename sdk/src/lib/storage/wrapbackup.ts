@@ -1,26 +1,21 @@
 import { type Dict } from "./createstore.js";
 import { wrapWithReplay } from "./_replay.js";
 import { canBackup } from "../utils-transport.js";
-import { openDB } from "idb";
+import { get, set, createStore } from "idb-keyval";
 
 export const wrapBackup = (storage: Dict, requestBackup: (startBackup: () => void) => void) => {
   if (!canBackup) return storage;
   if (localStorage["monoidentity-x/backup"] == "off") return storage;
 
   const { proxy, flush, setTransmit, load } = wrapWithReplay(storage);
+  const store = createStore("monoidentity-x", "handles");
   const getDir = async () => {
-    const db = await openDB("monoidentity-x");
-    const handle = (await db.get("handles", "backup")) as FileSystemDirectoryHandle | undefined;
+    const handle = await get<FileSystemDirectoryHandle>("backup", store);
     if (!handle) throw new Error("No backup handle found");
     return handle;
   };
   const setDir = async (dir: FileSystemDirectoryHandle) => {
-    const db = await openDB("monoidentity-x", 1, {
-      upgrade(db) {
-        db.createObjectStore("handles");
-      },
-    });
-    await db.put("handles", dir, "backup");
+    await set("backup", dir, store);
   };
   const init = async (dir: FileSystemDirectoryHandle) => {
     let dirCache: Record<string, FileSystemDirectoryHandle> = {};

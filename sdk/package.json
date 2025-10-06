@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "repository": "KTibow/monoidentity",
   "author": {
     "name": "KTibow"
@@ -44,7 +44,7 @@
     "@tsndr/cloudflare-worker-jwt": "^3.2.0",
     "aws4fetch": "^1.0.20",
     "devalue": "^5.3.2",
-    "idb": "^8.0.3",
+    "idb-keyval": "^6.2.2",
     "valibot": "^1.1.0"
   },
   "devDependencies": {
