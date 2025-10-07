@@ -46,7 +46,7 @@ export const trackReady = async (
   let storage: Record<string, string>;
   if (setup.method == "cloud") {
     storage = createLocalStorage();
-    storage = wrapCloud(storage, setup);
+    storage = await wrapCloud(storage, setup);
   } else if (setup.method == "localStorage") {
     storage = createLocalStorage();
     storage = wrapBackup(storage, requestBackup);

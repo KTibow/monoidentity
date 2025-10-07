@@ -18,19 +18,14 @@ export const createLocalStorage = () =>
     },
 
     set(key: string, value: any) {
-      if (typeof key == "string") {
-        localStorage[prefixed(key)] = value;
-        return true;
-      }
-      return false;
+      if (typeof key != "string") return false;
+      localStorage[prefixed(key)] = value;
+      return true;
     },
 
     deleteProperty(key: string) {
-      if (typeof key == "string") {
-        delete localStorage[prefixed(key)];
-        return true;
-      }
-      return false;
+      if (typeof key != "string") return false;
+      return delete localStorage[prefixed(key)];
     },
 
     ownKeys() {
