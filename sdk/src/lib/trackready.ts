@@ -40,7 +40,10 @@ export const trackReady = async (
       redirectURI: location.origin,
     } satisfies IntentEnvelope);
     location.href = target.toString();
-    return;
+    await new Promise(() => {
+      /* never resolves */
+    });
+    throw new Error("unreachable");
   }
 
   let storage: Record<string, string>;
