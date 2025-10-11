@@ -1,130 +1,45 @@
 import { stringify, parse } from "devalue";
 import { parse as useSchema } from "valibot";
 import { decode } from "./utils-base36.js";
-import { createStore } from "./storage/createstore.js";
 import { login as loginSchema } from "./utils-transport.js";
 import { verify } from "@tsndr/cloudflare-worker-jwt";
 import publicKey from "./verification/public-key.js";
+import { storageClient } from "./storage/storageclient.svelte.js";
 
-let implementation: Record<string, string> | undefined;
-let app = "";
-export const conf = (i: Record<string, string>, a: string) => {
-  implementation = i;
+let app = "unknown";
+export const conf = (a: string) => {
   app = a;
 };
 
-export const LOGIN_RECOGNIZED_PATH = ".core/login.encjson";
+const LOGIN_RECOGNIZED_PATH = ".core/login.encjson";
 export const getLoginRecognized = () => {
-  if (!implementation) throw new Error("No implementation set");
-  const login = implementation[LOGIN_RECOGNIZED_PATH];
+  const client = storageClient();
+  const login = client[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
   return useSchema(loginSchema, JSON.parse(decode(login)));
 };
-export const VERIFICATION_PATH = ".core/verification.jwt";
-export const getVerification = async () => {
-  if (!implementation) throw new Error("No implementation set");
+export const setLoginRecognized = (login: string) => {
+  const client = storageClient();
+  client[LOGIN_RECOGNIZED_PATH] = login;
+};
 
-  const jwt = implementation[VERIFICATION_PATH];
+const VERIFICATION_PATH = ".core/verification.jwt";
+export const getVerification = async () => {
+  const client = storageClient();
+  const jwt = client[VERIFICATION_PATH];
   if (!jwt) throw new Error("No verification found");
   await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
   return jwt;
 };
 export const setVerification = (jwt: string) => {
-  if (!implementation) throw new Error("No implementation set");
-  implementation[VERIFICATION_PATH] = jwt;
-};
-export const useVerification = async (jwt: string) => {
-  const result = await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
-  return result!;
+  const client = storageClient();
+  client[VERIFICATION_PATH] = jwt;
 };
 
-const withPrefix = <T>(
-  obj: Record<string, T>,
-  prefix: (text: string) => string,
-  unprefix?: (text: string) => string | undefined,
-) =>
-  new Proxy(obj, {
-    get(target, prop: string) {
-      return target[prefix(prop)];
-    },
-    set(target, prop: string, value) {
-      target[prefix(prop)] = value;
-      return true;
-    },
-    has(target, prop: string) {
-      return prefix(prop) in target;
-    },
-    deleteProperty(target, prop: string) {
-      return delete target[prefix(prop)];
-    },
-    ownKeys(target) {
-      if (typeof unprefix != "function") {
-        throw new Error("unprefix must be a function");
-      }
-      return Object.keys(target)
-        .map((key) => unprefix(key))
-        .filter((key): key is string => typeof key == "string");
-    },
-    getOwnPropertyDescriptor(target, prop: string) {
-      return Reflect.getOwnPropertyDescriptor(target, prefix(prop));
-    },
-  });
 export const getStorage = (realm: "config" | "cache") =>
-  withPrefix(
-    createStore<any>({
-      get(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        const item = implementation[key];
-        return item ? parse(item) : undefined;
-      },
-      set(key: string, value) {
-        if (!implementation) throw new Error("No implementation set");
-        implementation[key] = stringify(value);
-        return true;
-      },
-      has(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return key in implementation;
-      },
-      deleteProperty(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return delete implementation[key];
-      },
-    }),
-    (text: string) => {
-      if (!app) throw new Error("No app set");
-      return `.${realm}/${app}/${text}.devalue`;
-    },
-  );
+  storageClient((key: string) => `.${realm}/${app}/${key}.devalue`, undefined, stringify, parse);
 export const getScopedFS = (dir: string) =>
-  withPrefix(
-    createStore<string>({
-      get(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return implementation[key];
-      },
-      set(key: string, value) {
-        if (!implementation) throw new Error("No implementation set");
-        implementation[key] = value;
-        return true;
-      },
-      has(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return key in implementation;
-      },
-      deleteProperty(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return delete implementation[key];
-      },
-      ownKeys() {
-        if (!implementation) throw new Error("No implementation set");
-        return Object.keys(implementation);
-      },
-      getOwnPropertyDescriptor(key: string) {
-        if (!implementation) throw new Error("No implementation set");
-        return Reflect.getOwnPropertyDescriptor(implementation, key);
-      },
-    }),
-    (text: string) => `${dir}/${text}`,
-    (text: string) => (text.startsWith(`${dir}/`) ? text.slice(dir.length + 1) : undefined),
+  storageClient(
+    (key: string) => `${dir}/${key}`,
+    (key: string) => (key.startsWith(dir + "/") ? key.slice(dir.length + 1) : undefined),
   );

@@ -4,23 +4,26 @@ import {
   type StorageSetup,
   type Provision,
 } from "./utils-transport.js";
-import { createLocalStorage } from "./storage/createlocalstorage.js";
-import { wrapBackup } from "./storage/wrapbackup.js";
-import { wrapCloud } from "./storage/wrapcloud.js";
-import { LOGIN_RECOGNIZED_PATH, conf } from "./storage.js";
+// import { createLocalStorage } from "./storage/createlocalstorage.js";
+// import { wrapBackup } from "./storage/wrapbackup.js";
+// import { wrapCloud } from "./storage/wrapcloud.js";
+import { conf, setLoginRecognized } from "./storage.js";
+import { backupLocally } from "./storage/backuplocally.js";
+import { backupCloud } from "./storage/backupcloud.js";
 
 export const trackReady = async (
   app: string,
   intents: Intent[],
   requestBackup: (startBackup: () => void) => void,
 ) => {
-  const params = new URLSearchParams(location.hash.slice(1));
+  conf(app);
 
   let setup = localStorage["monoidentity-x/setup"]
     ? (JSON.parse(localStorage["monoidentity-x/setup"]) as StorageSetup)
     : undefined;
 
   let provisions: Provision[] = [];
+  const params = new URLSearchParams(location.hash.slice(1));
   const cb = params.get("monoidentitycallback");
   if (cb) {
     history.replaceState(null, "", location.pathname);
@@ -40,26 +43,18 @@ export const trackReady = async (
       redirectURI: location.origin,
     } satisfies IntentEnvelope);
     location.href = target.toString();
-    await new Promise(() => {
-      /* never resolves */
-    });
-    throw new Error("unreachable");
+    throw new Error("halt: redirecting");
   }
 
-  let storage: Record<string, string>;
-  if (setup.method == "cloud") {
-    storage = createLocalStorage();
-    storage = await wrapCloud(storage, setup);
-  } else if (setup.method == "localStorage") {
-    storage = createLocalStorage();
-    storage = wrapBackup(storage, requestBackup);
-  } else {
-    throw new Error("unreachable");
+  if (setup.method == "localStorage") {
+    await backupLocally(requestBackup);
   }
-  conf(storage, app);
+  if (setup.method == "cloud") {
+    await backupCloud(setup);
+  }
   for (const provision of provisions) {
     if ("createLoginRecognized" in provision) {
-      storage[LOGIN_RECOGNIZED_PATH] = provision.createLoginRecognized;
+      setLoginRecognized(provision.createLoginRecognized);
     }
   }
 };

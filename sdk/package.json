@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.11.2",
+  "version": "0.12.0",
   "repository": "KTibow/monoidentity",
   "author": {
     "name": "KTibow"
@@ -25,16 +25,15 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/+client.d.ts",
+      "svelte": "./dist/+client.js"
     },
-    "./Monoidentity.svelte": {
-      "types": "./dist/Monoidentity.svelte.d.ts",
-      "svelte": "./dist/Monoidentity.svelte"
+    "./server": {
+      "types": "./dist/+server.d.ts",
+      "import": "./dist/+server.js"
     }
   },
   "peerDependencies": {

@@ -19,10 +19,8 @@
 
 {#snippet backupUI(yes: () => void, no: () => void)}
   <p>Avoid reconfiguration with a backup folder.</p>
-  <div class="buttons">
-    <button class="primary" onclick={yes}>Connect</button>
-    <button onclick={no}>Skip</button>
-  </div>
+  <button onclick={no}>Skip</button>
+  <button class="primary" onclick={yes}>Connect</button>
 {/snippet}
 
 {#await ready}
@@ -40,32 +38,36 @@
   .backup {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-
-    background-color: light-dark(#000, #fff);
-    color: light-dark(#fff, #000);
+    gap: 0.25rem;
     line-height: 1;
-    padding: 0.75rem;
-    border-radius: 1.5rem;
 
-    > .buttons {
+    > * {
       display: flex;
-      gap: 0.5rem;
-      > button {
-        display: flex;
-        flex: 1;
-        align-items: center;
-        justify-content: center;
-        height: 2rem;
-        border-radius: 0.75rem;
-        &.primary {
-          background-color: light-dark(#fff, #000);
-          color: light-dark(#000, #fff);
-        }
-        border: none;
-        font: inherit;
-        cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      height: 3rem;
+      margin: 0;
+      padding-inline: 0.5rem;
+      border-radius: 0.5rem;
+      border: none;
+      font: inherit;
+      &:first-child {
+        border-start-start-radius: 1.5rem;
+        border-start-end-radius: 1.5rem;
       }
+      &:last-child {
+        border-end-start-radius: 1.5rem;
+        border-end-end-radius: 1.5rem;
+      }
+      background-color: light-dark(#fff, #000);
+      color: light-dark(#000, #fff);
+    }
+    > button {
+      cursor: pointer;
+    }
+    > .primary {
+      background-color: light-dark(#000, #fff);
+      color: light-dark(#fff, #000);
     }
   }
   .toast {
