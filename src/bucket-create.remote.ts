@@ -1,7 +1,7 @@
 import { fn } from "monoserve";
 import { string } from "valibot";
 import { encodeBucket } from "../sdk/src/lib/utils-bucket";
-import { useVerification } from "monoidentity";
+import { useVerification } from "monoidentity/server";
 import { CF_ACCOUNT_ID, CF_KEY } from "$env/static/private";
 
 const KV_NAMESPACE_ID = "6b33cf77a0bf4a029bc17b738c9f2cdb";
