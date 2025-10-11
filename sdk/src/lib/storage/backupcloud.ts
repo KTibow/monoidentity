@@ -6,6 +6,7 @@ const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
 
 const isJunk = (key: string) => key.includes(".obsidian/") || key.includes(".cache/");
+const keepAnyway = (key: string) => key.includes(".cache/");
 
 const loadFromCloud = async (base: string, client: AwsClient) => {
   const listResp = await client.fetch(base);
@@ -60,9 +61,9 @@ const syncFromCloud = async (bucket: Bucket, client: AwsClient) => {
 
   const local = storageClient();
   for (const key of Object.keys(local)) {
-    if (!(key in remote)) {
-      delete local[key];
-    }
+    if (key in remote) continue;
+    if (keepAnyway(key)) continue;
+    delete local[key];
   }
   for (const [key, value] of Object.entries(remote)) {
     local[key] = value;
