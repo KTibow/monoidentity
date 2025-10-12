@@ -69,4 +69,6 @@ export default defineConfig({
     dir: outputDir,
     format: "esm",
   },
+
+  external: ["devalue"],
 });
