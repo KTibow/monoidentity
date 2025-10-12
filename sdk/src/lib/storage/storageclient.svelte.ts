@@ -47,7 +47,8 @@ export const storageClient = (
     set(_, key: string, value) {
       key = prefix(key);
 
-      localStorage[key] = serialize ? serialize(value) : value;
+      if (serialize) value = serialize(value);
+      localStorage[key] = value;
       announce(key, value);
       return true;
     },
