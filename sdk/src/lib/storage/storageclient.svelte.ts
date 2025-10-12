@@ -35,7 +35,9 @@ export const storageClient = (
     prefix = (key) => `monoidentity/${key}`;
   }
   return new Proxy({} as Record<string, any>, {
-    get(_, key: string) {
+    get(_, key) {
+      if (typeof key == "symbol") return undefined;
+
       key = prefix(key);
 
       storageCounters[key];
