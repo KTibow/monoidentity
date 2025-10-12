@@ -1,7 +1,7 @@
 import type { Bucket } from "../utils-bucket.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
-import { addToSync } from "$lib/storage.js";
+import { addToSync } from "../storage.js";
 
 const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
