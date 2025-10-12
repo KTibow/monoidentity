@@ -1,6 +1,7 @@
 import type { Bucket } from "../utils-bucket.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
+import { addToSync } from "$lib/storage.js";
 
 const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
@@ -85,7 +86,36 @@ export const backupCloud = async (bucket: Bucket) => {
   const syncIntervalId = setInterval(() => syncFromCloud(bucket, client), 15 * 60 * 1000);
 
   // Continuous sync: mirror local changes to cloud
-  const listener = async (event: CustomEvent<{ key: string; value?: string }>) => {
+  const write = async (key: string, value?: string) => {
+    const url = `${bucket.base}/${key}`;
+
+    if (value != undefined) {
+      // PUT content (unconditional to start; you can add If-Match/If-None-Match for safety)
+      const r = await client.fetch(url, {
+        method: "PUT",
+        headers: { "content-type": "application/octet-stream" },
+        body: value,
+      });
+      if (!r.ok) throw new Error(`PUT ${key} failed: ${r.status}`);
+
+      // Update cache
+      const etag = r.headers.get("etag")?.replaceAll('"', "");
+      if (etag) {
+        const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
+        cache[key] = { etag, content: value };
+        localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
+      }
+    } else {
+      // DELETE key
+      const r = await client.fetch(url, { method: "DELETE" });
+      if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
+
+      const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
+      delete cache[key];
+      localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
+    }
+  };
+  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
     let key = event.detail.key;
     if (!key.startsWith("monoidentity/")) return;
     key = key.slice("monoidentity/".length);
@@ -93,37 +123,10 @@ export const backupCloud = async (bucket: Bucket) => {
 
     console.debug("[monoidentity cloud] saving", key);
 
-    const url = `${bucket.base}/${key}`;
-
-    try {
-      if (event.detail.value != undefined) {
-        // PUT content (unconditional to start; you can add If-Match/If-None-Match for safety)
-        const r = await client.fetch(url, {
-          method: "PUT",
-          headers: { "content-type": "application/octet-stream" },
-          body: event.detail.value,
-        });
-        if (!r.ok) throw new Error(`PUT ${key} failed: ${r.status}`);
-
-        // Update cache
-        const etag = r.headers.get("etag")?.replaceAll('"', "");
-        if (etag) {
-          const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
-          cache[key] = { etag, content: event.detail.value };
-          localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
-        }
-      } else {
-        // DELETE key
-        const r = await client.fetch(url, { method: "DELETE" });
-        if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
-
-        const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
-        delete cache[key];
-        localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
-      }
-    } catch (err) {
-      console.warn("[monoidentity cloud] sync failed", key, err);
-    }
+    const promise = write(key, event.detail.value).catch((err) => {
+      console.warn("[monoidentity cloud] save failed", key, err);
+    });
+    addToSync(promise);
   };
 
   addEventListener(STORAGE_EVENT, listener);

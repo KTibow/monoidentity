@@ -7,9 +7,14 @@ import publicKey from "./verification/public-key.js";
 import { storageClient } from "./storage/storageclient.svelte.js";
 
 let app = "unknown";
+let syncPromise = Promise.resolve();
 export const conf = (a: string) => {
   app = a;
 };
+export const addToSync = (p: Promise<void>) => {
+  syncPromise = syncPromise.then(() => p);
+};
+export const completeSync = () => syncPromise;
 
 const LOGIN_RECOGNIZED_PATH = ".core/login.encjson";
 export const getLoginRecognized = () => {
