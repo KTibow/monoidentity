@@ -8,6 +8,8 @@ type Cache = Record<string, { etag: string; content: string }>;
 const isJunk = (key: string) => key.includes(".obsidian/") || key.includes(".cache/");
 const keepAnyway = (key: string) => key.includes(".cache/");
 
+let unmount: (() => void) | undefined;
+
 const loadFromCloud = async (base: string, client: AwsClient) => {
   const listResp = await client.fetch(base);
   if (!listResp.ok) throw new Error(`List bucket failed: ${listResp.status}`);
@@ -71,6 +73,8 @@ const syncFromCloud = async (bucket: Bucket, client: AwsClient) => {
 };
 
 export const backupCloud = async (bucket: Bucket) => {
+  unmount?.();
+
   const client = new AwsClient({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
@@ -78,10 +82,10 @@ export const backupCloud = async (bucket: Bucket) => {
 
   await syncFromCloud(bucket, client);
 
-  setInterval(() => syncFromCloud(bucket, client), 15 * 60 * 1000);
+  const syncIntervalId = setInterval(() => syncFromCloud(bucket, client), 15 * 60 * 1000);
 
   // Continuous sync: mirror local changes to cloud
-  addEventListener(STORAGE_EVENT, async (event: CustomEvent<{ key: string; value?: string }>) => {
+  const listener = async (event: CustomEvent<{ key: string; value?: string }>) => {
     let key = event.detail.key;
     if (!key.startsWith("monoidentity/")) return;
     key = key.slice("monoidentity/".length);
@@ -120,5 +124,18 @@ export const backupCloud = async (bucket: Bucket) => {
     } catch (err) {
       console.warn("[monoidentity cloud] sync failed", key, err);
     }
-  });
+  };
+
+  addEventListener(STORAGE_EVENT, listener);
+
+  unmount = () => {
+    clearInterval(syncIntervalId);
+    removeEventListener(STORAGE_EVENT, listener);
+  };
 };
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    unmount?.();
+  });
+}

@@ -2,6 +2,8 @@ import { createStore, get, set } from "idb-keyval";
 import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-transport.js";
 
+let unmount: (() => void) | undefined;
+
 const saveToDir = (dir: FileSystemDirectoryHandle) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
@@ -17,7 +19,7 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     }
     return parent;
   };
-  addEventListener(STORAGE_EVENT, async (event: CustomEvent) => {
+  const listener = async (event: CustomEvent) => {
     let key = event.detail.key;
     if (!key.startsWith("monoidentity/")) return;
     key = key.slice("monoidentity/".length);
@@ -36,18 +38,26 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     } else {
       await parent.removeEntry(name);
     }
-  });
+  };
+
+  addEventListener(STORAGE_EVENT, listener);
+
+  return () => {
+    removeEventListener(STORAGE_EVENT, listener);
+  };
 };
 export const backupLocally = async (requestBackup: (startBackup: () => void) => void) => {
   if (!canBackup) return;
   if (localStorage["monoidentity-x/backup"] == "off") return;
+
+  unmount?.();
 
   const handles = createStore("monoidentity-x", "handles");
   if (localStorage["monoidentity-x/backup"] == "on") {
     const dir = await get<FileSystemDirectoryHandle>("backup", handles);
     if (!dir) throw new Error("No backup handle found");
 
-    saveToDir(dir);
+    unmount = saveToDir(dir);
   } else {
     localStorage["monoidentity-x/backup"] = "off";
     requestBackup(async () => {
@@ -79,7 +89,13 @@ export const backupLocally = async (requestBackup: (startBackup: () => void) => 
         return;
       }
 
-      saveToDir(dir);
+      unmount = saveToDir(dir);
     });
   }
 };
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    unmount?.();
+  });
+}
