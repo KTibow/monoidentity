@@ -1,10 +1,11 @@
 import { createStore, get, set } from "idb-keyval";
 import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-transport.js";
+import { shouldPersist } from "./_should.js";
 
 let unmount: (() => void) | undefined;
 
-const saveToDir = (dir: FileSystemDirectoryHandle) => {
+const saveToDir = (shouldBackup: (path: string) => boolean, dir: FileSystemDirectoryHandle) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
     let key = "";
@@ -27,6 +28,12 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     const pathParts = key.split("/");
     const name = pathParts.at(-1)!;
     const value = event.detail.value;
+
+    if (!shouldBackup(key)) {
+      if (!shouldPersist(key))
+        console.warn("[monoidentity backup]", key, "isn't marked to be backed up or saved");
+      return;
+    }
     console.debug("[monoidentity backup] saving", name);
 
     const parent = await getDirCached(pathParts.slice(0, -1));
@@ -46,7 +53,10 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     removeEventListener(STORAGE_EVENT, listener);
   };
 };
-export const backupLocally = async (requestBackup: (startBackup: () => void) => void) => {
+export const backupLocally = async (
+  shouldBackup: (path: string) => boolean,
+  requestBackup: (startBackup: () => void) => void,
+) => {
   if (!canBackup) return;
   if (localStorage["monoidentity-x/backup"] == "off") return;
 
@@ -57,7 +67,7 @@ export const backupLocally = async (requestBackup: (startBackup: () => void) => 
     const dir = await get<FileSystemDirectoryHandle>("backup", handles);
     if (!dir) throw new Error("No backup handle found");
 
-    unmount = saveToDir(dir);
+    unmount = saveToDir(shouldBackup, dir);
   } else {
     localStorage["monoidentity-x/backup"] = "off";
     requestBackup(async () => {
@@ -89,7 +99,7 @@ export const backupLocally = async (requestBackup: (startBackup: () => void) => 
         return;
       }
 
-      unmount = saveToDir(dir);
+      unmount = saveToDir(shouldBackup, dir);
     });
   }
 };

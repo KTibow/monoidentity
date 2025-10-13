@@ -14,6 +14,7 @@ import { backupCloud } from "./storage/backupcloud.js";
 export const trackReady = async (
   app: string,
   intents: Intent[],
+  shouldBackup: (path: string) => boolean,
   requestBackup: (startBackup: () => void) => void,
 ) => {
   conf(app);
@@ -47,10 +48,10 @@ export const trackReady = async (
   }
 
   if (setup.method == "localStorage") {
-    await backupLocally(requestBackup);
+    await backupLocally(shouldBackup, requestBackup);
   }
   if (setup.method == "cloud") {
-    await backupCloud(setup);
+    await backupCloud(shouldBackup, setup);
   }
   for (const provision of provisions) {
     if ("createLoginRecognized" in provision) {

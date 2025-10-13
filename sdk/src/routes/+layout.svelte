@@ -9,6 +9,6 @@
   <link rel="icon" href={icon} />
 </svelte:head>
 
-<Monoidentity app="monoidentity-demo">
+<Monoidentity app="monoidentity-demo" shouldBackup={() => false}>
   {@render children()}
 </Monoidentity>

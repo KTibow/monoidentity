@@ -3,12 +3,23 @@
   import { trackReady } from "./trackready.js";
   import type { Intent } from "./utils-transport.js";
 
-  let { app, intents, children }: { app: string; intents?: Intent[]; children: Snippet } = $props();
+  let {
+    app,
+    intents,
+    shouldBackup,
+    children,
+  }: {
+    app: string;
+    intents?: Intent[];
+    shouldBackup: (path: string) => boolean;
+    children: Snippet;
+  } = $props();
 
   let backup: (() => void) | undefined = $state();
   const ready = trackReady(
     app,
     intents || [],
+    shouldBackup,
     (startBackup) =>
       (backup = () => {
         startBackup();

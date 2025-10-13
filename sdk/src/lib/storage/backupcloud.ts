@@ -2,16 +2,18 @@ import type { Bucket } from "../utils-bucket.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addToSync } from "../storage.js";
+import { shouldPersist } from "./_should.js";
 
 const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
 
-const isJunk = (key: string) => key.includes(".obsidian/") || key.includes(".cache/");
-const keepAnyway = (key: string) => key.includes(".cache/");
-
 let unmount: (() => void) | undefined;
 
-const loadFromCloud = async (base: string, client: AwsClient) => {
+const loadFromCloud = async (
+  shouldBackup: (path: string) => boolean,
+  base: string,
+  client: AwsClient,
+) => {
   const listResp = await client.fetch(base);
   if (!listResp.ok) throw new Error(`List bucket failed: ${listResp.status}`);
   const listXml = await listResp.text();
@@ -19,7 +21,7 @@ const loadFromCloud = async (base: string, client: AwsClient) => {
   const objects = [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
     .map((m) => m.slice(1).map((s) => s.replaceAll("&quot;", `"`).replaceAll("&apos;", `'`)))
     .map(([key, etag]) => ({ key, etag: etag.replaceAll(`"`, "") }))
-    .filter(({ key }) => !isJunk(key));
+    .filter(({ key }) => shouldBackup(key));
   const prevCache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
   const nextCache: Cache = {};
   const model: Record<string, string> = {};
@@ -59,13 +61,17 @@ const loadFromCloud = async (base: string, client: AwsClient) => {
   localStorage[CLOUD_CACHE_KEY] = JSON.stringify(nextCache);
   return model;
 };
-const syncFromCloud = async (bucket: Bucket, client: AwsClient) => {
-  const remote = await loadFromCloud(bucket.base, client);
+const syncFromCloud = async (
+  shouldBackup: (path: string) => boolean,
+  bucket: Bucket,
+  client: AwsClient,
+) => {
+  const remote = await loadFromCloud(shouldBackup, bucket.base, client);
 
   const local = storageClient();
   for (const key of Object.keys(local)) {
     if (key in remote) continue;
-    if (keepAnyway(key)) continue;
+    if (shouldPersist(key)) continue;
     delete local[key];
   }
   for (const [key, value] of Object.entries(remote)) {
@@ -73,7 +79,7 @@ const syncFromCloud = async (bucket: Bucket, client: AwsClient) => {
   }
 };
 
-export const backupCloud = async (bucket: Bucket) => {
+export const backupCloud = async (shouldBackup: (path: string) => boolean, bucket: Bucket) => {
   unmount?.();
 
   const client = new AwsClient({
@@ -81,12 +87,22 @@ export const backupCloud = async (bucket: Bucket) => {
     secretAccessKey: bucket.secretAccessKey,
   });
 
-  await syncFromCloud(bucket, client);
+  await syncFromCloud(shouldBackup, bucket, client);
 
-  const syncIntervalId = setInterval(() => syncFromCloud(bucket, client), 15 * 60 * 1000);
+  const syncIntervalId = setInterval(
+    () => syncFromCloud(shouldBackup, bucket, client),
+    15 * 60 * 1000,
+  );
 
   // Continuous sync: mirror local changes to cloud
   const write = async (key: string, value?: string) => {
+    if (!shouldBackup(key)) {
+      if (!shouldPersist(key))
+        console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
+      return;
+    }
+    console.debug("[monoidentity cloud] saving", key);
+
     const url = `${bucket.base}/${key}`;
 
     if (value != undefined) {
@@ -119,9 +135,6 @@ export const backupCloud = async (bucket: Bucket) => {
     let key = event.detail.key;
     if (!key.startsWith("monoidentity/")) return;
     key = key.slice("monoidentity/".length);
-    if (isJunk(key)) return;
-
-    console.debug("[monoidentity cloud] saving", key);
 
     const promise = write(key, event.detail.value).catch((err) => {
       console.warn("[monoidentity cloud] save failed", key, err);
