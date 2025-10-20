@@ -49,10 +49,10 @@
     return found;
   };
 
+  const savedBucket = localStorage["cloud-bucket"];
   const getCloudBucket = async () => {
-    const saved = localStorage["cloud-bucket"];
-    if (saved) {
-      return decodeBucket(saved);
+    if (savedBucket) {
+      return decodeBucket(savedBucket);
     }
 
     if (!email) throw new Error("Email is required");
@@ -105,7 +105,7 @@
     {#if maybeRecognized}
       <Button variant="filled" disabled={!recognized || !password} iconType="left">
         <Icon icon={iconCloud} />
-        Sign in with cloud (WIP)
+        Sign in with cloud
       </Button>
       <div class="row">
         <Button variant="tonal" value="local" disabled={!recognized || !password}>
@@ -124,15 +124,24 @@
   <AppBase header="Set up {appName}" subheader="Get {appName}'s storage working." {submit}>
     <details>
       <Button variant="filled" summary iconType="left">
-        <Icon icon={iconCloud} /> Use cloud storage (WIP)
+        <Icon icon={iconCloud} /> Use cloud storage
       </Button>
       <div class="cloud-panel">
-        <EmailInput bind:email />
-        <input class="focus-inset" type="password" placeholder="Password" bind:value={password} />
-        {#if maybeRecognized}
-          <Button variant="filled" disabled={!recognized || !password}>Continue (WIP)</Button>
+        {#if savedBucket}
+          <Button variant="filled">Continue</Button>
         {:else}
-          <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
+          <EmailInput bind:email />
+          {#if maybeRecognized}
+            <input
+              class="focus-inset"
+              type="password"
+              placeholder="Password"
+              bind:value={password}
+            />
+            <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
+          {:else}
+            <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
+          {/if}
         {/if}
       </div>
     </details>
