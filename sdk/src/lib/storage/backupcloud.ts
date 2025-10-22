@@ -75,6 +75,7 @@ const syncFromCloud = async (
     delete local[key];
   }
   for (const [key, value] of Object.entries(remote)) {
+    if (local[key] == value) continue;
     local[key] = value;
   }
 };
