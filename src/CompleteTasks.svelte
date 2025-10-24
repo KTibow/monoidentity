@@ -72,12 +72,10 @@
         provisionEnvelope.provisions.push({ createLoginRecognized: payload });
       }
     }
-    if (method?.startsWith("local")) {
-      if (eat((i) => "storage" in i)) {
+    if (eat((i) => "storage" in i)) {
+      if (method?.startsWith("local")) {
         provisionEnvelope.provisions.push({ setup: { method: "localStorage" } });
-      }
-    } else {
-      if (eat((i) => "storage" in i)) {
+      } else {
         const bucket = await getCloudBucket();
         provisionEnvelope.provisions.push({ setup: { method: "cloud", ...bucket } });
       }
@@ -97,7 +95,7 @@
   };
 </script>
 
-{#if intents.some((i) => "loginRecognized" in i)}
+{#if intents.some((i) => "loginRecognized" in i) && intents.some((i) => "storage" in i)}
   <AppBase header="Sign in" subheader="Securely authorize {appName}." {submit}>
     <EmailInput bind:email />
     <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
@@ -116,6 +114,17 @@
           <Button variant="text" value="local-backup">Use local backup</Button>
         {/if}
       </div>
+    {:else}
+      <p class="m3-font-body-medium">This app doesn't work with your email.</p>
+    {/if}
+  </AppBase>
+{:else if intents.some((i) => "loginRecognized" in i)}
+  <AppBase header="Sign in" subheader="Securely authorize {appName}." {submit}>
+    <EmailInput bind:email />
+    <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
+
+    {#if maybeRecognized}
+      <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
     {:else}
       <p class="m3-font-body-medium">This app doesn't work with your email.</p>
     {/if}

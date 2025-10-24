@@ -1,6 +1,7 @@
 export * from "./+common.js";
 export {
   getLoginRecognized,
+  relog,
   getVerification,
   getStorage,
   getScopedFS,

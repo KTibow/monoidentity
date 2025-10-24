@@ -5,6 +5,7 @@ import { login as loginSchema } from "./utils-transport.js";
 import { verify } from "@tsndr/cloudflare-worker-jwt";
 import publicKey from "./verification/public-key.js";
 import { storageClient } from "./storage/storageclient.svelte.js";
+import { switchToHub } from "./utils-hub.js";
 
 let app = "unknown";
 let syncPromise = Promise.resolve();
@@ -26,6 +27,9 @@ export const getLoginRecognized = () => {
 export const setLoginRecognized = (login: string) => {
   const client = storageClient();
   client[LOGIN_RECOGNIZED_PATH] = login;
+};
+export const relog = () => {
+  switchToHub([{ loginRecognized: true }]);
 };
 
 const VERIFICATION_PATH = ".core/verification.jwt";

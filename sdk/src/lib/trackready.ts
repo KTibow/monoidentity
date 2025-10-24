@@ -10,6 +10,7 @@ import {
 import { conf, setLoginRecognized } from "./storage.js";
 import { backupLocally } from "./storage/backuplocally.js";
 import { backupCloud } from "./storage/backupcloud.js";
+import { switchToHub } from "./utils-hub.js";
 
 export const trackReady = async (
   app: string,
@@ -38,13 +39,7 @@ export const trackReady = async (
   }
 
   if (!setup) {
-    const target = new URL("https://monoidentity.web.app");
-    target.hash = JSON.stringify({
-      intents: [{ storage: true }, ...intents],
-      redirectURI: location.origin,
-    } satisfies IntentEnvelope);
-    location.href = target.toString();
-    throw new Error("halt: redirecting");
+    switchToHub([{ storage: true }, ...intents]);
   }
 
   if (setup.method == "localStorage") {
