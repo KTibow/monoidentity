@@ -14,19 +14,21 @@
   let provisionEnvelope: ProvisionEnvelope = $state({ provisions: [] });
 
   let isTrusted = $state(!!appData || new URL(redirectURI).hostname == "localhost");
-  let submissionState: "submitting" | "submitted" | "error" = $state("submitting");
+  let submissionPromise: Promise<void> = $state(Promise.resolve());
 </script>
 
 {#if intents.length == 0}
-  {#if submissionState == "submitting"}
+  {#await submissionPromise}
     <Loader />
-  {:else if submissionState == "error"}
+  {:then}
+    {#if isTrusted}
+      <RedirectGo {provisionEnvelope} {redirectURI} />
+    {:else}
+      <RedirectPause {provisionEnvelope} {appName} allow={() => (isTrusted = true)} />
+    {/if}
+  {:catch}
     <p style:margin="auto">Something went wrong</p>
-  {:else if isTrusted}
-    <RedirectGo {provisionEnvelope} {redirectURI} />
-  {:else}
-    <RedirectPause {provisionEnvelope} {appName} allow={() => (isTrusted = true)} />
-  {/if}
+  {/await}
 {:else}
-  <CompleteTasks {intents} {provisionEnvelope} {appName} bind:submissionState />
+  <CompleteTasks {intents} {provisionEnvelope} {appName} bind:submissionPromise />
 {/if}

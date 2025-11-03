@@ -14,12 +14,12 @@
     intents,
     provisionEnvelope,
     appName,
-    submissionState = $bindable(),
+    submissionPromise = $bindable(),
   }: {
     intents: Intent[];
     provisionEnvelope: ProvisionEnvelope;
     appName: string;
-    submissionState: "submitting" | "submitted" | "error";
+    submissionPromise: Promise<void>;
   } = $props();
 
   let email = $state("");
@@ -81,17 +81,11 @@
       }
     }
   };
-  const submit = async (e: SubmitEvent) => {
+  const submit = (e: SubmitEvent) => {
     e.preventDefault();
     const method = e.submitter?.getAttribute("value") || undefined;
 
-    try {
-      await submitLogic(method);
-      submissionState = "submitted";
-    } catch (e) {
-      console.error(e);
-      submissionState = "error";
-    }
+    submissionPromise = submitLogic(method);
   };
 </script>
 
