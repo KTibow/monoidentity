@@ -14,7 +14,7 @@ export default fn(string(), async (login) => {
   const domain = email.split("@")[1];
   const district = districts[domain];
   if (!district) {
-    throw new Error("Unknown school domain");
+    throw new Response("Unknown school domain", { status: 400 });
   }
 
   const svApp = district.apps.find((app) => app.app == "StudentVue");
@@ -22,11 +22,11 @@ export default fn(string(), async (login) => {
   if (svApp) {
     const response = await studentvue({ base: svApp.base, userID, password }, "ChildList");
     if (!response.ChildList?.Child) {
-      throw new Error("Invalid auth");
+      throw new Response("Invalid auth", { status: 400 });
     }
     method = "studentvue";
   } else {
-    throw new Error("Couldn't verify");
+    throw new Response("Can't verify", { status: 400 });
   }
 
   return await sign(

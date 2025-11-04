@@ -26,8 +26,11 @@
     {:else}
       <RedirectPause {provisionEnvelope} {appName} allow={() => (isTrusted = true)} />
     {/if}
-  {:catch}
-    <p style:margin="auto">Something went wrong</p>
+  {:catch e}
+    <p>Something went wrong</p>
+    {#if e instanceof Error}
+      <pre>{e.message}</pre>
+    {/if}
   {/await}
 {:else}
   <CompleteTasks {intents} {provisionEnvelope} {appName} bind:submissionPromise />

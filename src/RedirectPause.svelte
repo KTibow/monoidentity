@@ -27,5 +27,5 @@
     <Button variant="text" onclick={deny}>Deny</Button>
   </AppBase>
 {:else}
-  <p style:margin="auto">You denied this auth request.</p>
+  <p>You denied this auth request.</p>
 {/if}
