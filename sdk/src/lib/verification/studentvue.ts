@@ -34,6 +34,11 @@ export default async (
     },
   });
   const dataWrap = await response.text();
+  if (!dataWrap.includes("<string")) {
+    throw new Error(`StudentVue error: malformed response (status ${response.status})`, {
+      cause: dataWrap,
+    });
+  }
   const data = dataWrap
     .split(`<string xmlns="http://edupoint.com/webservices/">`)[1]
     .split("</string>")[0]
@@ -41,12 +46,12 @@ export default async (
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
   const xml = parser.parse(data);
-  const err = xml.RT_ERROR;
+  const err: string | undefined = xml.RT_ERROR?.["@_ERROR_MESSAGE"];
   if (err) {
-    if (err["@_ERROR_MESSAGE"].startsWith("Invalid user id or password")) {
+    if (err.startsWith("Invalid user id or password")) {
       throw new Error("Invalid auth");
     }
-    throw new Error("StudentVue error");
+    throw new Error("StudentVue error", { cause: err });
   }
 
   return xml;

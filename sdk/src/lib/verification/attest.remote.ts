@@ -20,7 +20,13 @@ export default fn(string(), async (login) => {
   const svApp = district.apps.find((app) => app.app == "StudentVue");
   let method: string;
   if (svApp) {
-    const response = await studentvue({ base: svApp.base, userID, password }, "ChildList");
+    let response;
+    try {
+      response = await studentvue({ base: svApp.base, userID, password }, "ChildList");
+    } catch (e) {
+      console.error("StudentVue inaccessible", e);
+      throw new Response("StudentVue is inaccessible", { status: 400 });
+    }
     if (!response.ChildList?.Child) {
       throw new Response("Invalid auth", { status: 400 });
     }
