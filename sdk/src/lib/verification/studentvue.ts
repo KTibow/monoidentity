@@ -9,6 +9,42 @@ const build = (object: Record<string, string>) => {
 };
 const parser = new XMLParser({ ignoreAttributes: false });
 
+/*
+export default {
+  async fetch(request) {
+    const target = request.headers.get("x-proxy-target");
+    if (!target) {
+      return new Response("Missing x-proxy-target header", { status: 400 });
+    }
+
+    try {
+      const targetUrl = new URL(target);
+      if (
+        targetUrl.protocol != "https:" ||
+        !targetUrl.host.endsWith("-psv.edupoint.com") ||
+        targetUrl.pathname != "/Service/PXPCommunication.asmx/ProcessWebServiceRequest"
+      ) {
+        throw new Error();
+      }
+    } catch {
+      return new Response("Invalid target URL", { status: 400 });
+    }
+
+    const newHeaders = new Headers(request.headers);
+    newHeaders.delete("x-proxy-target");
+    newHeaders.delete("host");
+
+    const newRequest = new Request(target, {
+      method: request.method,
+      headers: newHeaders,
+      body: request.body,
+    });
+
+    return fetch(newRequest);
+  },
+}; */
+const PROXY_URL = "https://studentvuing.ktibow.workers.dev";
+
 export default async (
   { base, userID, password }: { base: string; userID: string; password: string },
   name: string,
@@ -26,11 +62,12 @@ export default async (
       .join("")}</Parms>`,
   });
 
-  const response = await fetch(`${base}/Service/PXPCommunication.asmx/ProcessWebServiceRequest`, {
+  const response = await fetch(PROXY_URL, {
     method: "POST",
     body: request,
     headers: {
       "content-type": "application/x-www-form-urlencoded",
+      "x-proxy-target": `${base}/Service/PXPCommunication.asmx/ProcessWebServiceRequest`,
     },
   });
   const dataWrap = await response.text();
