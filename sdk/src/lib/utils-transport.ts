@@ -1,5 +1,6 @@
 import { object, pipe, email, string } from "valibot";
-import type { Bucket } from "./utils-bucket.js";
+
+export type Bucket = { base: string; accessKeyId: string; secretAccessKey: string };
 
 export type Intent =
   | {

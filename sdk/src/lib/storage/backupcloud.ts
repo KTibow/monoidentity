@@ -1,4 +1,4 @@
-import type { Bucket } from "../utils-bucket.js";
+import type { Bucket } from "../utils-transport.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addToSync } from "../storage.js";

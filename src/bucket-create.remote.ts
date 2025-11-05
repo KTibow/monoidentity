@@ -1,6 +1,6 @@
 import { fn } from "monoserve";
 import { string } from "valibot";
-import { encodeBucket } from "../sdk/src/lib/utils-bucket";
+import { encodeBucket } from "./specific-utils";
 import { useVerification } from "monoidentity/server";
 import { CF_ACCOUNT_ID, CF_KEY } from "$env/static/private";
 

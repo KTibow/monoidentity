@@ -5,7 +5,7 @@
   import EmailInput from "./EmailInput.svelte";
   import { canBackup, type Intent, type ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
   import { encode } from "../sdk/src/lib/utils-base36";
-  import { decodeBucket } from "../sdk/src/lib/utils-bucket";
+  import { decodeBucket } from "./specific-utils";
   import { domains } from "./specific-utils";
   import AppBase from "./AppBase.svelte";
   import bucketCreate from "./bucket-create.remote";
