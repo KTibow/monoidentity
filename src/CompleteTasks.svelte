@@ -92,9 +92,9 @@
 {#if intents.some((i) => "loginRecognized" in i) && intents.some((i) => "storage" in i)}
   <AppBase header="Sign in" subheader="Securely authorize {appName}." {submit}>
     <EmailInput bind:email />
-    <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
 
     {#if maybeRecognized}
+      <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
       <Button variant="filled" disabled={!recognized || !password} iconType="left">
         <Icon icon={iconCloud} />
         Sign in with cloud
@@ -115,9 +115,9 @@
 {:else if intents.some((i) => "loginRecognized" in i)}
   <AppBase header="Sign in" subheader="Securely authorize {appName}." {submit}>
     <EmailInput bind:email />
-    <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
 
     {#if maybeRecognized}
+      <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
       <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
     {:else}
       <p class="m3-font-body-medium">This app doesn't work with your email.</p>
