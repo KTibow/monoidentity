@@ -39,9 +39,9 @@ importers:
       '@types/wicg-file-system-access':
         specifier: ^2023.10.6
         version: 2023.10.6
-      fast-xml-parser:
-        specifier: ^5.2.5
-        version: 5.2.5
+      fast-studentvue:
+        specifier: ^2.0.1
+        version: 2.0.1
       knip:
         specifier: ^5.64.1
         version: 5.64.1(@types/node@24.5.2)(typescript@5.9.3)
@@ -800,8 +800,11 @@ packages:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
     engines: {node: '>=8.6.0'}
 
-  fast-xml-parser@5.2.5:
-    resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
+  fast-studentvue@2.0.1:
+    resolution: {integrity: sha512-oJCQD9UcuUOJS4zepnSuBTn7IM049qitnXfSZLM4XzqxggFaqDm91H4jvypoPWvekw+sQN+ji+AzN998TxnL7g==}
+
+  fast-xml-parser@5.3.1:
+    resolution: {integrity: sha512-jbNkWiv2Ec1A7wuuxk0br0d0aTMUtQ4IkL+l/i1r9PRf6pLXjDgsBsWwO+UyczmQlnehi4Tbc8/KIvxGQe+I/A==}
     hasBin: true
 
   fastq@1.19.1:
@@ -1647,7 +1650,12 @@ snapshots:
       merge2: 1.4.1
       micromatch: 4.0.8
 
-  fast-xml-parser@5.2.5:
+  fast-studentvue@2.0.1:
+    dependencies:
+      fast-xml-parser: 5.3.1
+      school-districts: 2.0.0
+
+  fast-xml-parser@5.3.1:
     dependencies:
       strnum: 2.1.1
 
