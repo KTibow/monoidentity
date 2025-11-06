@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.15.1",
+  "version": "0.15.2",
   "repository": "KTibow/monoidentity",
   "author": {
     "name": "KTibow"
@@ -54,7 +54,7 @@
     "@types/wicg-file-system-access": "^2023.10.6",
     "fast-studentvue": "^2.0.1",
     "knip": "^5.64.1",
-    "monoserve": "^3.0.2",
+    "monoserve": "^3.2.0",
     "publint": "^0.3.13",
     "rolldown": "1.0.0-beta.40",
     "school-districts": "^2.0.0",
