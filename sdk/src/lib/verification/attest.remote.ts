@@ -50,14 +50,22 @@ const studentvue = (email: string, password: string, methodName: string) =>
     },
     methodName,
     {},
-    (url, args) =>
-      fetch(PROXY_URL, {
-        ...args,
-        headers: {
-          ...args.headers,
-          "x-proxy-target": url,
-        },
-      }),
+    async (url, args) => {
+      let r;
+      for (let i = 0; i < 3; i++) {
+        r = await fetch(PROXY_URL, {
+          ...args,
+          headers: {
+            ...args.headers,
+            "x-proxy-target": url,
+            "user-agent": "fast-studentvue",
+          },
+        });
+        if (r.ok) break;
+        console.debug(`Proxy try ${i + 1} failed (${r.status})`);
+      }
+      return r as Response;
+    },
   );
 
 export default fn(string(), async (login) => {
