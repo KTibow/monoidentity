@@ -32,7 +32,10 @@ const studentvue = (email: string, password: string, methodName: string) =>
         }
         if (r!.ok) break;
         console.debug(
-          `Try ${i + 1} failed (${r.status} ${await r.text().catch(() => "[no body]")})`,
+          `Try ${i + 1} failed (${r.status} ${await r
+            .clone()
+            .text()
+            .catch(() => "[no body]")})`,
         );
       }
       return r!;
