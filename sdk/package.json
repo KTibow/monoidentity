@@ -1,6 +1,7 @@
 {
   "name": "monoidentity",
-  "version": "0.15.2",
+  "version": "0.15.3",
+  "license": "ISC",
   "repository": "KTibow/monoidentity",
   "author": {
     "name": "KTibow"
