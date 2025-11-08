@@ -40,8 +40,8 @@ importers:
         specifier: ^2023.10.6
         version: 2023.10.6
       fast-studentvue:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.0.2
+        version: 2.0.2
       knip:
         specifier: ^5.64.1
         version: 5.64.1(@types/node@24.5.2)(typescript@5.9.3)
@@ -791,8 +791,8 @@ packages:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
     engines: {node: '>=8.6.0'}
 
-  fast-studentvue@2.0.1:
-    resolution: {integrity: sha512-oJCQD9UcuUOJS4zepnSuBTn7IM049qitnXfSZLM4XzqxggFaqDm91H4jvypoPWvekw+sQN+ji+AzN998TxnL7g==}
+  fast-studentvue@2.0.2:
+    resolution: {integrity: sha512-rqSceDww7AJdFG3J0J5HOJZkMFfb96C48r0p8u8/M0uzWaEbwZsJnM0MVDK5b/lCSu8gEg4lj5LXwF3X0k21nw==}
 
   fast-xml-parser@5.3.1:
     resolution: {integrity: sha512-jbNkWiv2Ec1A7wuuxk0br0d0aTMUtQ4IkL+l/i1r9PRf6pLXjDgsBsWwO+UyczmQlnehi4Tbc8/KIvxGQe+I/A==}
@@ -1623,7 +1623,7 @@ snapshots:
       merge2: 1.4.1
       micromatch: 4.0.8
 
-  fast-studentvue@2.0.1:
+  fast-studentvue@2.0.2:
     dependencies:
       fast-xml-parser: 5.3.1
       school-districts: 2.0.0

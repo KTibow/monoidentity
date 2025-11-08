@@ -17,20 +17,25 @@ const studentvue = (email: string, password: string, methodName: string) =>
     methodName,
     {},
     async (url, args) => {
-      let r;
-      for (let i = 0; i < 3; i++) {
-        r = await fetch(PROXY_URL, {
-          ...args,
-          headers: {
-            ...args.headers,
-            "x-proxy-target": url,
-            "user-agent": "fast-studentvue",
-          },
-        });
-        if (r.ok) break;
-        console.debug(`Proxy try ${i + 1} failed (${r.status})`);
+      let r: Response | undefined;
+      for (let i = 0; i < 6; i++) {
+        if (i < 3) {
+          r = await fetch(url, args);
+        } else {
+          r = await fetch(PROXY_URL, {
+            ...args,
+            headers: {
+              ...args.headers,
+              "x-proxy-target": url,
+            },
+          });
+        }
+        if (r!.ok) break;
+        console.debug(
+          `Try ${i + 1} failed (${r.status} ${await r.text().catch(() => "[no body]")})`,
+        );
       }
-      return r as Response;
+      return r!;
     },
   );
 
