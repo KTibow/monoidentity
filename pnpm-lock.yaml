@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@ktibow/iconset-material-symbols':
-        specifier: ^0.0.1761892960
+        specifier: ~0.0.1761892960
         version: 0.0.1761892960
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
@@ -48,8 +48,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0(prettier@3.6.2)(svelte@5.43.5)
       school-districts:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^4.0.0
+        version: 4.0.0
       svelte:
         specifier: ^5.43.5
         version: 5.43.5
@@ -829,8 +829,8 @@ packages:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
 
-  school-districts@3.0.0:
-    resolution: {integrity: sha512-84fVmFsDVtJNvCDjlN8aotdDczZ9wST+zIU0K5yGVWJWrX7QCp2harw4X1UAr6F+lYWxs7UOSFfqfbmTorfNhg==}
+  school-districts@4.0.0:
+    resolution: {integrity: sha512-QUNq81DJXllREVjtpJ8hhB8DJLUqzlIlvCzFA2iftetYFTv70yxEtN9GfqecSjCf7m2hSCD3cjcl01I1/sue4A==}
 
   smol-toml@1.4.2:
     resolution: {integrity: sha512-rInDH6lCNiEyn3+hH8KVGFdbjc099j47+OSgbMrfDYX1CmXLfdKd7qi6IfcWj2wFxvSVkuI46M+wPGYfEOEj6g==}
@@ -1572,7 +1572,7 @@ snapshots:
     dependencies:
       mri: 1.2.0
 
-  school-districts@3.0.0: {}
+  school-districts@4.0.0: {}
 
   smol-toml@1.4.2: {}
 

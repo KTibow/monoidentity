@@ -55,8 +55,8 @@ importers:
         specifier: ^1.0.0-beta.47
         version: 1.0.0-beta.47
       school-districts:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^4.0.0
+        version: 4.0.0
       svelte:
         specifier: ^5.43.5
         version: 5.43.5
@@ -882,8 +882,8 @@ packages:
   school-districts@2.0.0:
     resolution: {integrity: sha512-QTNnx3uJ7OPTPm3LYEoQEJXBK9J4z+GsTLq6OsOdFfcMKmQf+4GSgwB+F92dA/wYNQWD1Jkqctq+Ri3QOqXl1g==}
 
-  school-districts@3.0.0:
-    resolution: {integrity: sha512-84fVmFsDVtJNvCDjlN8aotdDczZ9wST+zIU0K5yGVWJWrX7QCp2harw4X1UAr6F+lYWxs7UOSFfqfbmTorfNhg==}
+  school-districts@4.0.0:
+    resolution: {integrity: sha512-QUNq81DJXllREVjtpJ8hhB8DJLUqzlIlvCzFA2iftetYFTv70yxEtN9GfqecSjCf7m2hSCD3cjcl01I1/sue4A==}
 
   scule@1.3.0:
     resolution: {integrity: sha512-6FtHJEvt+pVMIB9IBY+IcCJ6Z5f1iQnytgyfKMhDKgmzYG+TeH/wx1y3l27rshSbLiSanrR9ffZDrEsmjlQF2g==}
@@ -1698,7 +1698,7 @@ snapshots:
 
   school-districts@2.0.0: {}
 
-  school-districts@3.0.0: {}
+  school-districts@4.0.0: {}
 
   scule@1.3.0: {}
 
