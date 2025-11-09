@@ -5,7 +5,7 @@ import { VERIFICATION_PRIVATE_KEY } from "$env/static/private";
 import { decode } from "../utils-base36.js";
 import { login as loginSchema } from "../utils-transport.js";
 import fastStudentvue from "fast-studentvue";
-import districts from "school-districts";
+import { districtApps } from "school-districts";
 
 const PROXY_URL = "https://studentvuing.ktibow.workers.dev";
 const studentvue = (email: string, password: string, methodName: string) =>
@@ -46,12 +46,12 @@ export default fn(string(), async (login) => {
   const { email, password } = useSchema(loginSchema, JSON.parse(decode(login)));
 
   const domain = email.split("@")[1];
-  const district = districts[domain];
-  if (!district) {
+  const apps = districtApps[domain];
+  if (!apps) {
     throw new Response("Unknown domain", { status: 400 });
   }
 
-  const svApp = district.apps.find((app) => app.app == "StudentVue");
+  const svApp = apps.find((app) => app.app == "StudentVue");
   let method: string;
   if (svApp) {
     let response;
