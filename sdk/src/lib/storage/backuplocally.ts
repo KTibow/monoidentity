@@ -1,6 +1,6 @@
 import { createStore, get, set } from "idb-keyval";
 import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
-import { canBackup } from "../utils-transport.js";
+import { canBackup } from "../utils-localstorage.js";
 import { shouldPersist } from "./_should.js";
 
 let unmount: (() => void) | undefined;

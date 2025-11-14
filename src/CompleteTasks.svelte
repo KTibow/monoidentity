@@ -3,7 +3,8 @@
   import { Icon, Button } from "m3-svelte";
   import { rawAttest as attest } from "monoidentity";
   import EmailInput from "./EmailInput.svelte";
-  import { canBackup, type Intent, type ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import type { Intent, ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import { canBackup } from "../sdk/src/lib/utils-localstorage";
   import { encode } from "../sdk/src/lib/utils-base36";
   import { decodeBucket } from "./specific-utils";
   import { domains } from "./specific-utils";

@@ -23,6 +23,3 @@ export type Provision =
 export type ProvisionEnvelope = { provisions: Provision[] };
 
 export const login = object({ email: pipe(string(), email()), password: string() });
-
-export const canBackup =
-  navigator.userAgent.includes("CrOS") && Boolean(window.showDirectoryPicker);
