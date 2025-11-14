@@ -10,7 +10,7 @@
   "funding": "https://github.com/sponsors/KTibow",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && pnpm run prepack",
+    "build": "vite build && pnpm run prepack && pnpm --prefix firebase-functions run build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && rm -rf predist && node --env-file-if-exists=.env node_modules/rolldown/bin/cli.mjs -c && svelte-package -i predist -t && publint",

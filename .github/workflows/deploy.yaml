@@ -28,7 +28,10 @@ jobs:
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_KEY: ${{ secrets.CF_KEY }}
-      - name: Firebase
+      - name: Install Firebase Functions dependencies
+        run: pnpm install
+        working-directory: ./sdk/firebase-functions
+      - name: Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

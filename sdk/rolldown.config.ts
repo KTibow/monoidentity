@@ -55,7 +55,7 @@ export default defineConfig({
 
   plugins: [
     monoserve({
-      monoserverURL: "https://benignmonoserver.fly.dev",
+      monoserverURL: "https://monoserve-by45xe47vq-uc.a.run.app",
       env: process.env as Record<string, string>,
     }),
     copyRemainingAssetsPlugin({
