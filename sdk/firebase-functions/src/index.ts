@@ -1,28 +1,12 @@
 import { onRequest } from "firebase-functions/v2/https";
 
-// Load all monoserve handlers using import.meta.glob
-const modules: Record<string, { default: (req: Request) => Promise<Response> }> = import.meta.glob(
+const functionModules = import.meta.glob<{ default: (req: Request) => Promise<Response> }>(
   "../../functions/*.js",
-  { eager: true },
 );
 
-// Build handlers map from imported modules
-const handlers = new Map<string, (request: Request) => Promise<Response>>();
-
-for (const [path, { default: handler }] of Object.entries(modules)) {
-  const name = path.split("/").pop()!.split(".")[0];
-
-  handlers.set(name, handler);
-  console.log(`Loaded monoserve handler: ${name}`);
-}
-
-/**
- * Converts Firebase Functions request to standard Request object
- */
 function createStandardRequest(req: any): Request {
   const url = `${req.protocol}://${req.get("host") || "localhost"}${req.url}`;
 
-  // Get the raw body if available, otherwise stringify
   let body: string | undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
     if (typeof req.rawBody == "string") {
@@ -39,51 +23,46 @@ function createStandardRequest(req: any): Request {
   });
 }
 
-/**
- * Single Firebase Function that routes to all monoserve handlers
- */
 export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
-  // Extract function name from path
-  // Supports: /functionName or /api/functionName
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method == "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
   const pathParts = req.path.split("/").filter(Boolean);
   const functionName = pathParts[pathParts.length - 1];
 
   if (!functionName) {
-    res.status(404);
+    res.status(404).send("Function not found");
     return;
   }
 
-  const handler = handlers.get(functionName);
+  const modulePath = Object.keys(functionModules).find((path) =>
+    path.endsWith(`/${functionName}.js`),
+  );
 
-  if (!handler) {
-    res.status(404).json({
-      error: `Function '${functionName}' not found`,
-    });
+  if (!modulePath) {
+    res.status(404).send("Function not found");
     return;
   }
 
   try {
-    // Convert to standard Request
+    const { default: handler } = await functionModules[modulePath]();
     const request = createStandardRequest(req);
-
-    // Call monoserve handler
     const response = await handler(request);
-
-    // Convert Response back to Firebase response
     const body = await response.text();
 
-    // Copy headers
     response.headers.forEach((value, key) => {
       res.setHeader(key, value);
     });
 
-    // Send response
     res.status(response.status).send(body);
   } catch (error) {
     console.error(`Error in monoserve handler '${functionName}':`, error);
-    res.status(500).json({
-      error: "Internal server error",
-      details: error instanceof Error ? error.message : String(error),
-    });
+    res.status(500).send("Internal server error");
   }
 });
