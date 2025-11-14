@@ -35,9 +35,7 @@ export const generateStudentVueToken = async (email: string, password: string) =
     AssignmentID: "1",
   });
 
-  if (!response.AuthToken) {
-    throw new Error("Failed to generate auth token");
-  }
+  const token = response.AuthToken["@_EncyToken"];
 
-  return response.AuthToken;
+  return token;
 };

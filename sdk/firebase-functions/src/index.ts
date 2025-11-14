@@ -54,13 +54,23 @@ export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
     const { default: handler } = await functionModules[modulePath]();
     const request = createStandardRequest(req);
     const response = await handler(request);
-    const body = await response.text();
 
-    response.headers.forEach((value, key) => {
+    res.statusCode = response.status;
+
+    for (const [key, value] of response.headers) {
       res.setHeader(key, value);
-    });
+    }
 
-    res.status(response.status).send(body);
+    const body = response.body;
+    if (!body) {
+      res.end();
+      return;
+    }
+
+    for await (const chunk of body) {
+      res.write(chunk);
+    }
+    res.end();
   } catch (error) {
     console.error(`Error in monoserve handler '${functionName}':`, error);
     res.status(500).send("Internal server error");
