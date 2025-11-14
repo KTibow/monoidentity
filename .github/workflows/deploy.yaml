@@ -19,7 +19,7 @@ jobs:
         run: pnpm install
         working-directory: ./sdk
       - name: Build SDK
-        run: pnpm prepack
+        run: pnpm build
         working-directory: ./sdk
         env:
           VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
