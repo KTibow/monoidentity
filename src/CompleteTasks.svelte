@@ -58,8 +58,7 @@
 
     if (!email) throw new Error("Email is required");
     if (!password) throw new Error("Password is required");
-    const login = { email, password };
-    const jwt: string = await attest(encode(JSON.stringify(login)), undefined);
+    const jwt: string = await attest(email, password);
     const bucketEncoded = await bucketCreate(jwt);
 
     localStorage["cloud-bucket"] = bucketEncoded;
