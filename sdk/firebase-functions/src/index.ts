@@ -1,22 +1,20 @@
 import { onRequest } from "firebase-functions/v2/https";
 
 // Load all monoserve handlers using import.meta.glob
-const modules = import.meta.glob("../../functions/*.js", { eager: true });
+const modules: Record<string, { default: (req: Request) => Promise<Response> }> = import.meta.glob(
+  "../../functions/*.js",
+  { eager: true },
+);
 
 // Build handlers map from imported modules
 const handlers = new Map<string, (request: Request) => Promise<Response>>();
 
-for (const [path, module] of Object.entries(modules)) {
-  const name = path.split("/").pop() || "";
+for (const [path, { default: handler }] of Object.entries(modules)) {
+  const name = path.split("/").pop()!.split(".")[0];
 
-  const mod = module as { default?: (request: Request) => Promise<Response> };
-  if (mod.default && typeof mod.default == "function") {
-    handlers.set(name, mod.default);
-    console.log(`Loaded monoserve handler: ${name}`);
-  }
+  handlers.set(name, handler);
+  console.log(`Loaded monoserve handler: ${name}`);
 }
-
-console.log(`Loaded ${handlers.size} monoserve handlers`);
 
 /**
  * Converts Firebase Functions request to standard Request object
