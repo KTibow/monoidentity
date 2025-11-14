@@ -7,14 +7,12 @@ const modules = import.meta.glob("../../functions/*.js", { eager: true });
 const handlers = new Map<string, (request: Request) => Promise<Response>>();
 
 for (const [path, module] of Object.entries(modules)) {
-  // Extract function name from path (e.g., "../../functions/attest:c5b6.js" -> "attest")
-  const filename = path.split("/").pop() || "";
-  const functionName = filename.split(":")[0];
+  const name = path.split("/").pop() || "";
 
   const mod = module as { default?: (request: Request) => Promise<Response> };
   if (mod.default && typeof mod.default == "function") {
-    handlers.set(functionName, mod.default);
-    console.log(`Loaded monoserve handler: ${functionName}`);
+    handlers.set(name, mod.default);
+    console.log(`Loaded monoserve handler: ${name}`);
   }
 }
 
@@ -53,11 +51,7 @@ export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
   const functionName = pathParts[pathParts.length - 1];
 
   if (!functionName) {
-    res.status(400).json({
-      error: "No function name provided",
-      usage: "Call /{functionName} to invoke a monoserve handler",
-      availableFunctions: Array.from(handlers.keys()),
-    });
+    res.status(404);
     return;
   }
 
@@ -66,7 +60,6 @@ export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
   if (!handler) {
     res.status(404).json({
       error: `Function '${functionName}' not found`,
-      availableFunctions: Array.from(handlers.keys()),
     });
     return;
   }
