@@ -2,16 +2,17 @@
   import type { Snippet } from "svelte";
   import { trackReady } from "./trackready.js";
   import type { Intent } from "./utils-transport.js";
+  import type { SyncStrategy } from "./storage/utils-storage.js";
 
   let {
     app,
     intents,
-    shouldBackup,
+    getSyncStrategy,
     children,
   }: {
     app: string;
     intents?: Intent[];
-    shouldBackup: (path: string) => boolean;
+    getSyncStrategy: (path: string) => SyncStrategy;
     children: Snippet;
   } = $props();
 
@@ -19,7 +20,7 @@
   const ready = trackReady(
     app,
     intents || [],
-    shouldBackup,
+    getSyncStrategy,
     (startBackup) =>
       (backup = () => {
         startBackup();

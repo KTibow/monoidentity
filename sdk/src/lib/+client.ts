@@ -7,6 +7,7 @@ export {
   getScopedFS,
   completeSync,
 } from "./storage.js";
+export type { SyncStrategy } from "./storage/utils-storage.js";
 export { retrieveVerification } from "./verification-client.js";
 export { attest as rawAttest } from "./verification/attest.js";
 export { trackReady } from "./trackready.js";

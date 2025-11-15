@@ -1,3 +1,5 @@
+import { flush } from "./utils-storage.js";
+
 declare global {
   interface WindowEventMap {
     "monoidentity-storage": CustomEvent<{ key: string; value: string | undefined }>;
@@ -34,9 +36,37 @@ export const storageClient = (
   } else {
     prefix = (key) => `monoidentity/${key}`;
   }
+
+  const getScopedKeys = () => {
+    const keys: string[] = [];
+    for (const key in localStorage) {
+      if (!key.startsWith("monoidentity/")) continue;
+      let scopedKey = key.slice("monoidentity/".length);
+
+      if (unprefix) {
+        const unprefixed = unprefix(scopedKey);
+        if (!unprefixed) continue;
+        scopedKey = unprefixed;
+      }
+
+      keys.push(scopedKey);
+    }
+    return keys;
+  };
+
   return new Proxy({} as Record<string, any>, {
     get(_, key) {
       if (typeof key == "symbol") return undefined;
+
+      if (key == "flush") {
+        return async (userKey?: string) => {
+          if (userKey) {
+            await flush([prefix(userKey)]);
+          } else {
+            await flush(getScopedKeys().map((k) => prefix(k)));
+          }
+        };
+      }
 
       key = prefix(key);
 
@@ -62,20 +92,7 @@ export const storageClient = (
     ownKeys() {
       allCounter;
 
-      const keys: string[] = [];
-      for (let key in localStorage) {
-        if (!key.startsWith("monoidentity/")) continue;
-        key = key.slice("monoidentity/".length);
-
-        if (unprefix) {
-          const unprefixed = unprefix(key);
-          if (!unprefixed) continue;
-          key = unprefixed;
-        }
-
-        keys.push(key);
-      }
-      return keys;
+      return getScopedKeys();
     },
     getOwnPropertyDescriptor(_, key: string) {
       key = prefix(key);

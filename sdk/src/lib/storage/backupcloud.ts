@@ -2,7 +2,7 @@ import type { Bucket } from "../utils-transport.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addToSync } from "../storage.js";
-import { shouldPersist } from "./_should.js";
+import { shouldPersist, type SyncStrategy, enqueueSync } from "./utils-storage.js";
 
 const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
@@ -10,7 +10,7 @@ type Cache = Record<string, { etag: string; content: string }>;
 let unmount: (() => void) | undefined;
 
 const loadFromCloud = async (
-  shouldBackup: (path: string) => boolean,
+  getSyncStrategy: (path: string) => SyncStrategy,
   base: string,
   client: AwsClient,
 ) => {
@@ -21,7 +21,7 @@ const loadFromCloud = async (
   const objects = [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
     .map((m) => m.slice(1).map((s) => s.replaceAll("&quot;", `"`).replaceAll("&apos;", `'`)))
     .map(([key, etag]) => ({ key, etag: etag.replaceAll(`"`, "") }))
-    .filter(({ key }) => shouldBackup(key));
+    .filter(({ key }) => getSyncStrategy(key).mode != "none");
   const prevCache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
   const nextCache: Cache = {};
   const model: Record<string, string> = {};
@@ -62,11 +62,11 @@ const loadFromCloud = async (
   return model;
 };
 const syncFromCloud = async (
-  shouldBackup: (path: string) => boolean,
+  getSyncStrategy: (path: string) => SyncStrategy,
   bucket: Bucket,
   client: AwsClient,
 ) => {
-  const remote = await loadFromCloud(shouldBackup, bucket.base, client);
+  const remote = await loadFromCloud(getSyncStrategy, bucket.base, client);
 
   const local = storageClient();
   for (const key of Object.keys(local)) {
@@ -80,7 +80,10 @@ const syncFromCloud = async (
   }
 };
 
-export const backupCloud = async (shouldBackup: (path: string) => boolean, bucket: Bucket) => {
+export const backupCloud = async (
+  getSyncStrategy: (path: string) => SyncStrategy,
+  bucket: Bucket,
+) => {
   unmount?.();
 
   const client = new AwsClient({
@@ -88,16 +91,17 @@ export const backupCloud = async (shouldBackup: (path: string) => boolean, bucke
     secretAccessKey: bucket.secretAccessKey,
   });
 
-  await syncFromCloud(shouldBackup, bucket, client);
+  await syncFromCloud(getSyncStrategy, bucket, client);
 
   const syncIntervalId = setInterval(
-    () => syncFromCloud(shouldBackup, bucket, client),
+    () => syncFromCloud(getSyncStrategy, bucket, client),
     15 * 60 * 1000,
   );
 
   // Continuous sync: mirror local changes to cloud
   const write = async (key: string, value?: string) => {
-    if (!shouldBackup(key)) {
+    const strategy = getSyncStrategy(key);
+    if (strategy.mode == "none") {
       if (!shouldPersist(key))
         console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
       return;
@@ -132,15 +136,23 @@ export const backupCloud = async (shouldBackup: (path: string) => boolean, bucke
       localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
     }
   };
-  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
-    let key = event.detail.key;
-    if (!key.startsWith("monoidentity/")) return;
-    key = key.slice("monoidentity/".length);
-
-    const promise = write(key, event.detail.value).catch((err) => {
-      console.warn("[monoidentity cloud] save failed", key, err);
+  const writeWrapped = async (key: string, value?: string) =>
+    write(key, value).catch((err) => {
+      console.error("[monoidentity cloud] save failed", key, err);
     });
-    addToSync(promise);
+  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
+    const fullKey = event.detail.key;
+    if (!fullKey.startsWith("monoidentity/")) return;
+    const key = fullKey.slice("monoidentity/".length);
+
+    const strategy = getSyncStrategy(key);
+    if (strategy.mode == "none") return;
+
+    if (strategy.mode == "immediate") {
+      addToSync(writeWrapped(key, event.detail.value));
+    } else if (strategy.mode == "debounced") {
+      enqueueSync(fullKey, strategy.debounceMs, () => writeWrapped(key, localStorage[fullKey]));
+    }
   };
 
   addEventListener(STORAGE_EVENT, listener);

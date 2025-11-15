@@ -1,11 +1,14 @@
 import { createStore, get, set } from "idb-keyval";
 import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-localstorage.js";
-import { shouldPersist } from "./_should.js";
+import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 
 let unmount: (() => void) | undefined;
 
-const saveToDir = (shouldBackup: (path: string) => boolean, dir: FileSystemDirectoryHandle) => {
+const saveToDir = (
+  getSyncStrategy: (path: string) => SyncStrategy,
+  dir: FileSystemDirectoryHandle,
+) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
     let key = "";
@@ -20,22 +23,12 @@ const saveToDir = (shouldBackup: (path: string) => boolean, dir: FileSystemDirec
     }
     return parent;
   };
-  const listener = async (event: CustomEvent) => {
-    let key = event.detail.key;
-    if (!key.startsWith("monoidentity/")) return;
-    key = key.slice("monoidentity/".length);
 
+  const writeFile = async (key: string, value?: string) => {
     const pathParts = key.split("/");
     const name = pathParts.at(-1)!;
-    const value = event.detail.value;
 
-    if (!shouldBackup(key)) {
-      if (!shouldPersist(key))
-        console.warn("[monoidentity backup]", key, "isn't marked to be backed up or saved");
-      return;
-    }
     console.debug("[monoidentity backup] saving", name);
-
     const parent = await getDirCached(pathParts.slice(0, -1));
     if (value != undefined) {
       const file = await parent.getFileHandle(name, { create: true });
@@ -47,6 +40,22 @@ const saveToDir = (shouldBackup: (path: string) => boolean, dir: FileSystemDirec
     }
   };
 
+  const listener = async (event: CustomEvent) => {
+    const fullKey = event.detail.key;
+    if (!fullKey.startsWith("monoidentity/")) return;
+    const key = fullKey.slice("monoidentity/".length);
+
+    const strategy = getSyncStrategy(key);
+    if (strategy.mode == "none") {
+      if (!shouldPersist(key))
+        console.warn("[monoidentity backup]", key, "isn't marked to be backed up or saved");
+      return;
+    }
+
+    // Directly write
+    await writeFile(key, event.detail.value);
+  };
+
   addEventListener(STORAGE_EVENT, listener);
 
   return () => {
@@ -54,7 +63,7 @@ const saveToDir = (shouldBackup: (path: string) => boolean, dir: FileSystemDirec
   };
 };
 export const backupLocally = async (
-  shouldBackup: (path: string) => boolean,
+  getSyncStrategy: (path: string) => SyncStrategy,
   requestBackup: (startBackup: () => void) => void,
 ) => {
   if (!canBackup) return;
@@ -67,7 +76,7 @@ export const backupLocally = async (
     const dir = await get<FileSystemDirectoryHandle>("backup", handles);
     if (!dir) throw new Error("No backup handle found");
 
-    unmount = saveToDir(shouldBackup, dir);
+    unmount = saveToDir(getSyncStrategy, dir);
   } else {
     localStorage["monoidentity-x/backup"] = "off";
     requestBackup(async () => {
@@ -99,7 +108,7 @@ export const backupLocally = async (
         return;
       }
 
-      unmount = saveToDir(shouldBackup, dir);
+      unmount = saveToDir(getSyncStrategy, dir);
     });
   }
 };

@@ -6,11 +6,12 @@ import { conf, setLoginRecognized } from "./storage.js";
 import { backupLocally } from "./storage/backuplocally.js";
 import { backupCloud } from "./storage/backupcloud.js";
 import { switchToHub } from "./utils-hub.js";
+import type { SyncStrategy } from "./storage/utils-storage.js";
 
 export const trackReady = async (
   app: string,
   intents: Intent[],
-  shouldBackup: (path: string) => boolean,
+  getSyncStrategy: (path: string) => SyncStrategy,
   requestBackup: (startBackup: () => void) => void,
 ) => {
   conf(app);
@@ -38,10 +39,10 @@ export const trackReady = async (
   }
 
   if (setup.method == "localStorage") {
-    await backupLocally(shouldBackup, requestBackup);
+    await backupLocally(getSyncStrategy, requestBackup);
   }
   if (setup.method == "cloud") {
-    await backupCloud(shouldBackup, setup);
+    await backupCloud(getSyncStrategy, setup);
   }
   for (const provision of provisions) {
     if ("createLoginRecognized" in provision) {
