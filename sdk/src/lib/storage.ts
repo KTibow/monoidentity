@@ -45,7 +45,7 @@ export const setVerification = (jwt: string) => {
   client[VERIFICATION_PATH] = jwt;
 };
 
-export const getStorage = (realm: "config" | "cache") =>
+export const getStorage = (realm: "config" | "userdata" | "cache" | (string & {})) =>
   storageClient((key: string) => `.${realm}/${app}/${key}.devalue`, undefined, stringify, parse);
 export const getScopedFS = (dir: string) =>
   storageClient(
