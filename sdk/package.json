@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "license": "ISC",
   "repository": "KTibow/monoidentity",
   "author": {
@@ -43,6 +43,7 @@
     "@tsndr/cloudflare-worker-jwt": "^3.2.0",
     "aws4fetch": "^1.0.20",
     "devalue": "^5.4.2",
+    "fast-studentvue": "^2.0.3",
     "idb-keyval": "^6.2.2",
     "valibot": "^1.1.0"
   },
@@ -52,7 +53,6 @@
     "@sveltejs/package": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/wicg-file-system-access": "^2023.10.7",
-    "fast-studentvue": "^2.0.3",
     "knip": "^5.68.0",
     "monoserve": "^3.2.2",
     "publint": "^0.3.15",

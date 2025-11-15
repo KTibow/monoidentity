@@ -17,6 +17,9 @@ importers:
       devalue:
         specifier: ^5.4.2
         version: 5.4.2
+      fast-studentvue:
+        specifier: ^2.0.3
+        version: 2.0.3
       idb-keyval:
         specifier: ^6.2.2
         version: 6.2.2
@@ -39,9 +42,6 @@ importers:
       '@types/wicg-file-system-access':
         specifier: ^2023.10.7
         version: 2023.10.7
-      fast-studentvue:
-        specifier: ^2.0.3
-        version: 2.0.3
       knip:
         specifier: ^5.68.0
         version: 5.68.0(@types/node@24.5.2)(typescript@5.9.3)
