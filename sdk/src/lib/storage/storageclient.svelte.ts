@@ -76,10 +76,15 @@ export const storageClient = (
     },
     set(_, key: string, value) {
       key = prefix(key);
-
       if (serialize) value = serialize(value);
-      localStorage[key] = value;
-      announce(key, value);
+
+      if (localStorage[key] != value) {
+        localStorage[key] = value;
+        announce(key, value);
+      } else {
+        console.debug("[monoidentity storage] noop for", key);
+      }
+
       return true;
     },
     deleteProperty(_, key: string) {
