@@ -45,10 +45,17 @@ export const setVerification = (jwt: string) => {
   client[VERIFICATION_PATH] = jwt;
 };
 
-export const getStorage = (realm: "config" | "userdata" | "cache" | (string & {})) =>
-  storageClient((key: string) => `.${realm}/${app}/${key}.devalue`, undefined, stringify, parse);
+export const getStorage = (realm: "config" | "userdata" | "cache" | (string & {})) => {
+  const prefix = `.${realm}/${app}/`;
+  return storageClient(
+    (key) => `${prefix}${key}.devalue`,
+    (key) => (key.startsWith(prefix) ? key.slice(prefix.length, -".devalue".length) : undefined),
+    stringify,
+    parse,
+  );
+};
 export const getScopedFS = (dir: string) =>
   storageClient(
-    (key: string) => `${dir}/${key}`,
-    (key: string) => (key.startsWith(dir + "/") ? key.slice(dir.length + 1) : undefined),
+    (key) => `${dir}/${key}`,
+    (key) => (key.startsWith(dir + "/") ? key.slice(dir.length + 1) : undefined),
   );
