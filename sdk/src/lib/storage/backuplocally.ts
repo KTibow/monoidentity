@@ -1,8 +1,11 @@
-import { createStore, get, set } from "idb-keyval";
+import { get, set } from "idb-keyval";
 import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-localstorage.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
+import { store } from "./utils-idb.js";
 
+const TOGGLE_KEY = "monoidentity-x/local-backup";
+const HANDLE_KEY = "backup-handle";
 let unmount: (() => void) | undefined;
 
 const saveToDir = (
@@ -67,22 +70,21 @@ export const backupLocally = async (
   requestBackup: (startBackup: () => void) => void,
 ) => {
   if (!canBackup) return;
-  if (localStorage["monoidentity-x/backup"] == "off") return;
+  if (localStorage[TOGGLE_KEY] == "off") return;
 
   unmount?.();
 
-  const handles = createStore("monoidentity-x", "handles");
-  if (localStorage["monoidentity-x/backup"] == "on") {
-    const dir = await get<FileSystemDirectoryHandle>("backup", handles);
+  if (localStorage[TOGGLE_KEY] == "on") {
+    const dir = await get<FileSystemDirectoryHandle>(HANDLE_KEY, store);
     if (!dir) throw new Error("No backup handle found");
 
     unmount = saveToDir(getSyncStrategy, dir);
   } else {
-    localStorage["monoidentity-x/backup"] = "off";
+    localStorage[TOGGLE_KEY] = "off";
     requestBackup(async () => {
       const dir = await showDirectoryPicker({ mode: "readwrite" });
-      await set("backup", dir, handles);
-      localStorage["monoidentity-x/backup"] = "on";
+      await set(HANDLE_KEY, dir, store);
+      localStorage[TOGGLE_KEY] = "on";
 
       // Restore from backup
       const backup: Record<string, string> = {};

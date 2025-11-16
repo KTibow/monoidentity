@@ -3,26 +3,46 @@ import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addToSync } from "../storage.js";
 import { shouldPersist, type SyncStrategy, enqueueSync } from "./utils-storage.js";
+import { get, set } from "idb-keyval";
+import { store } from "./utils-idb.js";
 
-const CLOUD_CACHE_KEY = "monoidentity-x/cloud-cache";
+const CLOUD_CACHE_KEY = "cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
 
 let unmount: (() => void) | undefined;
+let cache: Cache | undefined;
+
+const initCache = async () => {
+  cache = (await get(CLOUD_CACHE_KEY, store)) || {};
+};
+
+const getCache = () => {
+  if (!cache) throw new Error("Cache not initialized");
+  return cache;
+};
+
+const saveCache = async () => {
+  if (!cache) throw new Error("Cache not initialized");
+  await set(CLOUD_CACHE_KEY, cache, store);
+};
 
 const loadFromCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   base: string,
   client: AwsClient,
 ) => {
+  const cachePromise = initCache();
+
   const listResp = await client.fetch(base);
   if (!listResp.ok) throw new Error(`List bucket failed: ${listResp.status}`);
   const listXml = await listResp.text();
-
   const objects = [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
     .map((m) => m.slice(1).map((s) => s.replaceAll("&quot;", `"`).replaceAll("&apos;", `'`)))
     .map(([key, etag]) => ({ key, etag: etag.replaceAll(`"`, "") }))
     .filter(({ key }) => getSyncStrategy(key).mode != "none");
-  const prevCache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
+
+  await cachePromise;
+  const prevCache = getCache();
   const nextCache: Cache = {};
   const model: Record<string, string> = {};
 
@@ -58,7 +78,8 @@ const loadFromCloud = async (
     }),
   );
 
-  localStorage[CLOUD_CACHE_KEY] = JSON.stringify(nextCache);
+  cache = nextCache;
+  saveCache();
   return model;
 };
 const syncFromCloud = async (
@@ -122,18 +143,13 @@ export const backupCloud = async (
       // Update cache
       const etag = r.headers.get("etag")?.replaceAll('"', "");
       if (etag) {
-        const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
-        cache[key] = { etag, content: value };
-        localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
+        getCache()[key] = { etag, content: value };
+        saveCache();
       }
     } else {
       // DELETE key
       const r = await client.fetch(url, { method: "DELETE" });
       if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
-
-      const cache: Cache = JSON.parse(localStorage[CLOUD_CACHE_KEY] || "{}");
-      delete cache[key];
-      localStorage[CLOUD_CACHE_KEY] = JSON.stringify(cache);
     }
   };
   const writeWrapped = async (key: string, value?: string) =>
