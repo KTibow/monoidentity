@@ -12,3 +12,4 @@ export { retrieveVerification } from "./verification-client.js";
 export { attest as rawAttest } from "./verification/attest.js";
 export { readyUp } from "./readyup.js";
 export { default as Monoidentity } from "./Monoidentity.svelte";
+export type { Bucket, StorageSetup } from "./utils-transport.js";
