@@ -121,12 +121,6 @@ export const backupCloud = async (
 
   // Continuous sync: mirror local changes to cloud
   const write = async (key: string, value?: string) => {
-    const strategy = getSyncStrategy(key);
-    if (!strategy) {
-      if (!shouldPersist(key))
-        console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
-      return;
-    }
     console.debug("[monoidentity cloud] saving", key);
 
     const url = `${bucket.base}/${key}`;
@@ -162,7 +156,11 @@ export const backupCloud = async (
     const key = fullKey.slice("monoidentity/".length);
 
     const strategy = getSyncStrategy(key);
-    if (!strategy) return;
+    if (!strategy) {
+      if (!shouldPersist(key))
+        console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
+      return;
+    }
 
     if (strategy.mode == "immediate") {
       addToSync(writeWrapped(key, event.detail.value));
