@@ -10,5 +10,5 @@ export {
 export type { SyncStrategy } from "./storage/utils-storage.js";
 export { retrieveVerification } from "./verification-client.js";
 export { attest as rawAttest } from "./verification/attest.js";
-export { syncFinished, readyUp } from "./readyup.js";
+export { readyUp } from "./readyup.js";
 export { default as Monoidentity } from "./Monoidentity.svelte";
