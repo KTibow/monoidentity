@@ -8,7 +8,12 @@ import { backupCloud } from "./storage/backupcloud.js";
 import { switchToHub } from "./utils-hub.js";
 import type { SyncStrategy } from "./storage/utils-storage.js";
 
-export const trackReady = async (
+let resolveSyncFinished: () => void;
+export const syncFinished = new Promise<void>((resolve) => {
+  resolveSyncFinished = resolve;
+});
+
+export const readyUp = (
   app: string,
   intents: Intent[],
   getSyncStrategy: (path: string) => SyncStrategy,
@@ -38,15 +43,18 @@ export const trackReady = async (
     switchToHub([{ storage: true }, ...intents]);
   }
 
-  if (setup.method == "localStorage") {
-    await backupLocally(getSyncStrategy, requestBackup);
-  }
-  if (setup.method == "cloud") {
-    await backupCloud(getSyncStrategy, setup);
-  }
   for (const provision of provisions) {
     if ("createLoginRecognized" in provision) {
       setLoginRecognized(provision.createLoginRecognized);
     }
   }
+  (async () => {
+    if (setup.method == "localStorage") {
+      await backupLocally(getSyncStrategy, requestBackup);
+    }
+    if (setup.method == "cloud") {
+      await backupCloud(getSyncStrategy, setup);
+    }
+    resolveSyncFinished();
+  })();
 };

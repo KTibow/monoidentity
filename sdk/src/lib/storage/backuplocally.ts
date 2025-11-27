@@ -49,7 +49,7 @@ const saveToDir = (
     const key = fullKey.slice("monoidentity/".length);
 
     const strategy = getSyncStrategy(key);
-    if (strategy.mode == "none") {
+    if (!strategy) {
       if (!shouldPersist(key))
         console.warn("[monoidentity backup]", key, "isn't marked to be backed up or saved");
       return;

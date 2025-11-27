@@ -39,7 +39,7 @@ const loadFromCloud = async (
   const objects = [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
     .map((m) => m.slice(1).map((s) => s.replaceAll("&quot;", `"`).replaceAll("&apos;", `'`)))
     .map(([key, etag]) => ({ key, etag: etag.replaceAll(`"`, "") }))
-    .filter(({ key }) => getSyncStrategy(key).mode != "none");
+    .filter(({ key }) => getSyncStrategy(key));
 
   await cachePromise;
   const prevCache = getCache();
@@ -122,7 +122,7 @@ export const backupCloud = async (
   // Continuous sync: mirror local changes to cloud
   const write = async (key: string, value?: string) => {
     const strategy = getSyncStrategy(key);
-    if (strategy.mode == "none") {
+    if (!strategy) {
       if (!shouldPersist(key))
         console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
       return;
@@ -162,7 +162,7 @@ export const backupCloud = async (
     const key = fullKey.slice("monoidentity/".length);
 
     const strategy = getSyncStrategy(key);
-    if (strategy.mode == "none") return;
+    if (!strategy) return;
 
     if (strategy.mode == "immediate") {
       addToSync(writeWrapped(key, event.detail.value));

@@ -1,9 +1,10 @@
-export const shouldPersist = (key: string) => key.includes(".cache/");
+export const shouldPersist = (key: string) =>
+  key.startsWith(".cache/") || key.startsWith(".local/");
 
 // Sync strategy types
 export type SyncStrategy =
-  | { mode: "none" } // don't backup (e.g., cache)
-  | { mode: "immediate" } // instant sync (e.g., config, core)
+  | undefined // do not sync
+  | { mode: "immediate" } // instant sync (e.g., config)
   | { mode: "debounced"; debounceMs: number }; // queued sync (e.g., notes, drawings, chats)
 
 // Queue management

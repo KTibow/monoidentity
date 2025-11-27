@@ -17,9 +17,13 @@ export const addToSync = (p: Promise<void>) => {
 };
 export const completeSync = () => syncPromise;
 
-const LOGIN_RECOGNIZED_PATH = ".core/login.encjson";
+const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
 export const getLoginRecognized = () => {
   const client = storageClient();
+  if (client[".core/login.encjson"]) {
+    client[LOGIN_RECOGNIZED_PATH] = client[".core/login.encjson"];
+    delete client[".core/login.encjson"];
+  }
   const login = client[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
   return useSchema(loginSchema, JSON.parse(decode(login)));

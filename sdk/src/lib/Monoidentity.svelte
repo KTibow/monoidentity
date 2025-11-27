@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import { trackReady } from "./trackready.js";
+  import { readyUp } from "./readyup.js";
   import type { Intent } from "./utils-transport.js";
   import type { SyncStrategy } from "./storage/utils-storage.js";
 
@@ -17,7 +17,7 @@
   } = $props();
 
   let backup: (() => void) | undefined = $state();
-  const ready = trackReady(
+  readyUp(
     app,
     intents || [],
     getSyncStrategy,
@@ -35,11 +35,7 @@
   <button class="primary" onclick={yes}>Connect</button>
 {/snippet}
 
-{#await ready}
-  <p class="center">Setting up</p>
-{:then}
-  {@render children()}
-{/await}
+{@render children()}
 {#if backup}
   <div class="backup toast">
     {@render backupUI(backup, () => (backup = undefined))}
@@ -87,8 +83,5 @@
     right: 1rem;
     top: 1rem;
     z-index: 1000;
-  }
-  .center {
-    margin: auto;
   }
 </style>
