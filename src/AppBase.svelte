@@ -13,8 +13,8 @@
 </script>
 
 <svelte:element this={submit ? "form" : "div"} class="base" onsubmit={submit}>
-  <Icon icon={logoMonoidentity} size={24} style="color:rgb(var(--m3-scheme-secondary))" />
-  <h1 class="m3-font-headline-small">{header}</h1>
+  <Icon icon={logoMonoidentity} size={24} style="color:var(--m3c-secondary)" />
+  <h1>{header}</h1>
   <p>{subheader}</p>
   <div class="br"></div>
   {@render children()}
@@ -28,13 +28,14 @@
     width: 100%;
     max-width: 25rem;
 
-    background-color: rgb(var(--m3-scheme-surface-container-low));
-    color: rgb(var(--m3-scheme-on-surface-variant));
+    background-color: var(--m3c-surface-container-low);
+    color: var(--m3c-on-surface-variant);
     padding: 1.5rem;
-    border-radius: var(--m3-util-rounding-extra-large);
+    border-radius: var(--m3-shape-extra-large);
 
     > h1 {
-      color: rgb(var(--m3-scheme-on-surface));
+      @apply --m3-headline-small;
+      color: var(--m3c-on-surface);
     }
     > :global(.br) {
       height: 2rem;

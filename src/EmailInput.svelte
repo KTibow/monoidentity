@@ -54,9 +54,9 @@
   input {
     height: 3rem;
     padding: 0 0.75rem;
-    border-radius: var(--m3-util-rounding-medium);
-    background-color: rgb(var(--m3-scheme-surface-container));
-    color: rgb(var(--m3-scheme-on-surface));
+    border-radius: var(--m3-shape-medium);
+    background-color: var(--m3c-surface-container);
+    color: var(--m3c-on-surface);
     width: 100%;
     box-sizing: border-box;
   }
@@ -68,7 +68,7 @@
     top: 50%;
     right: 1rem;
     translate: 0 -50%;
-    color: rgb(var(--m3-scheme-on-surface-variant));
+    color: var(--m3c-on-surface-variant);
     pointer-events: none;
     .key {
       display: inline-flex;
@@ -76,8 +76,8 @@
       justify-content: center;
       width: 1rem;
       height: 1rem;
-      border-radius: var(--m3-util-rounding-extra-small);
-      border: solid 1px rgb(var(--m3-scheme-on-surface-variant));
+      border-radius: var(--m3-shape-extra-small);
+      border: solid 1px var(--m3c-on-surface-variant);
     }
   }
 </style>

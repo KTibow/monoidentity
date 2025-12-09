@@ -109,7 +109,7 @@
         {/if}
       </div>
     {:else}
-      <p class="m3-font-body-medium">This app doesn't work with your email.</p>
+      <p class="subtle">This app doesn't work with your email.</p>
     {/if}
   </AppBase>
 {:else if intents.some((i) => "loginRecognized" in i)}
@@ -120,7 +120,7 @@
       <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
       <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
     {:else}
-      <p class="m3-font-body-medium">This app doesn't work with your email.</p>
+      <p class="subtle">This app doesn't work with your email.</p>
     {/if}
   </AppBase>
 {:else if intents.some((i) => "storage" in i)}
@@ -143,7 +143,7 @@
             />
             <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
           {:else}
-            <p class="m3-font-body-medium">Cloud isn't available for your email.</p>
+            <p class="subtle">Cloud isn't available for your email.</p>
           {/if}
         {/if}
       </div>
@@ -157,9 +157,9 @@
   input {
     height: 3rem;
     padding: 0 0.75rem;
-    border-radius: var(--m3-util-rounding-medium);
-    background-color: rgb(var(--m3-scheme-surface-container));
-    color: rgb(var(--m3-scheme-on-surface));
+    border-radius: var(--m3-shape-medium);
+    background-color: var(--m3c-surface-container);
+    color: var(--m3c-on-surface);
     width: 100%;
     box-sizing: border-box;
   }
@@ -184,5 +184,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .subtle {
+    @apply --m3-body-medium;
   }
 </style>

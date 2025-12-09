@@ -6,11 +6,14 @@
   import CompleteTasks from "./CompleteTasks.svelte";
   import Loader from "./Loader.svelte";
 
-  let { intents: _intents, redirectURI }: IntentEnvelope = $props();
+  let { intents: _intents, redirectURI: _redirectURI }: IntentEnvelope = $props();
+  // svelte-ignore state_referenced_locally
+  const intents = $state(_intents);
+  // svelte-ignore state_referenced_locally
+  const redirectURI = _redirectURI;
 
   const appData = knownApps[redirectURI];
   const appName = appData || new URL(redirectURI).hostname;
-  let intents = $state(_intents);
   let provisionEnvelope: ProvisionEnvelope = $state({ provisions: [] });
 
   let isTrusted = $state(!!appData || new URL(redirectURI).hostname == "localhost");
