@@ -19,6 +19,7 @@
   <div class="br"></div>
   {@render children()}
 </svelte:element>
+<a href="/privacy.html" target="_blank" class="privacy-link">Privacy</a>
 
 <style>
   .base {
@@ -41,5 +42,14 @@
       height: 2rem;
       margin-top: -0.5rem;
     }
+  }
+  .privacy-link {
+    @apply --m3-body-small;
+    color: var(--m3c-on-surface-variant);
+    position: absolute;
+    bottom: 0;
+    padding-block: 0.5em;
+    left: 50%;
+    translate: -50% 0;
   }
 </style>

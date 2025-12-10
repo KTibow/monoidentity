@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="./icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy Policy</title>
+    <style>
+      * {
+        margin: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        font-family:
+          Roboto,
+          system-ui,
+          -apple-system,
+          sans-serif;
+        line-height: 1.5;
+        color: #1f031e;
+        background-color: #fff3f9;
+        max-width: 65ch;
+        margin: auto;
+        padding: 2rem;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color: #ffdbf6;
+          background-color: #1f031e;
+        }
+      }
+      h2 {
+        font-size: 1.25rem;
+        margin-top: 1em;
+      }
+      a {
+        color: inherit;
+        text-decoration-thickness: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      Our policy is that
+      <strong>you can trust Monoidentity because you don't have to</strong>. There aren't any blind
+      boxes you need to put your faith in.
+    </p>
+
+    <h2>A private baseline</h2>
+    <p>
+      An app that uses Monoidentity is private by default. Anything you enter in
+      <code>monoidentity.web.app</code> is transferred directly to the app, and anything you do in
+      the app stays entirely local. You can read
+      <a href="https://github.com/KTibow/monoidentity">our code</a> to verify this.
+    </p>
+
+    <h2>The verification primitive</h2>
+    <p>
+      If an app wants to verify you, we have a simple method for this: connect
+      <strong>directly</strong> to StudentVue to exchange your password for a token. That
+      <strong>token</strong> goes to our server to verify you're who you say you are (and if
+      successful, generating a JWT). We don't store the input, details, or output of this process.
+    </p>
+
+    <h2>The cloud primitive</h2>
+    <p>
+      Any user can opt to get verified and get sponsored with a cloud storage bucket hosted on R2.
+      Data that is synced - chosen by apps, and excluding personal data like passwords and caches -
+      isn't end to end encrypted, but our policy is that it's a. sent over HTTPS and sent directly
+      b. encrypted at rest c. for you only (but that goes without saying).
+    </p>
+
+    <h2>No tracking</h2>
+    <p>No tracking cookies, no ads, no analytics.</p>
+  </body>
+</html>

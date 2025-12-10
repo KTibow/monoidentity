@@ -9,6 +9,14 @@ export default defineConfig({
   server: {
     port: 5172,
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: "index.html",
+        privacy: "privacy.html",
+      },
+    },
+  },
   plugins: [
     svelte(),
     monoserve({ monoserverURL: "https://benignmonoserver.fly.dev" }),
