@@ -5,3 +5,4 @@ functions
 .svelte-kit
 node_modules
 .env
+package-lock.json
