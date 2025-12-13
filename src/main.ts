@@ -1,13 +1,15 @@
 import { mount } from "svelte";
 import App from "./App.svelte";
 
-const intentEnvelope = decodeURIComponent(location.hash.slice(1));
-
-if (!intentEnvelope) {
+let intent: any;
+try {
+  intent = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+} catch {
   location.href = "https://github.com/KTibow/monoidentity";
-} else {
-  mount(App, {
-    target: document.body,
-    props: JSON.parse(intentEnvelope),
-  });
+  throw new Error("Invalid intent");
 }
+
+mount(App, {
+  target: document.body,
+  props: intent,
+});
