@@ -1,4 +1,4 @@
-import { flush } from "./utils-storage.js";
+import { executeSync } from "./sync.js";
 
 declare global {
   interface WindowEventMap {
@@ -58,13 +58,17 @@ export const storageClient = (
     get(_, key) {
       if (typeof key == "symbol") return undefined;
 
-      if (key == "flush") {
-        return async (userKey?: string) => {
-          if (userKey) {
-            await flush([prefix(userKey)]);
+      if (key == "sync") {
+        return async (dir?: "out" | "in" | undefined, userKeys?: string[]) => {
+          let fullKeys: string[];
+          if (userKeys) {
+            // User provided keys - apply prefix to get full storage keys
+            fullKeys = userKeys.map((k) => prefix(k));
           } else {
-            await flush(getScopedKeys().map((k) => prefix(k)));
+            // No keys provided - sync all scoped keys
+            fullKeys = getScopedKeys().map((k) => prefix(k));
           }
+          await executeSync(dir, fullKeys);
         };
       }
 

@@ -8,14 +8,9 @@ import { storageClient } from "./storage/storageclient.svelte.js";
 import { switchToHub } from "./utils-hub.js";
 
 let app = "unknown";
-let syncPromise = Promise.resolve();
 export const conf = (a: string) => {
   app = a;
 };
-export const addToSync = (p: Promise<void>) => {
-  syncPromise = syncPromise.then(() => p);
-};
-export const completeSync = () => syncPromise;
 
 const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
 export const getLoginRecognized = () => {

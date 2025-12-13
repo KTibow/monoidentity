@@ -5,7 +5,6 @@ export {
   getVerification,
   getStorage,
   getScopedFS,
-  completeSync,
 } from "./storage.js";
 export type { SyncStrategy } from "./storage/utils-storage.js";
 export { retrieveVerification } from "./verification-client.js";

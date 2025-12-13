@@ -1,17 +1,18 @@
 import { get, set } from "idb-keyval";
-import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
+import { storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-localstorage.js";
-import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
+import type { SyncStrategy } from "./utils-storage.js";
 import { store } from "./utils-idb.js";
+import { registerSyncHandler } from "./sync.js";
 
 const TOGGLE_KEY = "monoidentity-x/local-backup";
 const HANDLE_KEY = "backup-handle";
 let unmount: (() => void) | undefined;
 
-const saveToDir = (
+const setupSyncHandler = (
   getSyncStrategy: (path: string) => SyncStrategy,
   dir: FileSystemDirectoryHandle,
-) => {
+): (() => void) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
     let key = "";
@@ -43,34 +44,25 @@ const saveToDir = (
     }
   };
 
-  const listener = async (event: CustomEvent) => {
-    const fullKey = event.detail.key;
+  const cleanup = registerSyncHandler("out", async (fullKey: string) => {
     if (!fullKey.startsWith("monoidentity/")) return;
     const key = fullKey.slice("monoidentity/".length);
 
     const strategy = getSyncStrategy(key);
-    if (!strategy) {
-      if (!shouldPersist(key))
-        console.warn("[monoidentity backup]", key, "isn't marked to be backed up or saved");
-      return;
-    }
+    if (!strategy) return;
 
-    // Directly write
-    await writeFile(key, event.detail.value);
-  };
+    const value = localStorage[fullKey];
+    await writeFile(key, value);
+  });
 
-  addEventListener(STORAGE_EVENT, listener);
-
-  return () => {
-    removeEventListener(STORAGE_EVENT, listener);
-  };
+  return cleanup;
 };
 export const backupLocally = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   requestBackup: (startBackup: () => void) => void,
-) => {
-  if (!canBackup) return;
-  if (localStorage[TOGGLE_KEY] == "off") return;
+): Promise<(() => void)[]> => {
+  if (!canBackup) return [];
+  if (localStorage[TOGGLE_KEY] == "off") return [];
 
   unmount?.();
 
@@ -78,7 +70,8 @@ export const backupLocally = async (
     const dir = await get<FileSystemDirectoryHandle>(HANDLE_KEY, store);
     if (!dir) throw new Error("No backup handle found");
 
-    unmount = saveToDir(getSyncStrategy, dir);
+    unmount = setupSyncHandler(getSyncStrategy, dir);
+    return [unmount];
   } else {
     localStorage[TOGGLE_KEY] = "off";
     requestBackup(async () => {
@@ -86,7 +79,6 @@ export const backupLocally = async (
       await set(HANDLE_KEY, dir, store);
       localStorage[TOGGLE_KEY] = "on";
 
-      // Restore from backup
       const backup: Record<string, string> = {};
       const traverse = async (d: FileSystemDirectoryHandle, path: string) => {
         for await (const entry of d.values()) {
@@ -110,8 +102,9 @@ export const backupLocally = async (
         return;
       }
 
-      unmount = saveToDir(getSyncStrategy, dir);
+      unmount = setupSyncHandler(getSyncStrategy, dir);
     });
+    return [];
   }
 };
 

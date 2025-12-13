@@ -1,8 +1,8 @@
 import type { Bucket } from "../utils-transport.js";
 import { AwsClient } from "aws4fetch";
-import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
-import { addToSync } from "../storage.js";
-import { shouldPersist, type SyncStrategy, enqueueSync } from "./utils-storage.js";
+import { storageClient } from "./storageclient.svelte.js";
+import { registerSyncHandler } from "./sync.js";
+import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
 
@@ -104,77 +104,123 @@ const syncFromCloud = async (
 export const backupCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   bucket: Bucket,
-) => {
+): Promise<(() => void)[]> => {
   unmount?.();
 
-  const client = new AwsClient({
+  const awsClient = new AwsClient({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
   });
 
-  await syncFromCloud(getSyncStrategy, bucket, client);
+  await initCache();
 
-  const syncIntervalId = setInterval(
-    () => syncFromCloud(getSyncStrategy, bucket, client),
-    15 * 60 * 1000,
-  );
+  const cleanupOut = registerSyncHandler("out", async (fullKey: string) => {
+    if (!fullKey.startsWith("monoidentity/")) return;
+    const key = fullKey.slice("monoidentity/".length);
 
-  // Continuous sync: mirror local changes to cloud
-  const write = async (key: string, value?: string) => {
+    const strategy = getSyncStrategy(key);
+    if (!strategy) return;
+
     console.debug("[monoidentity cloud] saving", key);
 
     const url = `${bucket.base}/${key}`;
+    const value = localStorage[fullKey];
 
     if (value != undefined) {
-      // PUT content (unconditional to start; you can add If-Match/If-None-Match for safety)
-      const r = await client.fetch(url, {
+      const r = await awsClient.fetch(url, {
         method: "PUT",
         headers: { "content-type": "application/octet-stream" },
         body: value,
       });
       if (!r.ok) throw new Error(`PUT ${key} failed: ${r.status}`);
 
-      // Update cache
       const etag = r.headers.get("etag")?.replaceAll('"', "");
       if (etag) {
         getCache()[key] = { etag, content: value };
-        saveCache();
+        await saveCache();
       }
     } else {
-      // DELETE key
-      const r = await client.fetch(url, { method: "DELETE" });
+      const r = await awsClient.fetch(url, { method: "DELETE" });
       if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
+
+      delete getCache()[key];
+      await saveCache();
     }
-  };
-  const writeWrapped = async (key: string, value?: string) =>
-    write(key, value).catch((err) => {
-      console.error("[monoidentity cloud] save failed", key, err);
-    });
-  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
-    const fullKey = event.detail.key;
+  });
+
+  const cleanupIn = registerSyncHandler("in", async (fullKey: string) => {
     if (!fullKey.startsWith("monoidentity/")) return;
     const key = fullKey.slice("monoidentity/".length);
 
     const strategy = getSyncStrategy(key);
-    if (!strategy) {
-      if (!shouldPersist(key))
-        console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
-      return;
-    }
+    if (!strategy) return;
 
-    if (strategy.mode == "immediate") {
-      addToSync(writeWrapped(key, event.detail.value));
-    } else if (strategy.mode == "debounced") {
-      enqueueSync(fullKey, strategy.debounceMs, () => writeWrapped(key, localStorage[fullKey]));
-    }
-  };
+    const url = `${bucket.base}/${key}`;
 
-  addEventListener(STORAGE_EVENT, listener);
+    try {
+      const r = await awsClient.fetch(url);
+      if (!r.ok) {
+        if (r.status === 404) {
+          const local = storageClient();
+          if (local[key] && !shouldPersist(key)) {
+            delete local[key];
+          }
+        }
+        return;
+      }
+
+      const etag = r.headers.get("etag")?.replaceAll('"', "") || "";
+      const cached = getCache()[key];
+
+      if (cached?.etag === etag) {
+        const local = storageClient();
+        if (local[key] !== cached.content) {
+          local[key] = cached.content;
+        }
+        return;
+      }
+
+      console.debug("[monoidentity cloud] loading", key);
+      let content: string;
+      if (key.endsWith(".md") || key.endsWith(".devalue")) {
+        content = await r.text();
+      } else {
+        const buf = new Uint8Array(await r.arrayBuffer());
+        content = "";
+        const chunk = 8192;
+        for (let i = 0; i < buf.length; i += chunk) {
+          content += String.fromCharCode.apply(
+            null,
+            buf.subarray(i, i + chunk) as unknown as number[],
+          );
+        }
+      }
+
+      const local = storageClient();
+      if (local[key] !== content) {
+        local[key] = content;
+      }
+      getCache()[key] = { etag, content };
+      await saveCache();
+    } catch (err) {
+      console.error(`[monoidentity cloud] inbound sync failed for ${key}:`, err);
+    }
+  });
+
+  await syncFromCloud(getSyncStrategy, bucket, awsClient);
+
+  const syncIntervalId = setInterval(
+    () => syncFromCloud(getSyncStrategy, bucket, awsClient),
+    15 * 60 * 1000,
+  );
 
   unmount = () => {
     clearInterval(syncIntervalId);
-    removeEventListener(STORAGE_EVENT, listener);
+    cleanupOut();
+    cleanupIn();
   };
+
+  return [unmount];
 };
 
 if (import.meta.hot) {
