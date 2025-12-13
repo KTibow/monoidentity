@@ -126,7 +126,7 @@ export default fn(string(), async (jwt) => {
     secretAccessKey,
   });
 
-  await fetch(
+  const kvRes = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${KV_NAMESPACE_ID}/values/${user}`,
     {
       method: "PUT",
@@ -134,6 +134,10 @@ export default fn(string(), async (jwt) => {
       body: encoded,
     },
   );
+
+  if (!kvRes.ok) {
+    throw new Error(`Failed to store credentials in KV: ${await kvRes.text()}`);
+  }
 
   return encoded;
 });
