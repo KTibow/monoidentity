@@ -1,17 +1,16 @@
 // This isn't encryption, it's just to prevent casual observation of sensitive data
 export const encode = (text: string) => {
+  const bytes = new TextEncoder().encode(text);
   let output = "";
-  for (let i = 0; i < text.length; i++) {
-    const charCode = text.charCodeAt(i);
-    output += charCode.toString(36).padStart(2, "0");
+  for (let i = 0; i < bytes.length; i++) {
+    output += bytes[i].toString(36).padStart(2, "0");
   }
   return output;
 };
 export const decode = (text: string) => {
-  let output = "";
+  const bytes = new Uint8Array(text.length / 2);
   for (let i = 0; i < text.length; i += 2) {
-    const charCode = parseInt(text.slice(i, i + 2), 36);
-    output += String.fromCharCode(charCode);
+    bytes[i / 2] = parseInt(text.slice(i, i + 2), 36);
   }
-  return output;
+  return new TextDecoder().decode(bytes);
 };
