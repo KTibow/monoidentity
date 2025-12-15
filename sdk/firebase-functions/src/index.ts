@@ -9,11 +9,7 @@ function createStandardRequest(req: any): Request {
 
   let body: string | undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
-    if (typeof req.rawBody == "string") {
-      body = req.rawBody;
-    } else if (req.body) {
-      body = typeof req.body == "string" ? req.body : JSON.stringify(req.body);
-    }
+    body = req.body;
   }
 
   return new Request(url, {
