@@ -3,6 +3,7 @@ import { STORAGE_EVENT, storageClient } from "./storageclient.svelte.js";
 import { canBackup } from "../utils-localstorage.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { store } from "./utils-idb.js";
+import { addSync } from "./utils-sync.js";
 
 const TOGGLE_KEY = "monoidentity-x/local-backup";
 const HANDLE_KEY = "backup-handle";
@@ -43,7 +44,7 @@ const saveToDir = (
     }
   };
 
-  const listener = async (event: CustomEvent) => {
+  const listener = (event: CustomEvent) => {
     const fullKey = event.detail.key;
     if (!fullKey.startsWith("monoidentity/")) return;
     const key = fullKey.slice("monoidentity/".length);
@@ -55,8 +56,7 @@ const saveToDir = (
       return;
     }
 
-    // Directly write
-    await writeFile(key, event.detail.value);
+    addSync(key, writeFile(key, event.detail.value));
   };
 
   addEventListener(STORAGE_EVENT, listener);
@@ -87,28 +87,32 @@ export const backupLocally = async (
       localStorage[TOGGLE_KEY] = "on";
 
       // Restore from backup
-      const backup: Record<string, string> = {};
-      const traverse = async (d: FileSystemDirectoryHandle, path: string) => {
-        for await (const entry of d.values()) {
-          if (entry.kind == "file") {
-            const file = await entry.getFile();
-            const text = await file.text();
-            backup[`${path}${entry.name}`] = text;
-          } else if (entry.kind == "directory") {
-            await traverse(entry, `${path}${entry.name}/`);
+      const restorePromise = (async () => {
+        const backup: Record<string, string> = {};
+        const traverse = async (d: FileSystemDirectoryHandle, path: string) => {
+          for await (const entry of d.values()) {
+            if (entry.kind == "file") {
+              const file = await entry.getFile();
+              const text = await file.text();
+              backup[`${path}${entry.name}`] = text;
+            } else if (entry.kind == "directory") {
+              await traverse(entry, `${path}${entry.name}/`);
+            }
           }
+        };
+        await traverse(dir, "");
+        if (Object.keys(backup).length) {
+          const client = storageClient();
+          for (const key in backup) {
+            console.debug("[monoidentity backup] loading", key);
+            client[key] = backup[key];
+          }
+          location.reload();
+          return;
         }
-      };
-      await traverse(dir, "");
-      if (Object.keys(backup).length) {
-        const client = storageClient();
-        for (const key in backup) {
-          console.debug("[monoidentity backup] loading", key);
-          client[key] = backup[key];
-        }
-        location.reload();
-        return;
-      }
+      })();
+      addSync("*", restorePromise);
+      await restorePromise;
 
       unmount = saveToDir(getSyncStrategy, dir);
     });

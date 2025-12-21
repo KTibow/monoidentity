@@ -1,8 +1,8 @@
 import type { Bucket } from "../utils-transport.js";
 import { AwsClient } from "aws4fetch";
 import { storageClient, STORAGE_EVENT } from "./storageclient.svelte.js";
-import { addToSync } from "../storage.js";
-import { shouldPersist, type SyncStrategy, enqueueSync } from "./utils-storage.js";
+import { addSync, scheduleSync } from "./utils-sync.js";
+import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
 
@@ -82,7 +82,7 @@ const loadFromCloud = async (
   saveCache();
   return model;
 };
-const syncFromCloud = async (
+const _syncFromCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   bucket: Bucket,
   client: AwsClient,
@@ -99,6 +99,16 @@ const syncFromCloud = async (
     if (local[key] == value) continue;
     local[key] = value;
   }
+};
+
+const syncFromCloud = async (
+  getSyncStrategy: (path: string) => SyncStrategy,
+  bucket: Bucket,
+  client: AwsClient,
+) => {
+  const promise = _syncFromCloud(getSyncStrategy, bucket, client);
+  addSync("*", promise);
+  await promise;
 };
 
 export const backupCloud = async (
@@ -163,9 +173,9 @@ export const backupCloud = async (
     }
 
     if (strategy.mode == "immediate") {
-      addToSync(writeWrapped(key, event.detail.value));
+      addSync(fullKey, writeWrapped(key, event.detail.value));
     } else if (strategy.mode == "debounced") {
-      enqueueSync(fullKey, strategy.debounceMs, () => writeWrapped(key, localStorage[fullKey]));
+      scheduleSync(fullKey, () => writeWrapped(key, localStorage[fullKey]), strategy.debounceMs);
     }
   };
 

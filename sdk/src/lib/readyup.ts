@@ -2,7 +2,7 @@ import { type Intent, type StorageSetup, type Provision } from "./utils-transpor
 // import { createLocalStorage } from "./storage/createlocalstorage.js";
 // import { wrapBackup } from "./storage/wrapbackup.js";
 // import { wrapCloud } from "./storage/wrapcloud.js";
-import { addToSync, conf, setLoginRecognized } from "./storage.js";
+import { conf, setLoginRecognized } from "./storage.js";
 import { backupLocally } from "./storage/backuplocally.js";
 import { backupCloud } from "./storage/backupcloud.js";
 import { switchToHub } from "./utils-hub.js";
@@ -43,14 +43,12 @@ export const readyUp = (
       setLoginRecognized(provision.createLoginRecognized);
     }
   }
-  addToSync(
-    (async () => {
-      if (setup.method == "localStorage") {
-        await backupLocally(getSyncStrategy, requestBackup);
-      }
-      if (setup.method == "cloud") {
-        await backupCloud(getSyncStrategy, setup);
-      }
-    })(),
-  );
+
+  // fire off backup
+  if (setup.method == "localStorage") {
+    backupLocally(getSyncStrategy, requestBackup);
+  }
+  if (setup.method == "cloud") {
+    backupCloud(getSyncStrategy, setup);
+  }
 };

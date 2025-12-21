@@ -1,13 +1,7 @@
 export * from "./+common.js";
-export {
-  getLoginRecognized,
-  relog,
-  getVerification,
-  getStorage,
-  getScopedFS,
-  completeSync,
-} from "./storage.js";
+export { getLoginRecognized, relog, getVerification, getStorage, getScopedFS } from "./storage.js";
 export type { SyncStrategy } from "./storage/utils-storage.js";
+export { waitForSync } from "./storage/utils-sync.js";
 export { retrieveVerification } from "./verification-client.js";
 export { attest as rawAttest } from "./verification/attest.js";
 export { readyUp } from "./readyup.js";

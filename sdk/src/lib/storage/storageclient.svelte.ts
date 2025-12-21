@@ -1,4 +1,4 @@
-import { flush } from "./utils-storage.js";
+import { waitForSync } from "./utils-sync.js";
 
 declare global {
   interface WindowEventMap {
@@ -58,13 +58,9 @@ export const storageClient = (
     get(_, key) {
       if (typeof key == "symbol") return undefined;
 
-      if (key == "flush") {
-        return async (userKey?: string) => {
-          if (userKey) {
-            await flush([prefix(userKey)]);
-          } else {
-            await flush(getScopedKeys().map((k) => prefix(k)));
-          }
+      if (key == "sync") {
+        return async (userKey: string) => {
+          await waitForSync(prefix(userKey));
         };
       }
 
