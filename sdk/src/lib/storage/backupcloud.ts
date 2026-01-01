@@ -6,6 +6,8 @@ import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
 
+type AwsFetch = (url: string, options?: RequestInit) => Promise<Response>;
+
 const CLOUD_CACHE_KEY = "cloud-cache";
 type Cache = Record<string, { etag: string; content: string }>;
 
@@ -29,11 +31,11 @@ const saveCache = async () => {
 const loadFromCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   base: string,
-  client: AwsClient,
+  client: AwsFetch,
 ) => {
   const cachePromise = initCache();
 
-  const listResp = await client.fetch(base);
+  const listResp = await client(base);
   if (!listResp.ok) throw new Error(`List bucket failed: ${listResp.status}`);
   const listXml = await listResp.text();
   const objects = [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
@@ -56,7 +58,7 @@ const loadFromCloud = async (
       }
 
       console.debug("[monoidentity cloud] loading", key);
-      const r = await client.fetch(`${base}/${key}`);
+      const r = await client(`${base}/${key}`);
       if (!r.ok) throw new Error(`Fetch ${key} failed: ${r.status}`);
 
       let content: string;
@@ -85,7 +87,7 @@ const loadFromCloud = async (
 const _syncFromCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   bucket: Bucket,
-  client: AwsClient,
+  client: AwsFetch,
 ) => {
   const remote = await loadFromCloud(getSyncStrategy, bucket.base, client);
 
@@ -104,7 +106,7 @@ const _syncFromCloud = async (
 const syncFromCloud = async (
   getSyncStrategy: (path: string) => SyncStrategy,
   bucket: Bucket,
-  client: AwsClient,
+  client: AwsFetch,
 ) => {
   const promise = _syncFromCloud(getSyncStrategy, bucket, client);
   addSync("*", promise);
@@ -117,10 +119,14 @@ export const backupCloud = async (
 ) => {
   unmount?.();
 
-  const client = new AwsClient({
+  const awsClient = new AwsClient({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
   });
+
+  const client: AwsFetch = async (url, options) => {
+    return awsClient.fetch(url, { ...options, aws: { signQuery: true } });
+  };
 
   await syncFromCloud(getSyncStrategy, bucket, client);
 
@@ -137,7 +143,7 @@ export const backupCloud = async (
 
     if (value != undefined) {
       // PUT content (unconditional to start; you can add If-Match/If-None-Match for safety)
-      const r = await client.fetch(url, {
+      const r = await client(url, {
         method: "PUT",
         headers: { "content-type": "application/octet-stream" },
         body: value,
@@ -152,7 +158,7 @@ export const backupCloud = async (
       }
     } else {
       // DELETE key
-      const r = await client.fetch(url, { method: "DELETE" });
+      const r = await client(url, { method: "DELETE" });
       if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
     }
   };
