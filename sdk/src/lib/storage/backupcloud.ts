@@ -174,7 +174,7 @@ export const backupCloud = async (
     const strategy = getSyncStrategy(key);
     if (!strategy) {
       if (!shouldPersist(key))
-        console.warn("[monoidentity cloud]", key, "isn't marked to be backed up or saved");
+        console.warn("[monoidentity cloud]", key, "isn't marked to be synced");
       return;
     }
 
