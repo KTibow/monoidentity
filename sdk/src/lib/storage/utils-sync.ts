@@ -11,7 +11,9 @@ const runScheduledSync = async (key: string) => {
   if (!scheduled) return;
 
   delete scheduledSyncs[key];
-  addSync(key, scheduled.fn());
+  const promise = scheduled.fn();
+  addSync(key, promise);
+  await promise;
 };
 const scheduleInterval = setInterval(() => {
   const now = Date.now();
