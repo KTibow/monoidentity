@@ -8,8 +8,13 @@ function createStandardRequest(req: any): Request {
   const url = `${req.protocol}://${req.get("host") || "localhost"}${req.url}`;
 
   let body: string | undefined;
-  if (req.method !== "GET" && req.method !== "HEAD") {
-    body = req.body;
+  if (req.method != "GET" && req.method != "HEAD") {
+    if (typeof req.body == "object" && req.body) {
+      // when content-type = application/json
+      body = JSON.stringify(req.body);
+    } else {
+      body = req.body;
+    }
   }
 
   return new Request(url, {
