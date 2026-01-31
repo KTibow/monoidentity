@@ -26,7 +26,6 @@
     type="email"
     placeholder="Email"
     bind:value={email}
-    class="focus-inset"
     use:focusOnVisible
     onkeydown={(e) => {
       if (!completion) return;
@@ -52,6 +51,7 @@
     position: relative;
   }
   input {
+    @apply --m3-focus-inward;
     height: 3rem;
     padding: 0 0.75rem;
     border-radius: var(--m3-shape-medium);

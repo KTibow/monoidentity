@@ -94,7 +94,7 @@
     <EmailInput bind:email />
 
     {#if maybeRecognized}
-      <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
+      <input type="password" placeholder="Password" bind:value={password} />
       <Button variant="filled" disabled={!recognized || !password} iconType="left">
         <Icon icon={iconCloud} />
         Sign in with cloud
@@ -117,7 +117,7 @@
     <EmailInput bind:email />
 
     {#if maybeRecognized}
-      <input type="password" placeholder="Password" bind:value={password} class="focus-inset" />
+      <input type="password" placeholder="Password" bind:value={password} />
       <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
     {:else}
       <p class="subtle">This app doesn't work with your email.</p>
@@ -135,12 +135,7 @@
         {:else}
           <EmailInput bind:email />
           {#if maybeRecognized}
-            <input
-              class="focus-inset"
-              type="password"
-              placeholder="Password"
-              bind:value={password}
-            />
+            <input type="password" placeholder="Password" bind:value={password} />
             <Button variant="filled" disabled={!recognized || !password}>Continue</Button>
           {:else}
             <p class="subtle">Cloud isn't available for your email.</p>
@@ -155,6 +150,7 @@
 
 <style>
   input {
+    @apply --m3-focus-inward;
     height: 3rem;
     padding: 0 0.75rem;
     border-radius: var(--m3-shape-medium);
