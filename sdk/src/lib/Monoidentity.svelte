@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { onDestroy, type Snippet } from "svelte";
   import { readyUp } from "./readyup.js";
   import type { Intent } from "./utils-transport.js";
   import type { SyncStrategy } from "./storage/utils-storage.js";
@@ -16,11 +16,17 @@
     children: Snippet;
   } = $props();
 
+  const aborter = new AbortController();
+  onDestroy(() => {
+    aborter.abort();
+  });
+
   let backup: (() => void) | undefined = $state();
   readyUp(
     app,
     intents || [],
     getSyncStrategy,
+    aborter.signal,
     (startBackup) =>
       (backup = () => {
         startBackup();
