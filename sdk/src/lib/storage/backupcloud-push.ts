@@ -1,17 +1,15 @@
-import type { Bucket } from "../utils-transport.js";
 import { STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addSync, scheduleSync } from "./utils-sync.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
-import { setCloudCacheEntry, type AwsFetch } from "./backupcloud-pull.js";
+import type { AwsFetch } from "./backupcloud-connection.js";
+import { setCloudCacheEntry } from "./backupcloud-pull.js";
 import { encodeCloudContent } from "./_backupcloud.js";
 
-const write = async (key: string, value: string | undefined, bucket: Bucket, client: AwsFetch) => {
+const write = async (key: string, value: string | undefined, client: AwsFetch) => {
   console.debug("[monoidentity cloud] saving", key);
 
-  const url = `${bucket.base}/${key}`;
-
   if (value != undefined) {
-    const r = await client(url, {
+    const r = await client(key, {
       method: "PUT",
       headers: { "content-type": "application/octet-stream" },
       body: encodeCloudContent(key, value),
@@ -25,20 +23,19 @@ const write = async (key: string, value: string | undefined, bucket: Bucket, cli
     return;
   }
 
-  const r = await client(url, { method: "DELETE" });
+  const r = await client(key, { method: "DELETE" });
   if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
 };
 
 export const mountCloudPush = (
   getSyncStrategy: (path: string) => SyncStrategy,
-  bucket: Bucket,
   client: AwsFetch,
   signal: AbortSignal,
 ) => {
   signal.throwIfAborted();
 
   const writeWrapped = async (key: string, value: string | undefined) =>
-    write(key, value, bucket, client).catch((err) => {
+    write(key, value, client).catch((err) => {
       console.error("[monoidentity cloud] save failed", key, err);
     });
 

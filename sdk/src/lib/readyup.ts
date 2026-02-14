@@ -65,11 +65,11 @@ export const readyUp = (
   }
   if (setup.method == "cloud") {
     const client = createCloudClient(setup);
-    void pullFromCloud(getSyncStrategy, setup, client)
+    void pullFromCloud(getSyncStrategy, client)
       .then(() => {
         signal.throwIfAborted();
-        mountCloudPull(getSyncStrategy, setup, client, signal);
-        mountCloudPush(getSyncStrategy, setup, client, signal);
+        mountCloudPull(getSyncStrategy, client, signal);
+        mountCloudPush(getSyncStrategy, client, signal);
       })
       .catch((err) => {
         console.error("[monoidentity cloud] pull failed", err);
