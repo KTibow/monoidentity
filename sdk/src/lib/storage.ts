@@ -7,11 +7,6 @@ import publicKey from "./verification/public-key.js";
 import { storageClient } from "./storage/storageclient.svelte.js";
 import { switchToHub } from "./utils-hub.js";
 
-let app = "unknown";
-export const conf = (a: string) => {
-  app = a;
-};
-
 const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
 export const getLoginRecognized = () => {
   const client = storageClient();
@@ -45,7 +40,7 @@ export const setVerification = (jwt: string) => {
 };
 
 export const getStorage = (realm: "config" | "userdata" | "cache" | (string & {})) => {
-  const prefix = `.${realm}/${app}/`;
+  const prefix = `.${realm}/${MONOIDENTITY_APP_ID}/`;
   return storageClient(
     (key) => `${prefix}${key}.devalue`,
     (key) => (key.startsWith(prefix) ? key.slice(prefix.length, -".devalue".length) : undefined),

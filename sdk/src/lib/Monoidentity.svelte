@@ -5,12 +5,10 @@
   import type { SyncStrategy } from "./storage/utils-storage.js";
 
   let {
-    app,
     intents,
     getSyncStrategy,
     children,
   }: {
-    app: string;
     intents?: Intent[];
     getSyncStrategy: (path: string) => SyncStrategy;
     children: Snippet;
@@ -23,7 +21,6 @@
 
   let backup: (() => void) | undefined = $state();
   readyUp(
-    app,
     intents || [],
     getSyncStrategy,
     aborter.signal,

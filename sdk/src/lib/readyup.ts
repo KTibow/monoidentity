@@ -2,7 +2,7 @@ import { type Intent, type StorageSetup, type Provision } from "./utils-transpor
 // import { createLocalStorage } from "./storage/createlocalstorage.js";
 // import { wrapBackup } from "./storage/wrapbackup.js";
 // import { wrapCloud } from "./storage/wrapcloud.js";
-import { conf, setLoginRecognized } from "./storage.js";
+import { setLoginRecognized } from "./storage.js";
 
 import { pullFromLocalBackup } from "./storage/backuplocally-pull.js";
 import { mountLocalBackupPush } from "./storage/backuplocally-push.js";
@@ -15,14 +15,11 @@ import { switchToHub } from "./utils-hub.js";
 import type { SyncStrategy } from "./storage/utils-storage.js";
 
 export const readyUp = (
-  app: string,
   intents: Intent[],
   getSyncStrategy: (path: string) => SyncStrategy,
   signal: AbortSignal,
   requestBackup: (startBackup: () => void) => void,
 ) => {
-  conf(app);
-
   let setup = localStorage["monoidentity-x/setup"]
     ? (JSON.parse(localStorage["monoidentity-x/setup"]) as StorageSetup)
     : undefined;
