@@ -3,7 +3,7 @@ import { STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addSync, scheduleSync } from "./utils-sync.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { setCloudCacheEntry, type AwsFetch } from "./backupcloud-pull.js";
-import { encodeCloudContent } from "./backupcloud-content.js";
+import { encodeCloudContent } from "./_backupcloud.js";
 
 const write = async (key: string, value: string | undefined, bucket: Bucket, client: AwsFetch) => {
   console.debug("[monoidentity cloud] saving", key);

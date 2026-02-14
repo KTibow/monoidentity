@@ -7,7 +7,7 @@ import { conf, setLoginRecognized } from "./storage.js";
 import { pullFromLocalBackup } from "./storage/backuplocally-pull.js";
 import { mountLocalBackupPush } from "./storage/backuplocally-push.js";
 
-import { createCloudClient } from "./storage/backupcloud-shared.js";
+import { createCloudClient } from "./storage/backupcloud-connection.js";
 import { mountCloudPull, pullFromCloud } from "./storage/backupcloud-pull.js";
 import { mountCloudPush } from "./storage/backupcloud-push.js";
 

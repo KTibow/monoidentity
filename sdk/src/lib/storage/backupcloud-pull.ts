@@ -4,7 +4,7 @@ import { addSync } from "./utils-sync.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
-import { decodeCloudContent } from "./backupcloud-content.js";
+import { decodeCloudContent } from "./_backupcloud.js";
 
 export type AwsFetch = (url: string, options?: RequestInit) => Promise<Response>;
 

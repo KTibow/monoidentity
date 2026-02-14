@@ -1,7 +1,7 @@
 export const isPlainTextCloudObject = (key: string) =>
   key.endsWith(".md") || key.endsWith(".devalue");
 
-export const encodeCloudContent = (key: string, value: string): string | Blob => {
+export const encodeCloudContent = (key: string, value: string) => {
   if (isPlainTextCloudObject(key)) {
     return value;
   }
@@ -10,7 +10,7 @@ export const encodeCloudContent = (key: string, value: string): string | Blob =>
   for (let i = 0; i < value.length; i++) {
     bytes[i] = value.charCodeAt(i);
   }
-  return new Blob([bytes]);
+  return bytes;
 };
 
 export const decodeCloudContent = async (key: string, response: Response) => {
