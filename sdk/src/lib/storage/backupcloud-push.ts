@@ -3,6 +3,7 @@ import { STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addSync, scheduleSync } from "./utils-sync.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { setCloudCacheEntry, type AwsFetch } from "./backupcloud-pull.js";
+import { encodeCloudContent } from "./_backupcloud.js";
 
 const write = async (key: string, value: string | undefined, bucket: Bucket, client: AwsFetch) => {
   console.debug("[monoidentity cloud] saving", key);
@@ -13,7 +14,7 @@ const write = async (key: string, value: string | undefined, bucket: Bucket, cli
     const r = await client(url, {
       method: "PUT",
       headers: { "content-type": "application/octet-stream" },
-      body: value,
+      body: encodeCloudContent(key, value),
     });
     if (!r.ok) throw new Error(`PUT ${key} failed: ${r.status}`);
 

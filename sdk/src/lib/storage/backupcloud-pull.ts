@@ -4,6 +4,7 @@ import { addSync } from "./utils-sync.js";
 import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
+import { decodeCloudContent } from "./_backupcloud.js";
 
 export type AwsFetch = (url: string, options?: RequestInit) => Promise<Response>;
 
@@ -64,20 +65,7 @@ const loadFromCloud = async (
       const r = await client(`${base}/${key}`);
       if (!r.ok) throw new Error(`Fetch ${key} failed: ${r.status}`);
 
-      let content: string;
-      if (key.endsWith(".md") || key.endsWith(".devalue")) {
-        content = await r.text();
-      } else {
-        const buf = new Uint8Array(await r.arrayBuffer());
-        content = "";
-        const chunk = 8192;
-        for (let i = 0; i < buf.length; i += chunk) {
-          content += String.fromCharCode.apply(
-            null,
-            buf.subarray(i, i + chunk) as unknown as number[],
-          );
-        }
-      }
+      const content = await decodeCloudContent(key, r);
       model[key] = content;
       nextCache[key] = { etag, content };
     }),
