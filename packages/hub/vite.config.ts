@@ -22,7 +22,7 @@ export default defineConfig({
   },
   plugins: [
     svelte(),
-    monoserve({ monoserverURL: "https://benignmonoserver.fly.dev" }),
+    monoserve({ monoserverURL: "https://monoserve-by45xe47vq-uc.a.run.app" }),
     functionsMixins({ deps: ["m3-svelte"] }),
     tokenShaker(),
   ],
