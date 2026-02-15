@@ -1,2 +1,2 @@
 export const canBackup =
-  navigator.userAgent.includes("CrOS") && Boolean(window.showDirectoryPicker);
+  navigator.userAgent.includes("CrOS") && "showDirectoryPicker" in window;
