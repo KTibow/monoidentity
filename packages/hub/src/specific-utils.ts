@@ -1,6 +1,6 @@
 import { districtApps } from "school-districts";
-import { encode, decode } from "../sdk/src/lib/utils-base36.js";
-import type { Bucket } from "../sdk/src/lib/utils-transport.js";
+import { encode, decode } from "../../sdk/src/lib/utils-base36.js";
+import type { Bucket } from "../../sdk/src/lib/utils-transport.js";
 
 export const domains: string[] = Object.keys(districtApps);
 export const knownApps: Record<string, string> = {

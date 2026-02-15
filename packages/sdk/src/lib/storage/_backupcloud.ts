@@ -1,4 +1,4 @@
-export const isPlainTextCloudObject = (key: string) =>
+const isPlainTextCloudObject = (key: string) =>
   key.endsWith(".md") || key.endsWith(".devalue");
 
 export const encodeCloudContent = (key: string, value: string) => {

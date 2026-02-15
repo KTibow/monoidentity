@@ -1,7 +1,9 @@
-predist
 dist
 build
+predist
 functions
+packages/firebase-functions/lib
 .svelte-kit
 node_modules
 .env
+*.log

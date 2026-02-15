@@ -10,7 +10,7 @@
   "funding": "https://github.com/sponsors/KTibow",
   "scripts": {
     "dev": "vite dev",
-    "build": "pnpm run prepack && pnpm --prefix firebase-functions run build",
+    "build": "pnpm run prepack",
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && rm -rf predist && node --env-file-if-exists=.env node_modules/rolldown/bin/cli.mjs -c && svelte-package -i predist -t && publint",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -54,22 +54,16 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@types/wicg-file-system-access": "^2023.10.7",
     "knip": "^5.83.1",
-    "monoserve": "^3.2.3",
+    "monoserve": "^3.2.4",
     "publint": "^0.3.17",
     "rolldown": "1.0.0-rc.4",
     "school-districts": "^5.0.1",
     "svelte": "^5.51.0",
     "svelte-check": "^4.4.0",
     "tinyglobby": "^0.2.15",
-    "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },
   "keywords": [
     "svelte"
-  ],
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  }
+  ]
 }

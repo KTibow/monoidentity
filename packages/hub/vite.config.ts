@@ -6,6 +6,9 @@ import { tokenShaker } from "vite-plugin-token-shaker";
 
 // https://vite.dev/config/
 export default defineConfig({
+  resolve: {
+    conditions: ["svelte", "module", "browser", "development|production"],
+  },
   server: {
     port: 5172,
   },

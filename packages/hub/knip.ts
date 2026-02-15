@@ -1,6 +1,7 @@
 export default {
-  entry: ["src/main.ts", "src/app.css"],
+  entry: ["src/app.css"],
   project: ["src/**"],
+  ignoreUnresolved: ["\\$env/static/private"],
   compilers: {
     css: (text: string) => [...text.matchAll(/(?<=@)import[^;]+/g)].join("\n"),
   },

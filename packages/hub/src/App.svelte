@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { IntentEnvelope, ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import type { IntentEnvelope, ProvisionEnvelope } from "../../sdk/src/lib/utils-transport";
   import { knownApps } from "./specific-utils";
   import RedirectGo from "./RedirectGo.svelte";
   import RedirectPause from "./RedirectPause.svelte";

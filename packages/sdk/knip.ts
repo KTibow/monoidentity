@@ -1,5 +1,5 @@
 export default {
   entry: ["src/lib/+client.ts", "src/lib/+server.ts", "rolldown.config.ts"],
-  ignore: ["firebase-functions/**"],
+  ignoreDependencies: ["@types/wicg-file-system-access"],
   tags: ["-knipexternal"],
 };

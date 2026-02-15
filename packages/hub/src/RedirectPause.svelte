@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "m3-svelte";
-  import type { ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import type { ProvisionEnvelope } from "../../sdk/src/lib/utils-transport";
   import AppBase from "./AppBase.svelte";
 
   let {

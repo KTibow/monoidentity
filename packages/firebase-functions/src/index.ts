@@ -1,7 +1,7 @@
 import { onRequest } from "firebase-functions/v2/https";
 
 const functionModules = import.meta.glob<{ default: (req: Request) => Promise<Response> }>(
-  "../../functions/*.js",
+  "../../sdk/functions/*.js",
 );
 
 function createStandardRequest(req: any): Request {

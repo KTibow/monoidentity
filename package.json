@@ -1,38 +1,25 @@
 {
-  "name": "monoidentity-website",
+  "name": "monoidentity-workspace",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-check",
+    "dev": "pnpm --filter ./packages/hub dev",
+    "build": "pnpm run build:sdk && pnpm run build:hub && pnpm run build:firebase-functions",
+    "build:hub": "pnpm --filter ./packages/hub build",
+    "build:sdk": "pnpm --filter ./packages/sdk build",
+    "build:firebase-functions": "pnpm --filter ./packages/firebase-functions build",
+    "check": "pnpm -r --if-present check",
     "format": "prettier --write .",
     "lint": "prettier --check .",
-    "knip": "knip"
+    "knip": "pnpm -r --if-present knip"
   },
   "devDependencies": {
-    "@ktibow/iconset-material-symbols": "~0.0.1764827375",
-    "@sveltejs/vite-plugin-svelte": "^6.2.4",
-    "@tsconfig/svelte": "^5.0.7",
-    "@types/node": "^25.2.3",
-    "@unocss/reset": "^66.6.0",
-    "devalue": "^5.6.2",
-    "knip": "^5.83.1",
-    "kreations": "^1.3.2",
-    "m3-svelte": "^7.1.0",
-    "monoidentity": "link:sdk",
-    "monoserve": "^3.2.3",
     "prettier": "^3.8.1",
     "prettier-plugin-svelte": "^3.4.1",
-    "school-districts": "^5.0.1",
-    "svelte": "^5.51.0",
-    "svelte-check": "^4.4.0",
-    "typescript": "~5.9.3",
-    "valibot": "^1.2.0",
-    "vite": "^7.3.1",
-    "vite-plugin-functions-mixins": "^0.4.1",
-    "vite-plugin-token-shaker": "^0.0.7"
+    "typescript": "~5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

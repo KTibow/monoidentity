@@ -14,23 +14,18 @@ jobs:
         with:
           version: latest
       - name: Install
-        run: pnpm install
-      - name: Install SDK
-        run: pnpm install
-        working-directory: ./sdk
+        run: pnpm install --frozen-lockfile
       - name: Build SDK
-        run: pnpm build
-        working-directory: ./sdk
+        run: pnpm build:sdk
         env:
           VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
-      - name: Build
-        run: pnpm build
+      - name: Build Hub
+        run: pnpm build:hub
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_KEY: ${{ secrets.CF_KEY }}
-      - name: Install Firebase Functions dependencies
-        run: pnpm install
-        working-directory: ./sdk/firebase-functions
+      - name: Build Firebase Functions
+        run: pnpm build:firebase-functions
       - name: Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:

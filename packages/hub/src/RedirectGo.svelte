@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ProvisionEnvelope } from "../sdk/src/lib/utils-transport";
+  import type { ProvisionEnvelope } from "../../sdk/src/lib/utils-transport";
   import Loader from "./Loader.svelte";
 
   let {
