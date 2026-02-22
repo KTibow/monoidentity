@@ -4,7 +4,7 @@ import type { Bucket } from "../../sdk/src/lib/utils-transport.js";
 
 export const domains: string[] = Object.keys(districtApps);
 export const knownApps: Record<string, string> = {
-  "https://secanthq.web.app": "Secant",
+  "https://secant.kendell.dev": "Secant",
   "https://cosinehq.web.app": "Cosine",
   "https://cblstn.web.app": "Cobblestone",
 };
