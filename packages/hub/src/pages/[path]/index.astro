@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 type Variant = {
   path: string;
   app: string;
-  redirectOrigin: string;
+  redirect: string;
   chooseCloudHere?: boolean;
   declineHere?: boolean;
   privacy: string;
@@ -14,27 +14,27 @@ export function getStaticPaths() {
   const RUNDOWN_PRIVACY =
     'detect your district, and via StudentVue, detect your school and teachers';
   const variants: Record<string, Omit<Variant, 'path'>> = {
-    'secant.kendell.dev': {
+    secant: {
       app: 'Secant',
-      redirectOrigin: 'https://secant.kendell.dev',
+      redirect: 'https://secant.kendell.dev',
       privacy:
         'Your authentication will only be used to connect to StudentVue to load data and quickly access saved authentication.',
     },
-    'cobblestone.kendell.dev:initial': {
+    'cobblestone-initial': {
       app: 'Cobblestone',
-      redirectOrigin: 'https://cobblestone.kendell.dev',
+      redirect: 'https://cobblestone.kendell.dev',
       chooseCloudHere: true,
       declineHere: true,
       privacy: `Any authentication will be used for rundowns to ${RUNDOWN_PRIVACY}. If selected, it may also act to verify your identity for access to cloud storage.`,
     },
-    'cobblestone.kendell.dev': {
+    cobblestone: {
       app: 'Cobblestone',
-      redirectOrigin: 'https://cobblestone.kendell.dev',
+      redirect: 'https://cobblestone.kendell.dev',
       privacy: `You're providing authentication for rundowns, so it'll be used to ${RUNDOWN_PRIVACY}.`,
     },
-    'cosinehq.web.app': {
+    cosine: {
       app: 'Cosine',
-      redirectOrigin: 'https://cosinehq.web.app',
+      redirect: 'https://cosinehq.web.app',
       privacy:
         'Your authentication will only be used to verify your identity for access to cloud storage.',
     },
@@ -53,7 +53,7 @@ const declineEnabled = !!variant.declineHere;
 ---
 
 <Base>
-  <form data-redirect-origin={variant.redirectOrigin}>
+  <form data-redirect={variant.redirect}>
     <input
       name="email"
       type="email"
@@ -105,7 +105,23 @@ const declineEnabled = !!variant.declineHere;
 
   <script>
     const form = document.querySelector('form') as HTMLFormElement;
-    const redirectOrigin = form.dataset.redirectOrigin as string;
+    const defaultRedirect = form.dataset.redirect as string;
+    const redirectOverride = new URLSearchParams(location.hash.slice(1)).get('redirect');
+    let redirect = defaultRedirect;
+    if (redirectOverride) {
+      const candidate = new URL(
+        redirectOverride.includes('://') ? redirectOverride : `http://${redirectOverride}`,
+      );
+      if (
+        candidate.hostname == 'localhost' ||
+        candidate.hostname == '127.0.0.1' ||
+        candidate.hostname == '0.0.0.0' ||
+        candidate.hostname == '[::1]' ||
+        candidate.hostname.endsWith('.localhost')
+      ) {
+        redirect = candidate.toString();
+      }
+    }
 
     const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
     const passwordInput = form.querySelector('input[name="password"]') as HTMLInputElement;
@@ -152,7 +168,7 @@ const declineEnabled = !!variant.declineHere;
         if (decision == 'cloud') params.set('monoidentitysync', 'cloud');
       }
 
-      const target = new URL(redirectOrigin);
+      const target = new URL(redirect);
       target.hash = params.toString();
       location.href = target.toString();
     });

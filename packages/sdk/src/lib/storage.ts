@@ -15,9 +15,20 @@ export const setLoginRecognized = (login: string) => {
   const client = storageClient();
   client[LOGIN_RECOGNIZED_PATH] = login;
 };
+
+const isLocalhostHost = (host: string) =>
+  host == "localhost" ||
+  host == "127.0.0.1" ||
+  host == "0.0.0.0" ||
+  host == "[::1]" ||
+  host.endsWith(".localhost");
+
 export const relog = () => {
-  location.href =
-    "https://monoidentity.web.app/" + location.origin.replace(/^https?:\/\//, "");
+  const target = new URL(`https://monoidentity.web.app/${MONOIDENTITY_APP_ID}`);
+  if (isLocalhostHost(location.hostname)) {
+    target.searchParams.set("redirect", location.origin);
+  }
+  location.href = target.toString();
   throw new Error("relogging");
 };
 
