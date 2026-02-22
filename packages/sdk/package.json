@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "license": "ISC",
   "repository": "KTibow/monoidentity",
   "author": {
@@ -23,7 +23,8 @@
     "!dist/**/*.spec.*"
   ],
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "**/+receive-callback.js"
   ],
   "type": "module",
   "exports": {
@@ -31,9 +32,9 @@
       "types": "./dist/+client.d.ts",
       "svelte": "./dist/+client.js"
     },
-    "./init": {
-      "types": "./dist/+init.d.ts",
-      "import": "./dist/+init.js"
+    "./receive-callback": {
+      "types": "./dist/+receive-callback.d.ts",
+      "import": "./dist/+receive-callback.js"
     }
   },
   "peerDependencies": {
