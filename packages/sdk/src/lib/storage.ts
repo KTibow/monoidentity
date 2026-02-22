@@ -10,10 +10,6 @@ import { switchToHub } from "./utils-hub.js";
 const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
 export const getLoginRecognized = () => {
   const client = storageClient();
-  if (client[".core/login.encjson"]) {
-    client[LOGIN_RECOGNIZED_PATH] = client[".core/login.encjson"];
-    delete client[".core/login.encjson"];
-  }
   const login = client[LOGIN_RECOGNIZED_PATH];
   if (!login) throw new Error("No login found");
   return useSchema(loginSchema, JSON.parse(decode(login)));
@@ -26,7 +22,7 @@ export const relog = () => {
   switchToHub([{ loginRecognized: true }]);
 };
 
-const VERIFICATION_PATH = ".core/verification.jwt";
+const VERIFICATION_PATH = ".local/verification.jwt";
 export const getVerification = async () => {
   const client = storageClient();
   const jwt = client[VERIFICATION_PATH];
