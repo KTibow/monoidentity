@@ -1,3 +1,17 @@
+export type SyncRequestDetail = {
+  key: string;
+  resolve?: () => void;
+  reject?: (reason?: unknown) => void;
+};
+
+declare global {
+  interface WindowEventMap {
+    "monoidentity-sync-request": CustomEvent<SyncRequestDetail>;
+  }
+}
+
+export const SYNC_REQUEST_EVENT = "monoidentity-sync-request";
+
 const activeSyncs: Record<string, Promise<void>> = {};
 const scheduledSyncs: Record<string, { fn: () => Promise<void>; executeAt: number }> = {};
 export const addSync = (key: string, promise: Promise<void>) => {
@@ -23,15 +37,10 @@ const scheduleInterval = setInterval(() => {
     }
   }
 }, 100);
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    clearInterval(scheduleInterval);
-  });
-}
 
-export const waitForSync = async (key: string) => {
+const waitForTrackedSync = async (key: string) => {
   if (key != "*") {
-    await waitForSync("*");
+    await waitForTrackedSync("*");
   }
   if (key in activeSyncs) {
     await activeSyncs[key];
@@ -44,3 +53,27 @@ export const scheduleSync = (key: string, fn: () => Promise<void>, delay = 1000)
   const executeAt = Date.now() + delay;
   scheduledSyncs[key] = { fn, executeAt };
 };
+
+export const waitForSync = async (key: string) => {
+  await new Promise<void>((resolve, reject) =>
+    window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
+  );
+};
+
+const onSyncRequest = (event: CustomEvent<SyncRequestDetail>) => {
+  const { key, resolve, reject } = event.detail;
+  waitForTrackedSync(key)
+    .then(() => {
+      resolve?.();
+    })
+    .catch((error) => {
+      reject?.(error);
+    });
+};
+addEventListener(SYNC_REQUEST_EVENT, onSyncRequest as EventListener);
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    clearInterval(scheduleInterval);
+    removeEventListener(SYNC_REQUEST_EVENT, onSyncRequest as EventListener);
+  });
+}
