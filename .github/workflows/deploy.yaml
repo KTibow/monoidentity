@@ -1,8 +1,8 @@
 name: Deploy
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -17,9 +17,6 @@ jobs:
         run: pnpm install
       - name: Build Hub
         run: pnpm build:hub
-        env:
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CF_KEY: ${{ secrets.CF_KEY }}
       - name: Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:

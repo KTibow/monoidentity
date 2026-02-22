@@ -19,6 +19,9 @@ jobs:
         run: pnpm build:verification
         env:
           VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
+      # todo
+      #    CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      #    CF_KEY: ${{ secrets.CF_KEY }}
       - name: Build Firebase Functions
         run: pnpm build:firebase-functions
       - name: Firebase Functions
