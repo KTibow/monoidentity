@@ -1,8 +1,8 @@
 name: Deploy
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,18 +14,12 @@ jobs:
         with:
           version: latest
       - name: Install
-        run: pnpm install --frozen-lockfile
-      - name: Build SDK
-        run: pnpm build:sdk
-        env:
-          VERIFICATION_PRIVATE_KEY: ${{ secrets.VERIFICATION_PRIVATE_KEY }}
+        run: pnpm install
       - name: Build Hub
         run: pnpm build:hub
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CF_KEY: ${{ secrets.CF_KEY }}
-      - name: Build Firebase Functions
-        run: pnpm build:firebase-functions
       - name: Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -33,8 +27,3 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MONOIDENTITY }}
           channelId: live
           projectId: monoidentity
-      - name: Firebase Functions
-        run: |
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MONOIDENTITY }}' > /tmp/firebase-sa.json
-          export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firebase-sa.json
-          pnpx --package firebase-tools firebase deploy --only functions --project monoidentity --non-interactive

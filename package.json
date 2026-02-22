@@ -6,6 +6,7 @@
     "build": "pnpm run build:sdk && pnpm run build:hub && pnpm run build:firebase-functions",
     "build:hub": "pnpm --filter ./packages/hub build",
     "build:sdk": "pnpm --filter ./packages/sdk build",
+    "build:verification": "pnpm --filter ./packages/monoidentity-verification build",
     "build:firebase-functions": "pnpm --filter ./packages/firebase-functions build",
     "check": "pnpm -r --if-present check",
     "format": "prettier --write .",
