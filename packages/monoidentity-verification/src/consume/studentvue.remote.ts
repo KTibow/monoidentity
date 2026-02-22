@@ -1,6 +1,6 @@
 import { fn } from "monoserve";
 import { string, object, pipe, email, uuid } from "valibot";
-import { generateVerificationJWT } from "./jwt-utils.js";
+import { generateVerificationJWT } from "./lib";
 import { districtApps } from "school-districts";
 
 const studentVueTokenSchema = object({
@@ -42,6 +42,10 @@ export default fn(studentVueTokenSchema, async ({ token, email }) => {
 
   if (!studentIdMatch || !studentIdMatch[1]) {
     throw new Response("Student ID not found in response", { status: 400 });
+  }
+
+  if (email.split("@")[0] != studentIdMatch[1]) {
+    throw new Response("Student ID not correct", { status: 400 });
   }
 
   // Generate and return JWT

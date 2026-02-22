@@ -2,9 +2,7 @@ import { stringify, parse } from "devalue";
 import { parse as useSchema } from "valibot";
 import { decode } from "./utils-base36.js";
 import { login as loginSchema } from "./utils-transport.js";
-import { verify } from "@tsndr/cloudflare-worker-jwt";
-import publicKey from "./verification/public-key.js";
-import { storageClient } from "./storage/storageclient.svelte.js";
+import { storageClient } from "./storageclient.svelte.js";
 import { switchToHub } from "./utils-hub.js";
 
 const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
@@ -22,18 +20,7 @@ export const relog = () => {
   switchToHub([{ loginRecognized: true }]);
 };
 
-const VERIFICATION_PATH = ".local/verification.jwt";
-export const getVerification = async () => {
-  const client = storageClient();
-  const jwt = client[VERIFICATION_PATH];
-  if (!jwt) throw new Error("No verification found");
-  await verify(jwt, publicKey, { algorithm: "ES256", throwError: true });
-  return jwt;
-};
-export const setVerification = (jwt: string) => {
-  const client = storageClient();
-  client[VERIFICATION_PATH] = jwt;
-};
+export const VERIFICATION_PATH = ".local/verification.jwt";
 
 export const getStorage = (realm: "config" | "userdata" | "cache" | (string & {})) => {
   const prefix = `.${realm}/${MONOIDENTITY_APP_ID}/`;

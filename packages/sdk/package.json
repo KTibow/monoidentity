@@ -1,6 +1,6 @@
 {
   "name": "monoidentity",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "license": "ISC",
   "repository": "KTibow/monoidentity",
   "author": {
@@ -34,20 +34,14 @@
     "./init": {
       "types": "./dist/+init.d.ts",
       "import": "./dist/+init.js"
-    },
-    "./server": {
-      "types": "./dist/+server.d.ts",
-      "import": "./dist/+server.js"
     }
   },
   "peerDependencies": {
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "@tsndr/cloudflare-worker-jwt": "^3.2.1",
     "aws4fetch": "^1.0.20",
     "devalue": "^5.6.2",
-    "fast-studentvue": "^2.1.1",
     "idb-keyval": "^6.2.2",
     "valibot": "^1.2.0"
   },
@@ -60,7 +54,6 @@
     "monoserve": "^3.2.4",
     "publint": "^0.3.17",
     "rolldown": "1.0.0-rc.4",
-    "school-districts": "^5.0.1",
     "svelte": "^5.51.0",
     "svelte-check": "^4.4.0",
     "tinyglobby": "^0.2.15",

@@ -54,12 +54,6 @@ export const scheduleSync = (key: string, fn: () => Promise<void>, delay = 1000)
   scheduledSyncs[key] = { fn, executeAt };
 };
 
-export const waitForSync = async (key: string) => {
-  await new Promise<void>((resolve, reject) =>
-    window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
-  );
-};
-
 const onSyncRequest = (event: CustomEvent<SyncRequestDetail>) => {
   const { key, resolve, reject } = event.detail;
   waitForTrackedSync(key)

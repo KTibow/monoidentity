@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Monoidentity from "$lib/Monoidentity.svelte";
   import icon from "../../../hub/icon.svg";
   import "./app.css";
   let { children } = $props();
@@ -9,6 +8,4 @@
   <link rel="icon" href={icon} />
 </svelte:head>
 
-<Monoidentity>
-  {@render children()}
-</Monoidentity>
+{@render children()}

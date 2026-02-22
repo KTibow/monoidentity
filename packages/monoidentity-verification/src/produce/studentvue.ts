@@ -16,7 +16,7 @@ const studentvue = (
     params,
   );
 
-export const generateStudentVueToken = async (email: string, password: string) => {
+export const produceStudentVue = async (email: string, password: string) => {
   const domain = email.split("@")[1];
   const apps = districtApps[domain];
   if (!apps) {

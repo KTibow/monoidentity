@@ -1,4 +1,10 @@
-import { waitForSync } from "./utils-sync.js";
+import { SYNC_REQUEST_EVENT } from "./old/storage/utils-sync.js";
+
+export const waitForSync = async (key: string) => {
+  await new Promise<void>((resolve, reject) =>
+    window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
+  );
+};
 
 declare global {
   interface WindowEventMap {
