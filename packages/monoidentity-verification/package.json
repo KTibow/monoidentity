@@ -1,15 +1,17 @@
 {
   "name": "monoidentity-verification",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "KTibow",
   "license": "ISC",
   "homepage": "https://github.com/KTibow/monoidentity",
   "funding": "https://github.com/sponsors/KTibow",
   "repository": "KTibow/monoidentity",
   "exports": {
-    ".": "./dist/index.mjs",
-    "./package.json": "./package.json"
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
     "dist"
