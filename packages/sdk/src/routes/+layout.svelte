@@ -1,6 +1,6 @@
 <script lang="ts">
   import Monoidentity from "$lib/Monoidentity.svelte";
-  import icon from "../../../icon.svg";
+  import icon from "../../../hub/icon.svg";
   import "./app.css";
   let { children } = $props();
 </script>
@@ -9,6 +9,6 @@
   <link rel="icon" href={icon} />
 </svelte:head>
 
-<Monoidentity getSyncStrategy={() => undefined}>
+<Monoidentity>
   {@render children()}
 </Monoidentity>

@@ -1,6 +1,6 @@
 import { storageClient } from "./storageclient.svelte.js";
 import { addSync } from "./utils-sync.js";
-import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
+import { shouldPersist } from "./utils-storage.js";
 import { get, set } from "idb-keyval";
 import { store } from "./utils-idb.js";
 import { decodeCloudContent } from "./_backupcloud.js";
@@ -30,14 +30,14 @@ export const setCloudCacheEntry = async (key: string, etag: string, content: str
   await saveCache();
 };
 
-const listCloud = async (getSyncStrategy: (path: string) => SyncStrategy, client: AwsFetch) => {
+const listCloud = async (client: AwsFetch) => {
   const listResp = await client("");
   if (!listResp.ok) throw new Error(`List bucket failed: ${listResp.status}`);
   const listXml = await listResp.text();
   return [...listXml.matchAll(/<Key>(.*?)<\/Key>.*?<ETag>(.*?)<\/ETag>/gs)]
     .map((m) => m.slice(1).map((s) => s.replaceAll("&quot;", `"`).replaceAll("&apos;", `'`)))
     .map(([key, etag]) => ({ key, etag: etag.replaceAll(`"`, "") }))
-    .filter(({ key }) => getSyncStrategy(key));
+    .filter(({ key }) => MONOIDENTITY_SYNC_FOR(key));
 };
 const loadFromCloud = async (objects: { key: string; etag: string }[], client: AwsFetch) => {
   const prevCache = getCache();
@@ -68,12 +68,9 @@ const loadFromCloud = async (objects: { key: string; etag: string }[], client: A
   return model;
 };
 
-const _pullFromCloud = async (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  client: AwsFetch,
-) => {
+const _pullFromCloud = async (client: AwsFetch) => {
   const cachePromise = initCache();
-  const objects = await listCloud(getSyncStrategy, client);
+  const objects = await listCloud(client);
   await cachePromise;
   const remote = await loadFromCloud(objects, client);
 
@@ -89,25 +86,18 @@ const _pullFromCloud = async (
   }
 };
 
-export const pullFromCloud = async (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  client: AwsFetch,
-) => {
-  const promise = _pullFromCloud(getSyncStrategy, client);
+export const pullFromCloud = async (client: AwsFetch) => {
+  const promise = _pullFromCloud(client);
   addSync("*", promise);
   await promise;
 };
 
-export const mountCloudPull = (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  client: AwsFetch,
-  signal: AbortSignal,
-) => {
+export const mountCloudPull = (client: AwsFetch, signal: AbortSignal) => {
   signal.throwIfAborted();
 
   const syncIntervalId = setInterval(
     () => {
-      pullFromCloud(getSyncStrategy, client).catch((err) => {
+      pullFromCloud(client).catch((err) => {
         console.error("[monoidentity cloud] pull failed", err);
       });
     },

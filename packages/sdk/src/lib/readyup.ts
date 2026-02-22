@@ -12,11 +12,9 @@ import { mountCloudPull, pullFromCloud } from "./storage/backupcloud-pull.js";
 import { mountCloudPush } from "./storage/backupcloud-push.js";
 
 import { switchToHub } from "./utils-hub.js";
-import type { SyncStrategy } from "./storage/utils-storage.js";
 
 export const readyUp = (
   intents: Intent[],
-  getSyncStrategy: (path: string) => SyncStrategy,
   signal: AbortSignal,
   requestBackup: (startBackup: () => void) => void,
 ) => {
@@ -54,7 +52,7 @@ export const readyUp = (
       .then((dir) => {
         signal.throwIfAborted();
         if (!dir) return;
-        mountLocalBackupPush(getSyncStrategy, dir, signal);
+        mountLocalBackupPush(dir, signal);
       })
       .catch((err) => {
         console.error("[monoidentity local] pull failed", err);
@@ -62,11 +60,11 @@ export const readyUp = (
   }
   if (setup.method == "cloud") {
     const client = createCloudClient(setup);
-    void pullFromCloud(getSyncStrategy, client)
+    void pullFromCloud(client)
       .then(() => {
         signal.throwIfAborted();
-        mountCloudPull(getSyncStrategy, client, signal);
-        mountCloudPush(getSyncStrategy, client, signal);
+        mountCloudPull(client, signal);
+        mountCloudPush(client, signal);
       })
       .catch((err) => {
         console.error("[monoidentity cloud] pull failed", err);

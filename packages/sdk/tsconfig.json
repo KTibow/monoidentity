@@ -1,7 +1,7 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "types": ["@types/wicg-file-system-access"],
+    "types": ["@types/wicg-file-system-access", "./src/lib/client.d.ts"],
     "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,
@@ -12,6 +12,6 @@
     "strict": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "noUnusedLocals": true
-  }
+    "noUnusedLocals": true,
+  },
 }

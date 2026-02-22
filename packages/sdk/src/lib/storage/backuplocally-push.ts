@@ -1,11 +1,8 @@
 import { STORAGE_EVENT } from "./storageclient.svelte.js";
-import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
+import { shouldPersist } from "./utils-storage.js";
 import { addSync } from "./utils-sync.js";
 
-const saveToDir = (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  dir: FileSystemDirectoryHandle,
-) => {
+const saveToDir = (dir: FileSystemDirectoryHandle) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
     let key = "";
@@ -43,7 +40,7 @@ const saveToDir = (
     if (!fullKey.startsWith("monoidentity/")) return;
     const key = fullKey.slice("monoidentity/".length);
 
-    const strategy = getSyncStrategy(key);
+    const strategy = MONOIDENTITY_SYNC_FOR(key);
     if (!strategy) {
       if (!shouldPersist(key))
         console.warn("[monoidentity local]", key, "isn't marked to be backed up or saved");
@@ -60,13 +57,9 @@ const saveToDir = (
   };
 };
 
-export const mountLocalBackupPush = (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  dir: FileSystemDirectoryHandle,
-  signal: AbortSignal,
-) => {
+export const mountLocalBackupPush = (dir: FileSystemDirectoryHandle, signal: AbortSignal) => {
   signal.throwIfAborted();
-  const unmount = saveToDir(getSyncStrategy, dir);
+  const unmount = saveToDir(dir);
   const cleanup = () => {
     unmount();
     signal.removeEventListener("abort", onAbort);

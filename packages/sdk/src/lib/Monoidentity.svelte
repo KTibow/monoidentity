@@ -2,15 +2,12 @@
   import { onDestroy, type Snippet } from "svelte";
   import { readyUp } from "./readyup.js";
   import type { Intent } from "./utils-transport.js";
-  import type { SyncStrategy } from "./storage/utils-storage.js";
 
   let {
     intents,
-    getSyncStrategy,
     children,
   }: {
     intents?: Intent[];
-    getSyncStrategy: (path: string) => SyncStrategy;
     children: Snippet;
   } = $props();
 
@@ -22,7 +19,6 @@
   let backup: (() => void) | undefined = $state();
   readyUp(
     intents || [],
-    getSyncStrategy,
     aborter.signal,
     (startBackup) =>
       (backup = () => {

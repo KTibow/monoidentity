@@ -1,6 +1,6 @@
 import { STORAGE_EVENT } from "./storageclient.svelte.js";
 import { addSync, scheduleSync } from "./utils-sync.js";
-import { shouldPersist, type SyncStrategy } from "./utils-storage.js";
+import { shouldPersist } from "./utils-storage.js";
 import type { AwsFetch } from "./backupcloud-connection.js";
 import { setCloudCacheEntry } from "./backupcloud-pull.js";
 import { encodeCloudContent } from "./_backupcloud.js";
@@ -27,11 +27,7 @@ const write = async (key: string, value: string | undefined, client: AwsFetch) =
   if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
 };
 
-export const mountCloudPush = (
-  getSyncStrategy: (path: string) => SyncStrategy,
-  client: AwsFetch,
-  signal: AbortSignal,
-) => {
+export const mountCloudPush = (client: AwsFetch, signal: AbortSignal) => {
   signal.throwIfAborted();
 
   const writeWrapped = async (key: string, value: string | undefined) =>
@@ -44,7 +40,7 @@ export const mountCloudPush = (
     if (!fullKey.startsWith("monoidentity/")) return;
     const key = fullKey.slice("monoidentity/".length);
 
-    const strategy = getSyncStrategy(key);
+    const strategy = MONOIDENTITY_SYNC_FOR(key);
     if (!strategy) {
       if (!shouldPersist(key))
         console.warn("[monoidentity cloud]", key, "isn't marked to be synced");
