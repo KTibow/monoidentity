@@ -31,6 +31,10 @@
       "types": "./dist/+client.d.ts",
       "svelte": "./dist/+client.js"
     },
+    "./init": {
+      "types": "./dist/+init.d.ts",
+      "import": "./dist/+init.js"
+    },
     "./server": {
       "types": "./dist/+server.d.ts",
       "import": "./dist/+server.js"
