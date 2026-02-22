@@ -1,4 +1,5 @@
 {
   "printWidth": 100,
-  "plugins": ["prettier-plugin-svelte"]
+  "plugins": ["prettier-plugin-svelte", "prettier-plugin-astro"],
+  "singleQuote": true
 }

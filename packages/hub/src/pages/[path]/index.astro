@@ -1,0 +1,225 @@
+---
+import Base from '../../layouts/Base.astro';
+
+type Variant = {
+  path: string;
+  app: string;
+  redirectOrigin: string;
+  chooseCloudHere?: boolean;
+  declineHere?: boolean;
+  privacy: string;
+};
+
+export function getStaticPaths() {
+  const RUNDOWN_PRIVACY =
+    'detect your district, and via StudentVue, detect your school and teachers';
+  const variants: Record<string, Omit<Variant, 'path'>> = {
+    'secant.kendell.dev': {
+      app: 'Secant',
+      redirectOrigin: 'https://secant.kendell.dev',
+      privacy:
+        'Your authentication will only be used to connect to StudentVue to load data and quickly access saved authentication.',
+    },
+    'cobblestone.kendell.dev:initial': {
+      app: 'Cobblestone',
+      redirectOrigin: 'https://cobblestone.kendell.dev',
+      chooseCloudHere: true,
+      declineHere: true,
+      privacy: `Any authentication will be used for rundowns to ${RUNDOWN_PRIVACY}. If selected, it may also act to verify your identity for access to cloud storage.`,
+    },
+    'cobblestone.kendell.dev': {
+      app: 'Cobblestone',
+      redirectOrigin: 'https://cobblestone.kendell.dev',
+      privacy: `You're providing authentication for rundowns, so it'll be used to ${RUNDOWN_PRIVACY}.`,
+    },
+    'cosinehq.web.app': {
+      app: 'Cosine',
+      redirectOrigin: 'https://cosinehq.web.app',
+      privacy:
+        'Your authentication will only be used to verify your identity for access to cloud storage.',
+    },
+  };
+
+  return Object.entries(variants).map(([path, variant]) => ({
+    params: { path },
+    props: { path, ...variant },
+  }));
+}
+
+const variant = Astro.props as Variant;
+
+const cloudChoiceEnabled = !!variant.chooseCloudHere;
+const declineEnabled = !!variant.declineHere;
+---
+
+<Base>
+  <form data-redirect-origin={variant.redirectOrigin}>
+    <input
+      name="email"
+      type="email"
+      pattern="[0-9]{7}@apps\.nsd\.org"
+      placeholder="Email"
+      autocomplete="username"
+      autocapitalize="none"
+      autocorrect="off"
+      inputmode="email"
+      required
+      autofocus
+    />
+    <input
+      name="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      enterkeyhint="go"
+      required
+    />
+    {
+      cloudChoiceEnabled ? (
+        <>
+          <button type="submit" value="continue" data-default-submit>
+            Sign in with cloud
+          </button>
+          <button type="submit" value="cloud" class="tonal">
+            Sign in without cloud
+          </button>
+        </>
+      ) : (
+        <button type="submit" value="continue" class="" data-default-submit="">
+          Continue to {variant.app}
+        </button>
+      )
+    }
+    {
+      declineEnabled && (
+        <button type="submit" value="skip" formnovalidate class="text">
+          Skip
+        </button>
+      )
+    }
+  </form>
+
+  <footer>
+    Monoidentity · {variant.privacy}
+  </footer>
+
+  <script>
+    const form = document.querySelector('form') as HTMLFormElement;
+    const redirectOrigin = form.dataset.redirectOrigin as string;
+
+    const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
+    const passwordInput = form.querySelector('input[name="password"]') as HTMLInputElement;
+    const defaultButton = form.querySelector('button[data-default-submit]') as HTMLButtonElement;
+    const skipButton = form.querySelector<HTMLButtonElement>('button[value=skip]');
+
+    const isFilled = () => emailInput.value.trim() != '' && passwordInput.value != '';
+
+    function updateDeny() {
+      if (skipButton) skipButton.style.opacity = isFilled() ? '0' : 'unset';
+    }
+
+    emailInput.addEventListener('input', updateDeny);
+    passwordInput.addEventListener('input', updateDeny);
+
+    const encodeLogin = (text: string) => {
+      const bytes = new TextEncoder().encode(text);
+      let output = '';
+      for (let i = 0; i < bytes.length; i++) output += bytes[i].toString(36).padStart(2, '0');
+      return output;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const submitter =
+        event.submitter instanceof HTMLButtonElement ? event.submitter : defaultButton;
+      const decision = submitter.value || 'continue';
+
+      if (decision != 'skip' && !form.reportValidity()) return;
+
+      const params = new URLSearchParams();
+      if (decision == 'skip') {
+        params.set('monoidentitysync', 'skip');
+      } else {
+        params.set(
+          'monoidentityloginrecognized',
+          encodeLogin(
+            JSON.stringify({
+              email: emailInput.value.trim(),
+              password: passwordInput.value,
+            }),
+          ),
+        );
+        if (decision == 'cloud') params.set('monoidentitysync', 'cloud');
+      }
+
+      const target = new URL(redirectOrigin);
+      target.hash = params.toString();
+      location.href = target.toString();
+    });
+  </script>
+</Base>
+
+<style>
+  :global(body) {
+    min-height: 100dvh;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: url('./blurry-gradient-haikei.svg') center / cover no-repeat;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: auto;
+  }
+
+  input {
+    @apply --m3-body-large;
+    @apply --m3-focus-inward;
+    height: 2.5rem;
+    padding-inline: 1rem;
+    border-radius: var(--m3-shape-medium);
+    background-color: light-dark(
+      color-mix(in oklch, var(--m3c-surface-container-highest) 30%, transparent),
+      color-mix(in oklch, var(--m3c-surface-container-lowest) 30%, transparent)
+    );
+    color: var(--m3c-on-surface);
+  }
+
+  button {
+    @apply --m3-label-large;
+    @apply --m3-focus-outward;
+    height: 2.5rem;
+    border-radius: var(--m3-shape-full);
+    padding-inline: 1.25rem;
+    cursor: pointer;
+    background-color: var(--m3c-primary);
+    color: var(--m3c-on-primary);
+    transition: opacity 0.15s;
+  }
+
+  button:disabled {
+    opacity: 0.38;
+    cursor: default;
+  }
+
+  button.tonal {
+    background-color: var(--m3c-secondary-container);
+    color: var(--m3c-on-secondary-container);
+  }
+
+  button.text {
+    background-color: transparent;
+    color: var(--m3c-on-surface-variant);
+  }
+
+  footer {
+    @apply --m3-body-small;
+    text-align: center;
+    max-width: 50rem;
+    color: var(--m3c-on-surface-variant);
+  }
+</style>

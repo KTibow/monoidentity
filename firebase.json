@@ -1,6 +1,7 @@
 {
   "hosting": {
     "public": "packages/hub/dist",
+    "cleanUrls": true,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "headers": [
       {
@@ -13,7 +14,7 @@
         ]
       },
       {
-        "source": "/assets/**",
+        "source": "/_astro/**",
         "headers": [
           {
             "key": "cache-control",

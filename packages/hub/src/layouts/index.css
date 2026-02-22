@@ -1,0 +1,212 @@
+@import '@unocss/reset/tailwind-v4.css';
+@import '@fontsource-variable/inter/opsz.css';
+:root {
+  @apply --m3-body-large;
+  background-color: var(--m3c-surface);
+  color: var(--m3c-on-surface);
+  box-sizing: border-box;
+  color-scheme: light dark;
+  --m3-font: Inter Variable, system-ui;
+  --m3-shape-none: 0;
+  --m3-shape-extra-small: 4px;
+  --m3-shape-small: 8px;
+  --m3-shape-medium: 12px;
+  --m3-shape-large: 16px;
+  --m3-shape-large-increased: 20px;
+  --m3-shape-extra-large: 28px;
+  --m3-shape-full: calc(infinity * 1px);
+  --m3c-surface: light-dark(#fff3f9, #1f031e);
+  --m3c-surface-container-lowest: light-dark(#fff, #000);
+  --m3c-surface-container-low: light-dark(#ffebf8, #260525);
+  --m3c-surface-container: light-dark(#ffdff6, #2f0a2d);
+  --m3c-surface-container-high: light-dark(#ffd7f6, #370f35);
+  --m3c-surface-container-highest: light-dark(#ffcef5, #40143e);
+  --m3c-on-surface: light-dark(#442341, #ffdbf6);
+  --m3c-on-surface-variant: light-dark(#754f70, #cb9dc2);
+  --m3c-outline: light-dark(#936a8c, #91688b);
+  --m3c-outline-variant: light-dark(#cd9fc4, #603c5b);
+  --m3c-inverse-surface: light-dark(#1f031e, #fff7f9);
+  --m3c-inverse-on-surface: light-dark(#bb8fb3, #6e4969);
+  --m3c-primary: light-dark(#a81c7c, #ff84cb);
+  --m3c-on-primary: light-dark(#ffeff4, #5e0043);
+  --m3c-primary-container: #ff69c5;
+  --m3c-on-primary-container: #490033;
+  --m3c-inverse-primary: light-dark(#fc66c2, #ac217f);
+  --m3c-secondary: light-dark(#8e3a8a, #fe9cf4);
+  --m3c-on-secondary: light-dark(#ffeef8, #671466);
+  --m3c-secondary-container: light-dark(#ffbdf4, #752373);
+  --m3c-on-secondary-container: light-dark(#762474, #ffbbf4);
+  --m3c-tertiary: light-dark(#3a53b7, #879dff);
+  --m3c-on-tertiary: light-dark(#f2f1ff, #001b6b);
+  --m3c-tertiary-container: light-dark(#9aacff, #778ff7);
+  --m3c-on-tertiary-container: light-dark(#002486, #00104a);
+  --m3c-error: light-dark(#b41340, #ff6e84);
+  --m3c-on-error: light-dark(#ffefef, #490013);
+  --m3c-error-container: light-dark(#f74b6d, #a70138);
+  --m3c-on-error-container: light-dark(#510017, #ffb2b9);
+  --m3c-shadow: #000;
+  --m3c-scrim: #000;
+  --m3c-on-on-primary: light-dark(#a71b7b, #ff84cc);
+  --m3c-primary-container-subtle: light-dark(#ffc4e1, #5a0040);
+  --m3c-on-primary-container-subtle: light-dark(#8d0067, #ff7fca);
+  --m3c-secondary-container-subtle: light-dark(#ffc1f4, #540054);
+  --m3c-on-secondary-container-subtle: light-dark(#782676, #e98adf);
+  --m3c-tertiary-container-subtle: light-dark(#cad2ff, #00217c);
+  --m3c-on-tertiary-container-subtle: light-dark(#243fa4, #92a6ff);
+  --m3c-error-container-subtle: light-dark(#ffc6cb, #5f001c);
+  --m3c-on-error-container-subtle: light-dark(#960031, #ff8796);
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+/* As the largest text on the screen, display styles are reserved for short, important text or numerals. */
+@mixin --m3-display-large {
+  font-family: var(--m3-font);
+  font-size: 3.563rem;
+  line-height: 1.123;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-display-medium {
+  font-family: var(--m3-font);
+  font-size: 2.813rem;
+  line-height: 1.156;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-display-small {
+  font-family: var(--m3-font);
+  font-size: 2.25rem;
+  line-height: 1.222;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+
+/* Headlines are best-suited for short, high-emphasis text on smaller screens. */
+@mixin --m3-headline-large {
+  font-family: var(--m3-font);
+  font-size: 2rem;
+  line-height: 1.25;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-headline-medium {
+  font-family: var(--m3-font);
+  font-size: 1.75rem;
+  line-height: 1.286;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-headline-small {
+  font-family: var(--m3-font);
+  font-size: 1.5rem;
+  line-height: 1.333;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+
+/* Titles are smaller than headline styles, and should be used for medium-emphasis text that remains relatively short. */
+@mixin --m3-title-large {
+  font-family: var(--m3-font);
+  font-size: 1.375rem;
+  line-height: 1.273;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-title-medium {
+  font-family: var(--m3-font);
+  font-size: 1rem;
+  line-height: 1.5;
+  /*letter-spacing: 0;*/
+  font-weight: 500;
+}
+@mixin --m3-title-small {
+  font-family: var(--m3-font);
+  font-size: 0.875rem;
+  line-height: 1.429;
+  /*letter-spacing: 0.006rem;*/
+  font-weight: 500;
+}
+
+/* Label styles are smaller, utilitarian styles, used for things like the text inside components
+or for very small text in the content body, such as captions. */
+@mixin --m3-label-large {
+  font-family: var(--m3-font);
+  font-size: 0.875rem;
+  line-height: 1.429;
+  /*letter-spacing: 0.006rem;*/
+  font-weight: 500;
+}
+@mixin --m3-label-medium {
+  font-family: var(--m3-font);
+  font-size: 0.75rem;
+  line-height: 1.333;
+  /*letter-spacing: 0.031rem;*/
+  font-weight: 500;
+}
+@mixin --m3-label-small {
+  font-family: var(--m3-font);
+  font-size: 0.688rem;
+  line-height: 1.455;
+  /*letter-spacing: 0.031rem;*/
+  font-weight: 500;
+}
+
+/* Body styles are used for longer passages of text in your app. */
+@mixin --m3-body-large {
+  font-family: var(--m3-font);
+  font-size: 1rem;
+  line-height: 1.5;
+  /*letter-spacing: 0;*/
+  font-weight: 400;
+}
+@mixin --m3-body-medium {
+  font-family: var(--m3-font);
+  font-size: 0.875rem;
+  line-height: 1.429;
+  /*letter-spacing: 0.016rem;*/
+  font-weight: 400;
+}
+@mixin --m3-body-small {
+  font-family: var(--m3-font);
+  font-size: 0.75rem;
+  line-height: 1.333;
+  /*letter-spacing: 0.025rem;*/
+  font-weight: 400;
+}
+
+@keyframes focus-outward {
+  0% {
+    box-shadow: 0 0 0 0px var(--m3c-secondary);
+  }
+  100% {
+    box-shadow: 0 0 0 3px var(--m3c-secondary);
+  }
+}
+@keyframes focus-inward {
+  0% {
+    box-shadow: inset 0 0 0 0px var(--m3c-secondary);
+  }
+  100% {
+    box-shadow: inset 0 0 0 3px var(--m3c-secondary);
+  }
+}
+@mixin --m3-focused-outward {
+  animation: focus-outward 0.6s cubic-bezier(0.14, 5.63, 0.4, 0.5) forwards;
+}
+@mixin --m3-focused-inward {
+  animation: focus-inward 0.6s cubic-bezier(0.14, 5.63, 0.4, 0.5) forwards;
+}
+@mixin --m3-focus-inward {
+  &:focus-visible {
+    @apply --m3-focused-inward;
+  }
+}
+@mixin --m3-focus-none {
+  animation: none;
+}

@@ -3,6 +3,7 @@ build
 functions
 packages/firebase-functions/lib
 .svelte-kit
+.astro
 node_modules
 .env
 *.log

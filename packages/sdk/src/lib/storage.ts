@@ -3,7 +3,6 @@ import { parse as useSchema } from "valibot";
 import { decode } from "./utils-base36.js";
 import { login as loginSchema } from "./utils-transport.js";
 import { storageClient } from "./storageclient.svelte.js";
-import { switchToHub } from "./utils-hub.js";
 
 const LOGIN_RECOGNIZED_PATH = ".local/login.encjson";
 export const getLoginRecognized = () => {
@@ -17,7 +16,9 @@ export const setLoginRecognized = (login: string) => {
   client[LOGIN_RECOGNIZED_PATH] = login;
 };
 export const relog = () => {
-  switchToHub([{ loginRecognized: true }]);
+  location.href =
+    "https://monoidentity.web.app/" + location.origin.replace(/^https?:\/\//, "");
+  throw new Error("relogging");
 };
 
 export const VERIFICATION_PATH = ".local/verification.jwt";
