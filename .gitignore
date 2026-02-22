@@ -1,6 +1,5 @@
 dist
 build
-predist
 functions
 packages/firebase-functions/lib
 .svelte-kit
