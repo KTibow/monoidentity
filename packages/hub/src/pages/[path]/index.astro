@@ -104,6 +104,8 @@ const declineEnabled = !!variant.declineHere;
   </footer>
 
   <script>
+    import { encode } from 'base36-esm';
+
     const form = document.querySelector('form') as HTMLFormElement;
     const defaultRedirect = form.dataset.redirect as string;
     const redirectOverride = new URLSearchParams(location.hash.slice(1)).get('redirect');
@@ -137,13 +139,6 @@ const declineEnabled = !!variant.declineHere;
     emailInput.addEventListener('input', updateDeny);
     passwordInput.addEventListener('input', updateDeny);
 
-    const encodeLogin = (text: string) => {
-      const bytes = new TextEncoder().encode(text);
-      let output = '';
-      for (let i = 0; i < bytes.length; i++) output += bytes[i].toString(36).padStart(2, '0');
-      return output;
-    };
-
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const submitter =
@@ -159,7 +154,7 @@ const declineEnabled = !!variant.declineHere;
       if (emailInput.value) {
         params.set(
           'monoidentityloginrecognized',
-          encodeLogin(
+          encode(
             JSON.stringify({
               email: emailInput.value.trim(),
               password: passwordInput.value,

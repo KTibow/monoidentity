@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
-    "astro": "^5.17.1"
+    "astro": "^5.17.1",
+    "base36-esm": "link:../base36-esm"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.2.8",

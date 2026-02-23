@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "aws4fetch": "^1.0.20",
-    "base36-esm": "^0.1.0",
     "devalue": "^5.6.2",
     "idb-keyval": "^6.2.2",
     "valibot": "^1.2.0"

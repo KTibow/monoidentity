@@ -20,7 +20,7 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm run build"
+    "prepare": "pnpm run build"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
