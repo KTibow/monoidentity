@@ -21,7 +21,7 @@ importers:
         specifier: ^3.4.1
         version: 3.4.1(prettier@3.8.1)(svelte@5.51.0)
       typescript:
-        specifier: ~5.9.3
+        specifier: ^5.9.3
         version: 5.9.3
 
   packages/base36-esm:
@@ -32,9 +32,6 @@ importers:
       tsdown:
         specifier: ^0.18.1
         version: 0.18.4(oxc-resolver@11.17.1)(publint@0.3.17)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
 
   packages/firebase-functions:
     dependencies:
@@ -75,10 +72,17 @@ importers:
         version: 0.4.1(vite@8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
 
   packages/monoidentity-sync:
+    dependencies:
+      aws4fetch:
+        specifier: ^1.0.20
+        version: 1.0.20
+      idb-keyval:
+        specifier: ^6.2.2
+        version: 6.2.2
     devDependencies:
-      '@types/node':
-        specifier: ^25.0.3
-        version: 25.2.3
+      '@types/wicg-file-system-access':
+        specifier: ^2023.10.7
+        version: 2023.10.7
       base36-esm:
         specifier: link:../base36-esm
         version: link:../base36-esm
@@ -94,12 +98,12 @@ importers:
       tsdown:
         specifier: ^0.18.1
         version: 0.18.4(oxc-resolver@11.17.1)(publint@0.3.17)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
       valibot:
         specifier: ^1.2.0
         version: 1.2.0(typescript@5.9.3)
+      vite:
+        specifier: 8.0.0-beta.15
+        version: 8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2)
 
   packages/monoidentity-verification:
     dependencies:
@@ -131,15 +135,12 @@ importers:
 
   packages/sdk:
     dependencies:
-      aws4fetch:
-        specifier: ^1.0.20
-        version: 1.0.20
+      base36-esm:
+        specifier: ^0.1.0
+        version: 0.1.0
       devalue:
         specifier: ^5.6.2
         version: 5.6.2
-      idb-keyval:
-        specifier: ^6.2.2
-        version: 6.2.2
       valibot:
         specifier: ^1.2.0
         version: 1.2.0(typescript@5.9.3)
@@ -156,27 +157,15 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.4
         version: 6.2.4(svelte@5.51.0)(vite@8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
-      '@types/wicg-file-system-access':
-        specifier: ^2023.10.7
-        version: 2023.10.7
-      monoserve:
-        specifier: ^3.2.4
-        version: 3.2.4(devalue@5.6.2)(vite@8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
       publint:
         specifier: ^0.3.17
         version: 0.3.17
-      rolldown:
-        specifier: 1.0.0-rc.4
-        version: 1.0.0-rc.4
       svelte:
         specifier: ^5.51.0
         version: 5.51.0
       svelte-check:
         specifier: ^4.4.0
         version: 4.4.0(picomatch@4.0.3)(svelte@5.51.0)(typescript@5.9.3)
-      tinyglobby:
-        specifier: ^0.2.15
-        version: 0.2.15
       vite:
         specifier: 8.0.0-beta.15
         version: 8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2)
@@ -1872,6 +1861,9 @@ packages:
 
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
+
+  base36-esm@0.1.0:
+    resolution: {integrity: sha512-tS/RrucuZs937n7V7Ri1ASbznlrAxku/MSkzQwZkU6VPjBjXah1vZvTZ13eojlwG3m6Tso17Qa5nR0GnbwqP5Q==}
 
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
@@ -5502,6 +5494,8 @@ snapshots:
   bail@2.0.2: {}
 
   base-64@1.0.0: {}
+
+  base36-esm@0.1.0: {}
 
   base64-js@1.5.1: {}
 

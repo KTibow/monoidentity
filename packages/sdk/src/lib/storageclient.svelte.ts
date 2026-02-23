@@ -1,6 +1,7 @@
-export const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
+const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
+const STORAGE_EVENT = 'monoidentity-storage';
 
-export const waitForSync = async (key: string) => {
+const waitForSync = async (key: string) => {
   await new Promise<void>((resolve, reject) =>
     window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
   );
@@ -11,7 +12,6 @@ declare global {
     'monoidentity-storage': CustomEvent<{ key: string; value: string | undefined }>;
   }
 }
-export const STORAGE_EVENT = 'monoidentity-storage';
 const announce = (key: string, value?: string) => {
   // Announce to all, even third parties
   window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value } }));

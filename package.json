@@ -12,14 +12,14 @@
     "check": "pnpm -r --if-present check",
     "format": "prettier --write .",
     "lint": "prettier --check .",
-    "knip": "pnpm -r --if-present knip"
+    "knip": "knip"
   },
   "devDependencies": {
     "knip": "^5.83.1",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-svelte": "^3.4.1",
-    "typescript": "~5.9.3"
+    "typescript": "^5.9.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

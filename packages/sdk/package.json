@@ -14,8 +14,7 @@
     "prepare": "svelte-kit sync || echo ''",
     "prepack": "svelte-kit sync && svelte-package && publint",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "knip": "knip"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "files": [
     "dist",
@@ -41,9 +40,8 @@
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "aws4fetch": "^1.0.20",
+    "base36-esm": "^0.1.0",
     "devalue": "^5.6.2",
-    "idb-keyval": "^6.2.2",
     "valibot": "^1.2.0"
   },
   "devDependencies": {
@@ -51,13 +49,9 @@
     "@sveltejs/kit": "^2.51.0",
     "@sveltejs/package": "^2.5.7",
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
-    "@types/wicg-file-system-access": "^2023.10.7",
-    "monoserve": "^3.2.4",
     "publint": "^0.3.17",
-    "rolldown": "1.0.0-rc.4",
     "svelte": "^5.51.0",
     "svelte-check": "^4.4.0",
-    "tinyglobby": "^0.2.15",
     "vite": "8.0.0-beta.15"
   },
   "keywords": [

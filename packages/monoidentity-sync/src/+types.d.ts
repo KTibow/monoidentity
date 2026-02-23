@@ -1,3 +1,4 @@
+export type Bucket = { base: string; accessKeyId: string; secretAccessKey: string };
 export type SyncStrategy =
   | undefined // do not upload or download; will be deleted on next sync unless shouldPersist(key)
   | { mode: 'immediate' } // instant sync (e.g., config)
