@@ -35,6 +35,7 @@ export const openHub = (path: string) => {
   location.href = target.toString();
   throw new Error('relogging');
 };
+export const relog = () => openHub(MONOIDENTITY_APP_ID);
 
 export const getStorage = (realm: 'config' | 'userdata' | 'cache' | (string & {})) => {
   const prefix = `.${realm}/${MONOIDENTITY_APP_ID}/`;
