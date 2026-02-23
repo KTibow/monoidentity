@@ -77,10 +77,10 @@ const declineEnabled = !!variant.declineHere;
     {
       cloudChoiceEnabled ? (
         <>
-          <button type="submit" value="continue" data-default-submit>
+          <button type="submit" value="cloud" data-default-submit>
             Sign in with cloud
           </button>
-          <button type="submit" value="cloud" class="tonal">
+          <button type="submit" value="continue" class="tonal">
             Sign in without cloud
           </button>
         </>
@@ -153,9 +153,10 @@ const declineEnabled = !!variant.declineHere;
       if (decision != 'skip' && !form.reportValidity()) return;
 
       const params = new URLSearchParams();
-      if (decision == 'skip') {
-        params.set('monoidentitysync', 'skip');
-      } else {
+
+      if (decision == 'cloud') params.set('monoidentitysync', 'cloud');
+
+      if (emailInput.value) {
         params.set(
           'monoidentityloginrecognized',
           encodeLogin(
@@ -165,7 +166,6 @@ const declineEnabled = !!variant.declineHere;
             }),
           ),
         );
-        if (decision == 'cloud') params.set('monoidentitysync', 'cloud');
       }
 
       const target = new URL(redirect);

@@ -7,7 +7,8 @@ if (monoidentityloginrecognized) {
   setLoginRecognized(monoidentityloginrecognized);
 }
 
-if (params.size) {
+export const loaded = Boolean(params.size);
+if (loaded) {
   history.replaceState(null, '', location.pathname);
 }
 
