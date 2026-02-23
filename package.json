@@ -15,10 +15,10 @@
     "knip": "knip"
   },
   "devDependencies": {
-    "knip": "^5.83.1",
+    "knip": "^5.85.0",
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-svelte": "^3.4.1",
+    "prettier-plugin-svelte": "^3.5.0",
     "typescript": "^5.9.3"
   },
   "pnpm": {
