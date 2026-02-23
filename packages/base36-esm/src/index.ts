@@ -1,9 +1,9 @@
 // This isn't encryption, it's just to prevent casual observation of sensitive data
 export const encode = (text: string) => {
   const bytes = new TextEncoder().encode(text);
-  let output = "";
+  let output = '';
   for (let i = 0; i < bytes.length; i++) {
-    output += bytes[i].toString(36).padStart(2, "0");
+    output += bytes[i].toString(36).padStart(2, '0');
   }
   return output;
 };

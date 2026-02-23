@@ -1,8 +1,10 @@
 import { stringify, parse } from 'devalue';
 import { parse as useSchema } from 'valibot';
-import { decode } from './utils-base36.js';
-import { login as loginSchema } from './utils-transport.js';
+import { decode } from '../../../base36-esm/src/index.js';
 import { storageClient } from './storageclient.svelte.js';
+import { object, pipe, email, string } from 'valibot';
+
+const loginSchema = object({ email: pipe(string(), email()), password: string() });
 
 const LOGIN_RECOGNIZED_PATH = '.local/login.encjson';
 export const getLoginRecognized = () => {
@@ -33,8 +35,6 @@ export const openHub = (path: string) => {
   location.href = target.toString();
   throw new Error('relogging');
 };
-
-export const VERIFICATION_PATH = '.local/verification.jwt';
 
 export const getStorage = (realm: 'config' | 'userdata' | 'cache' | (string & {})) => {
   const prefix = `.${realm}/${MONOIDENTITY_APP_ID}/`;

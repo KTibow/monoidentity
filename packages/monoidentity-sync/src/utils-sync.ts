@@ -1,4 +1,4 @@
-import { SYNC_REQUEST_EVENT } from '../../storageclient.svelte.js';
+const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
 
 export type SyncRequestDetail = {
   key: string;
