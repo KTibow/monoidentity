@@ -1,5 +1,5 @@
-const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
-const STORAGE_EVENT = 'monoidentity-storage';
+export const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
+export const STORAGE_EVENT = 'monoidentity-storage';
 
 const waitForSync = async (key: string) => {
   await new Promise<void>((resolve, reject) =>

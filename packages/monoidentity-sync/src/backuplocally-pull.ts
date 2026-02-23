@@ -1,6 +1,6 @@
 import { get, set } from 'idb-keyval';
 import { canBackup } from './utils-localstorage.js';
-import { storageClient } from './storageclient.svelte.js';
+import { storageClient } from 'monoidentity';
 import { store } from './utils-idb.js';
 import { addSync } from './utils-sync.js';
 

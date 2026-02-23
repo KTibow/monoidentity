@@ -1,4 +1,4 @@
-import type { Bucket } from './+types';
+import type { Bucket } from './types';
 import { AwsClient } from 'aws4fetch';
 
 export type AwsFetch = (path: string, options?: RequestInit) => Promise<Response>;

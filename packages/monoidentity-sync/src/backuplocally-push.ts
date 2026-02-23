@@ -1,4 +1,4 @@
-import { STORAGE_EVENT } from './storageclient.svelte.js';
+import { STORAGE_EVENT } from 'monoidentity';
 import { shouldPersist } from './utils-storage.js';
 import { addSync } from './utils-sync.js';
 

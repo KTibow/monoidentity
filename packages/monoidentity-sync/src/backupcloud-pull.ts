@@ -1,4 +1,4 @@
-import { storageClient } from './storageclient.svelte.js';
+import { storageClient } from 'monoidentity';
 import { addSync } from './utils-sync.js';
 import { shouldPersist } from './utils-storage.js';
 import { get, set } from 'idb-keyval';

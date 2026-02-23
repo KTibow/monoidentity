@@ -1,4 +1,4 @@
-import { STORAGE_EVENT } from './storageclient.svelte.js';
+import { STORAGE_EVENT } from 'monoidentity';
 import { addSync, scheduleSync } from './utils-sync.js';
 import { shouldPersist } from './utils-storage.js';
 import type { AwsFetch } from './backupcloud-connection.js';

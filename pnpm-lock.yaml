@@ -92,6 +92,9 @@ importers:
       dotenv:
         specifier: ^17.3.1
         version: 17.3.1
+      monoidentity:
+        specifier: ^0.31.1
+        version: 0.31.1(svelte@5.51.0)(typescript@5.9.3)
       monoserve:
         specifier: ^3.2.4
         version: 3.2.4(devalue@5.6.2)(vite@8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
@@ -2909,6 +2912,11 @@ packages:
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
+
+  monoidentity@0.31.1:
+    resolution: {integrity: sha512-m65nS5SmU+dQAjdQ/n0G+bTCuWO3RKhiyhgeaYFNDbZKYDQ+ZQYJymb8wWLsdDLoXj7fomEF6dqlKDYABypaFA==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   monoserve@3.2.4:
     resolution: {integrity: sha512-QTv1Sp8N7CSwgTv0ATrkai2K+kVlZ8UnkCfm9XYlo6dU0SVm2WGi3NUO04gz+NfnrkY9XBirlP827BHSFfa/aQ==}
@@ -6839,6 +6847,15 @@ snapshots:
     optional: true
 
   minimist@1.2.8: {}
+
+  monoidentity@0.31.1(svelte@5.51.0)(typescript@5.9.3):
+    dependencies:
+      base36-esm: 0.1.0
+      devalue: 5.6.2
+      svelte: 5.51.0
+      valibot: 1.2.0(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
 
   monoserve@3.2.4(devalue@5.6.2)(vite@8.0.0-beta.15(@types/node@25.2.3)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2)):
     dependencies:
