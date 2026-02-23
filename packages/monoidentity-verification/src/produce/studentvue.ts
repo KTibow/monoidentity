@@ -1,5 +1,5 @@
-import { districtApps } from "school-districts";
-import fastStudentvue from "fast-studentvue";
+import { districtApps } from 'school-districts';
+import fastStudentvue from 'fast-studentvue';
 
 const studentvue = (
   email: string,
@@ -10,32 +10,32 @@ const studentvue = (
   fastStudentvue(
     { email, password },
     () => {
-      throw new Error("Invalid auth");
+      throw new Error('Invalid auth');
     },
     methodName,
     params,
   );
 
 export const produceStudentVue = async (email: string, password: string) => {
-  const domain = email.split("@")[1];
+  const domain = email.split('@')[1];
   const apps = districtApps[domain];
   if (!apps) {
-    throw new Error("Unknown domain");
+    throw new Error('Unknown domain');
   }
 
-  const svApp = apps.find((app) => app.app == "StudentVue");
+  const svApp = apps.find((app) => app.app == 'StudentVue');
   if (!svApp) {
-    throw new Error("Domain does not support StudentVue");
+    throw new Error('Domain does not support StudentVue');
   }
 
-  const response = await studentvue(email, password, "GenerateAuthToken", {
-    Username: "",
-    TokenForClassWebSite: "true",
-    DocumentID: "1",
-    AssignmentID: "1",
+  const response = await studentvue(email, password, 'GenerateAuthToken', {
+    Username: '',
+    TokenForClassWebSite: 'true',
+    DocumentID: '1',
+    AssignmentID: '1',
   });
 
-  const token = response.AuthToken["@_EncyToken"];
+  const token = response.AuthToken['@_EncyToken'];
 
   return token;
 };

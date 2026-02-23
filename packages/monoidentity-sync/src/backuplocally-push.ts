@@ -1,14 +1,14 @@
-import { STORAGE_EVENT } from "./storageclient.svelte.js";
-import { shouldPersist } from "./utils-storage.js";
-import { addSync } from "./utils-sync.js";
+import { STORAGE_EVENT } from './storageclient.svelte.js';
+import { shouldPersist } from './utils-storage.js';
+import { addSync } from './utils-sync.js';
 
 const saveToDir = (dir: FileSystemDirectoryHandle) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
-    let key = "";
+    let key = '';
     let parent = dir;
     for (const path of route) {
-      key += "/";
+      key += '/';
       key += path;
       if (!dirCache[key]) {
         dirCache[key] = await parent.getDirectoryHandle(path, { create: true });
@@ -19,10 +19,10 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
   };
 
   const writeFile = async (key: string, value?: string) => {
-    const pathParts = key.split("/");
+    const pathParts = key.split('/');
     const name = pathParts.at(-1)!;
 
-    console.debug("[monoidentity local] saving", name);
+    console.debug('[monoidentity local] saving', name);
     const parent = await getDirCached(pathParts.slice(0, -1));
     if (value != undefined) {
       const file = await parent.getFileHandle(name, { create: true });
@@ -37,13 +37,13 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
 
   const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
     const fullKey = event.detail.key;
-    if (!fullKey.startsWith("monoidentity/")) return;
-    const key = fullKey.slice("monoidentity/".length);
+    if (!fullKey.startsWith('monoidentity/')) return;
+    const key = fullKey.slice('monoidentity/'.length);
 
     const strategy = MONOIDENTITY_SYNC_FOR(key);
     if (!strategy) {
       if (!shouldPersist(key))
-        console.warn("[monoidentity local]", key, "isn't marked to be backed up or saved");
+        console.warn('[monoidentity local]', key, "isn't marked to be backed up or saved");
       return;
     }
 
@@ -62,11 +62,11 @@ export const mountLocalBackupPush = (dir: FileSystemDirectoryHandle, signal: Abo
   const unmount = saveToDir(dir);
   const cleanup = () => {
     unmount();
-    signal.removeEventListener("abort", onAbort);
+    signal.removeEventListener('abort', onAbort);
   };
   const onAbort = () => {
     cleanup();
   };
-  signal.addEventListener("abort", onAbort, { once: true });
+  signal.addEventListener('abort', onAbort, { once: true });
   return cleanup;
 };

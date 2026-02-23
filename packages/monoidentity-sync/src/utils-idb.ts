@@ -1,3 +1,3 @@
-import { createStore } from "idb-keyval";
+import { createStore } from 'idb-keyval';
 
-export const store = createStore("monoidentity-x", "keyval");
+export const store = createStore('monoidentity-x', 'keyval');

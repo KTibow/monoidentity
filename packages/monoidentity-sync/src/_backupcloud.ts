@@ -1,5 +1,4 @@
-const isPlainTextCloudObject = (key: string) =>
-  key.endsWith(".md") || key.endsWith(".devalue");
+const isPlainTextCloudObject = (key: string) => key.endsWith('.md') || key.endsWith('.devalue');
 
 export const encodeCloudContent = (key: string, value: string) => {
   if (isPlainTextCloudObject(key)) {
@@ -19,7 +18,7 @@ export const decodeCloudContent = async (key: string, response: Response) => {
   }
 
   const buf = new Uint8Array(await response.arrayBuffer());
-  let content = "";
+  let content = '';
   const chunk = 8192;
   for (let i = 0; i < buf.length; i += chunk) {
     content += String.fromCharCode.apply(null, buf.subarray(i, i + chunk) as unknown as number[]);

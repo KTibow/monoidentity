@@ -1,6 +1,6 @@
 <script lang="ts">
-  import icon from "../../../hub/icon.svg";
-  import "./app.css";
+  import icon from '../../../hub/icon.svg';
+  import './app.css';
   let { children } = $props();
 </script>
 

@@ -9,6 +9,6 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "noUnusedLocals": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+  },
 }

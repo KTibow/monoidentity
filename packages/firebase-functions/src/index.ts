@@ -1,15 +1,15 @@
-import { onRequest } from "firebase-functions/v2/https";
+import { onRequest } from 'firebase-functions/v2/https';
 
 const functionModules = import.meta.glob<{ default: (req: Request) => Promise<Response> }>(
-  "../../*/functions/*.js",
+  '../../*/functions/*.js',
 );
 
 function createStandardRequest(req: any): Request {
-  const url = `${req.protocol}://${req.get("host") || "localhost"}${req.url}`;
+  const url = `${req.protocol}://${req.get('host') || 'localhost'}${req.url}`;
 
   let body: string | undefined;
-  if (req.method != "GET" && req.method != "HEAD") {
-    if (typeof req.body == "object" && req.body) {
+  if (req.method != 'GET' && req.method != 'HEAD') {
+    if (typeof req.body == 'object' && req.body) {
       // when content-type = application/json
       body = JSON.stringify(req.body);
     } else {
@@ -24,21 +24,21 @@ function createStandardRequest(req: any): Request {
   });
 }
 
-export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+export const monoserve = onRequest({ invoker: 'public' }, async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method == "OPTIONS") {
-    res.status(204).send("");
+  if (req.method == 'OPTIONS') {
+    res.status(204).send('');
     return;
   }
 
-  const pathParts = req.path.split("/").filter(Boolean);
+  const pathParts = req.path.split('/').filter(Boolean);
   const functionName = pathParts[pathParts.length - 1];
 
   if (!functionName) {
-    res.status(404).send("Function not found");
+    res.status(404).send('Function not found');
     return;
   }
 
@@ -47,7 +47,7 @@ export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
   );
 
   if (!modulePath) {
-    res.status(404).send("Function not found");
+    res.status(404).send('Function not found');
     return;
   }
 
@@ -74,6 +74,6 @@ export const monoserve = onRequest({ invoker: "public" }, async (req, res) => {
     res.end();
   } catch (error) {
     console.error(`Error in monoserve handler '${functionName}':`, error);
-    res.status(500).send("Internal server error");
+    res.status(500).send('Internal server error');
   }
 });
