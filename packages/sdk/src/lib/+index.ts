@@ -4,7 +4,11 @@ import { decode } from 'base36-esm';
 import { storageClient } from './storageclient.svelte.js';
 import { object, pipe, email, string } from 'valibot';
 
-export { SYNC_REQUEST_EVENT, STORAGE_EVENT } from './storageclient.svelte.js';
+export {
+  SYNC_REQUEST_EVENT,
+  STORAGE_EVENT,
+  storageClient as _storageClient,
+} from './storageclient.svelte.js';
 
 const loginSchema = object({ email: pipe(string(), email()), password: string() });
 
