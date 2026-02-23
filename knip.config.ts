@@ -25,6 +25,7 @@ const config: KnipConfig = {
       project: ['src/**/*.ts'],
       ignoreUnresolved: ['\\$env/static/private'],
       ignoreBinaries: ['tsc'],
+      ignoreDependencies: ['@types/wicg-file-system-access'],
     },
     'packages/monoidentity-verification': {
       entry: ['src/index.ts'],
@@ -35,7 +36,6 @@ const config: KnipConfig = {
     'packages/sdk': {
       entry: ['src/lib/+index.ts', 'src/lib/+receive-callback.ts'],
       project: ['src/**/*.ts'],
-      ignoreDependencies: ['@types/wicg-file-system-access'],
     },
   },
 };
