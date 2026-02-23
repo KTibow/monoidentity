@@ -4,6 +4,7 @@
   @apply --m3-body-large;
   background-color: var(--m3c-surface);
   color: var(--m3c-on-surface);
+  accent-color: var(--m3c-primary);
   box-sizing: border-box;
   color-scheme: light dark;
   --m3-font: Inter Variable, system-ui;
@@ -62,6 +63,10 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100dvh;
+}
+:focus-visible {
+  outline: none;
+  @apply --m3-focused-outward;
 }
 
 /* As the largest text on the screen, display styles are reserved for short, important text or numerals. */
