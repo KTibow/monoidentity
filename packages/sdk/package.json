@@ -28,8 +28,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/+client.d.ts",
-      "svelte": "./dist/+client.js"
+      "types": "./dist/+index.d.ts",
+      "svelte": "./dist/+index.js"
     },
     "./receive-callback": {
       "types": "./dist/+receive-callback.d.ts",
