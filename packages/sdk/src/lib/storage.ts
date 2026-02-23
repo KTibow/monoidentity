@@ -26,7 +26,9 @@ const isLocalhostHost = (host: string) =>
 export const relog = () => {
   const target = new URL(`https://monoidentity.web.app/${MONOIDENTITY_APP_ID}`);
   if (isLocalhostHost(location.hostname)) {
-    target.searchParams.set("redirect", location.origin);
+    const redirectParams = new URLSearchParams();
+    redirectParams.set("redirect", location.origin);
+    target.hash = redirectParams.toString();
   }
   location.href = target.toString();
   throw new Error("relogging");
