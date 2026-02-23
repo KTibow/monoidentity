@@ -1,6 +1,6 @@
 import { get, set } from 'idb-keyval';
 import { canBackup } from './utils-localstorage.js';
-import { storageClient } from 'monoidentity';
+import { _storageClient } from 'monoidentity';
 import { store } from './utils-idb.js';
 import { addSync } from './utils-sync.js';
 
@@ -24,7 +24,7 @@ const restoreFromDir = async (dir: FileSystemDirectoryHandle) => {
   await traverse(dir, '');
   if (!Object.keys(backup).length) return;
 
-  const client = storageClient();
+  const client = _storageClient();
   for (const key in backup) {
     console.debug('[monoidentity local] loading', key);
     client[key] = backup[key];

@@ -90,8 +90,8 @@ importers:
         specifier: ^17.3.1
         version: 17.3.1
       monoidentity:
-        specifier: ^0.31.2
-        version: 0.31.2(svelte@5.53.2)(typescript@5.9.3)
+        specifier: ^0.31.3
+        version: 0.31.3(svelte@5.53.2)(typescript@5.9.3)
       monoserve:
         specifier: ^3.2.4
         version: 3.2.4(devalue@5.6.3)(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
@@ -2733,8 +2733,8 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-  monoidentity@0.31.2:
-    resolution: {integrity: sha512-jVblwhBij/vsLRWANkSO0PQ0cf4D3EJ/BguVAXTi5G6+MdU6Gm49EiguoHfHX7LAaUfRVKuVYrAUeK/Rf1KzCw==}
+  monoidentity@0.31.3:
+    resolution: {integrity: sha512-mO0vmfU4KiiDrsUtSOmtRJXBkb56OIUhIeM4fCwfqwlyEXQiUQrBaYYHvkVgVuyaz5SKaPsrfpWPHmiYUnYQvA==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -6506,7 +6506,7 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  monoidentity@0.31.2(svelte@5.53.2)(typescript@5.9.3):
+  monoidentity@0.31.3(svelte@5.53.2)(typescript@5.9.3):
     dependencies:
       base36-esm: 0.1.0
       devalue: 5.6.3

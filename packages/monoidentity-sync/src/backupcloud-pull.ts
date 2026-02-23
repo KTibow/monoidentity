@@ -1,4 +1,4 @@
-import { storageClient } from 'monoidentity';
+import { _storageClient } from 'monoidentity';
 import { addSync } from './utils-sync.js';
 import { shouldPersist } from './utils-storage.js';
 import { get, set } from 'idb-keyval';
@@ -74,7 +74,7 @@ const _pullFromCloud = async (client: AwsFetch) => {
   await cachePromise;
   const remote = await loadFromCloud(objects, client);
 
-  const local = storageClient();
+  const local = _storageClient();
   for (const key of Object.keys(local)) {
     if (key in remote) continue;
     if (shouldPersist(key)) continue;
