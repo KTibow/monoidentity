@@ -109,9 +109,7 @@ const declineEnabled = !!variant.declineHere;
     const redirectOverride = new URLSearchParams(location.hash.slice(1)).get('redirect');
     let redirect = defaultRedirect;
     if (redirectOverride) {
-      const candidate = new URL(
-        redirectOverride.includes('://') ? redirectOverride : `http://${redirectOverride}`,
-      );
+      const candidate = new URL(redirectOverride);
       if (
         candidate.hostname == 'localhost' ||
         candidate.hostname == '127.0.0.1' ||
@@ -119,7 +117,9 @@ const declineEnabled = !!variant.declineHere;
         candidate.hostname == '[::1]' ||
         candidate.hostname.endsWith('.localhost')
       ) {
-        redirect = candidate.toString();
+        redirect = candidate.href;
+      } else {
+        console.warn('Ignoring invalid redirect', candidate.href);
       }
     }
 
