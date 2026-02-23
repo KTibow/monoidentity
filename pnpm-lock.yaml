@@ -116,6 +116,9 @@ importers:
       aws4fetch:
         specifier: ^1.0.20
         version: 1.0.20
+      base36-esm:
+        specifier: ^0.1.0
+        version: 0.1.0
       devalue:
         specifier: ^5.6.2
         version: 5.6.2
@@ -1854,6 +1857,9 @@ packages:
 
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
+
+  base36-esm@0.1.0:
+    resolution: {integrity: sha512-tS/RrucuZs937n7V7Ri1ASbznlrAxku/MSkzQwZkU6VPjBjXah1vZvTZ13eojlwG3m6Tso17Qa5nR0GnbwqP5Q==}
 
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
@@ -5484,6 +5490,8 @@ snapshots:
   bail@2.0.2: {}
 
   base-64@1.0.0: {}
+
+  base36-esm@0.1.0: {}
 
   base64-js@1.5.1: {}
 

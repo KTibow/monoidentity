@@ -1,6 +1,6 @@
 import { stringify, parse } from 'devalue';
 import { parse as useSchema } from 'valibot';
-import { decode } from '../../../base36-esm/src/index.js';
+import { decode } from 'base36-esm';
 import { storageClient } from './storageclient.svelte.js';
 import { object, pipe, email, string } from 'valibot';
 
