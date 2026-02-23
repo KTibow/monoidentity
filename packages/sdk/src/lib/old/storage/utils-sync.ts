@@ -1,3 +1,5 @@
+import { SYNC_REQUEST_EVENT } from '../../storageclient.svelte.js';
+
 export type SyncRequestDetail = {
   key: string;
   resolve?: () => void;
@@ -6,11 +8,9 @@ export type SyncRequestDetail = {
 
 declare global {
   interface WindowEventMap {
-    "monoidentity-sync-request": CustomEvent<SyncRequestDetail>;
+    'monoidentity-sync-request': CustomEvent<SyncRequestDetail>;
   }
 }
-
-export const SYNC_REQUEST_EVENT = "monoidentity-sync-request";
 
 const activeSyncs: Record<string, Promise<void>> = {};
 const scheduledSyncs: Record<string, { fn: () => Promise<void>; executeAt: number }> = {};
@@ -39,13 +39,13 @@ const scheduleInterval = setInterval(() => {
 }, 100);
 
 const waitForTrackedSync = async (key: string) => {
-  if (key != "*") {
-    await waitForTrackedSync("*");
+  if (key != '*') {
+    await waitForTrackedSync('*');
   }
   if (key in activeSyncs) {
     await activeSyncs[key];
   }
-  if (key != "*" && key in scheduledSyncs) {
+  if (key != '*' && key in scheduledSyncs) {
     await runScheduledSync(key);
   }
 };

@@ -1,4 +1,4 @@
-import { SYNC_REQUEST_EVENT } from "./old/storage/utils-sync.js";
+export const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
 
 export const waitForSync = async (key: string) => {
   await new Promise<void>((resolve, reject) =>
@@ -8,10 +8,10 @@ export const waitForSync = async (key: string) => {
 
 declare global {
   interface WindowEventMap {
-    "monoidentity-storage": CustomEvent<{ key: string; value: string | undefined }>;
+    'monoidentity-storage': CustomEvent<{ key: string; value: string | undefined }>;
   }
 }
-export const STORAGE_EVENT = "monoidentity-storage";
+export const STORAGE_EVENT = 'monoidentity-storage';
 const announce = (key: string, value?: string) => {
   // Announce to all, even third parties
   window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value } }));
@@ -24,7 +24,7 @@ const increment = (key: string) => {
   allCounter++;
 };
 addEventListener(STORAGE_EVENT, (event: CustomEvent) => increment(event.detail.key));
-addEventListener("storage", (event) => {
+addEventListener('storage', (event) => {
   if (event.storageArea != localStorage) return;
   if (!event.key) return;
   increment(event.key);
@@ -46,8 +46,8 @@ export const storageClient = (
   const getScopedKeys = () => {
     const keys: string[] = [];
     for (const key in localStorage) {
-      if (!key.startsWith("monoidentity/")) continue;
-      let scopedKey = key.slice("monoidentity/".length);
+      if (!key.startsWith('monoidentity/')) continue;
+      let scopedKey = key.slice('monoidentity/'.length);
 
       if (unprefix) {
         const unprefixed = unprefix(scopedKey);
@@ -62,9 +62,9 @@ export const storageClient = (
 
   return new Proxy({} as Record<string, any>, {
     get(_, key) {
-      if (typeof key == "symbol") return undefined;
+      if (typeof key == 'symbol') return undefined;
 
-      if (key == "sync") {
+      if (key == 'sync') {
         return async (userKey: string) => {
           await waitForSync(prefix(userKey));
         };
@@ -84,7 +84,7 @@ export const storageClient = (
         localStorage[key] = value;
         announce(key, value);
       } else {
-        console.debug("[monoidentity storage] noop for", key);
+        console.debug('[monoidentity storage] noop for', key);
       }
 
       return true;
