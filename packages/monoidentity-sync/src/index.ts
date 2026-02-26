@@ -15,15 +15,16 @@ export const localAvailable =
   navigator.userAgent.includes('CrOS') && 'showDirectoryPicker' in window;
 
 export const autopush = async () => {
-  const controller = new AbortController();
   if (localStorage[KEY_CLOUD]) {
+    const controller = new AbortController();
     const client = createCloudClient(JSON.parse(localStorage['monoidentity-sync/cloud']));
     cloudPush(client, controller.signal);
+    return () => controller.abort();
   }
   if (localStorage[KEY_LOCAL_ENABLED]) {
+    const controller = new AbortController();
     const handle = await get('handle', store);
     localPush(handle, controller.signal);
+    return () => controller.abort();
   }
-
-  return () => controller.abort();
 };
