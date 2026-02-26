@@ -102,8 +102,11 @@ export const cloudPull = (client: AwsFetch, signal: AbortSignal) => {
     15 * 60 * 1000,
   );
 
-  const cleanup = () => {
-    clearInterval(syncIntervalId);
-  };
-  signal.addEventListener('abort', cleanup, { once: true });
+  signal.addEventListener(
+    'abort',
+    () => {
+      clearInterval(syncIntervalId);
+    },
+    { once: true },
+  );
 };

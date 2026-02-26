@@ -5,6 +5,7 @@ import { store } from './utils-idb';
 import { localPush } from './backuplocal-push';
 import { KEY_CLOUD, KEY_LOCAL_ENABLED } from './utils-config';
 
+export { createCloudClient } from './backupcloud-connection';
 export { cloudPull } from './backupcloud-pull';
 export { localPull } from './backuplocal-pull';
 
