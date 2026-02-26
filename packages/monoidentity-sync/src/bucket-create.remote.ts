@@ -1,6 +1,6 @@
 import { fn } from 'monoserve';
 import { string } from 'valibot';
-import { encode } from 'base36-esm';
+import { encode, decode } from 'base36-esm';
 import { verifyJWT } from '../../monoidentity-verification/src/verify/index';
 import { CF_ACCOUNT_ID, CF_KEY } from '$env/static/private';
 
@@ -28,7 +28,8 @@ export default fn(string(), async (jwt) => {
   );
 
   if (existingCreds.ok) {
-    return await existingCreds.text(); // Already encoded
+    const encoded = await existingCreds.text();
+    return decode(encoded);
   }
 
   // Generate unique bucket name
@@ -120,13 +121,12 @@ export default fn(string(), async (jwt) => {
   const secretAccessKey = await sha256(secretAccessKeyInput);
 
   // 4. Encode and store in KV
-  const encoded = encode(
-    JSON.stringify({
-      base: `https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com/${bucketName}`,
-      accessKeyId,
-      secretAccessKey,
-    }),
-  );
+  const credsJson = JSON.stringify({
+    base: `https://${CF_ACCOUNT_ID}.r2.cloudflarestorage.com/${bucketName}`,
+    accessKeyId,
+    secretAccessKey,
+  });
+  const encoded = encode(credsJson);
 
   const kvRes = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/storage/kv/namespaces/${KV_NAMESPACE_ID}/values/${user}`,
@@ -141,5 +141,5 @@ export default fn(string(), async (jwt) => {
     throw new Error(`Failed to store credentials in KV: ${await kvRes.text()}`);
   }
 
-  return encoded;
+  return credsJson;
 });
