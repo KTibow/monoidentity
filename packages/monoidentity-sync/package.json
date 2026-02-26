@@ -1,7 +1,7 @@
 {
   "name": "monoidentity-sync",
   "type": "module",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "KTibow",
   "license": "ISC",
   "homepage": "https://github.com/KTibow/monoidentity",
