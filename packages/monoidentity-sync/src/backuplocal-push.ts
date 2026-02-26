@@ -1,8 +1,8 @@
 import { STORAGE_EVENT } from 'monoidentity';
-import { shouldPersist } from './utils-storage.js';
-import { addSync } from './utils-sync.js';
+import { addSync } from './utils-sync';
+import { keyIsLocal } from './utils-key-info';
 
-const saveToDir = (dir: FileSystemDirectoryHandle) => {
+export const localPush = (dir: FileSystemDirectoryHandle, signal: AbortSignal) => {
   let dirCache: Record<string, FileSystemDirectoryHandle> = {};
   const getDirCached = async (route: string[]) => {
     let key = '';
@@ -35,14 +35,14 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     await parent.removeEntry(name);
   };
 
-  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
+  const handler = (event: CustomEvent<{ key: string; value?: string }>) => {
     const fullKey = event.detail.key;
     if (!fullKey.startsWith('monoidentity/')) return;
     const key = fullKey.slice('monoidentity/'.length);
 
     const strategy = MONOIDENTITY_SYNC_FOR(key);
     if (!strategy) {
-      if (!shouldPersist(key))
+      if (!keyIsLocal(key))
         console.warn('[monoidentity local]', key, "isn't marked to be backed up or saved");
       return;
     }
@@ -50,23 +50,5 @@ const saveToDir = (dir: FileSystemDirectoryHandle) => {
     addSync(key, writeFile(key, event.detail.value));
   };
 
-  addEventListener(STORAGE_EVENT, listener);
-
-  return () => {
-    removeEventListener(STORAGE_EVENT, listener);
-  };
-};
-
-export const mountLocalBackupPush = (dir: FileSystemDirectoryHandle, signal: AbortSignal) => {
-  signal.throwIfAborted();
-  const unmount = saveToDir(dir);
-  const cleanup = () => {
-    unmount();
-    signal.removeEventListener('abort', onAbort);
-  };
-  const onAbort = () => {
-    cleanup();
-  };
-  signal.addEventListener('abort', onAbort, { once: true });
-  return cleanup;
+  addEventListener(STORAGE_EVENT, handler, { signal });
 };

@@ -1,7 +1,7 @@
-const isPlainTextCloudObject = (key: string) => key.endsWith('.md') || key.endsWith('.devalue');
+import { keyIsPlainText } from './utils-key-info';
 
 export const encodeCloudContent = (key: string, value: string) => {
-  if (isPlainTextCloudObject(key)) {
+  if (keyIsPlainText(key)) {
     return value;
   }
 
@@ -13,7 +13,7 @@ export const encodeCloudContent = (key: string, value: string) => {
 };
 
 export const decodeCloudContent = async (key: string, response: Response) => {
-  if (isPlainTextCloudObject(key)) {
+  if (keyIsPlainText(key)) {
     return response.text();
   }
 

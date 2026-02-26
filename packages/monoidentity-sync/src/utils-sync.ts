@@ -1,6 +1,6 @@
 const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
 
-export type SyncRequestDetail = {
+type SyncRequestDetail = {
   key: string;
   resolve?: () => void;
   reject?: (reason?: unknown) => void;

@@ -1,10 +1,10 @@
 import { _storageClient } from 'monoidentity';
-import { addSync } from './utils-sync.js';
-import { shouldPersist } from './utils-storage.js';
+import { addSync } from './utils-sync';
 import { get, set } from 'idb-keyval';
-import { store } from './utils-idb.js';
-import { decodeCloudContent } from './_backupcloud.js';
-import type { AwsFetch } from './backupcloud-connection.js';
+import { store } from './utils-idb';
+import { decodeCloudContent } from './_backupcloud';
+import type { AwsFetch } from './backupcloud-connection';
+import { keyIsLocal } from './utils-key-info';
 
 const CLOUD_CACHE_KEY = 'cloud-cache';
 type Cache = Record<string, { etag: string; content: string }>;
@@ -77,7 +77,7 @@ const _pullFromCloud = async (client: AwsFetch) => {
   const local = _storageClient();
   for (const key of Object.keys(local)) {
     if (key in remote) continue;
-    if (shouldPersist(key)) continue;
+    if (keyIsLocal(key)) continue;
     delete local[key];
   }
   for (const [key, value] of Object.entries(remote)) {
@@ -86,15 +86,13 @@ const _pullFromCloud = async (client: AwsFetch) => {
   }
 };
 
-export const pullFromCloud = async (client: AwsFetch) => {
+const pullFromCloud = async (client: AwsFetch) => {
   const promise = _pullFromCloud(client);
   addSync('*', promise);
   await promise;
 };
 
-export const mountCloudPull = (client: AwsFetch, signal: AbortSignal) => {
-  signal.throwIfAborted();
-
+export const cloudPull = (client: AwsFetch, signal: AbortSignal) => {
   const syncIntervalId = setInterval(
     () => {
       pullFromCloud(client).catch((err) => {
@@ -106,9 +104,6 @@ export const mountCloudPull = (client: AwsFetch, signal: AbortSignal) => {
 
   const cleanup = () => {
     clearInterval(syncIntervalId);
-    signal.removeEventListener('abort', cleanup);
   };
   signal.addEventListener('abort', cleanup, { once: true });
-
-  return cleanup;
 };

@@ -1,9 +1,9 @@
 import { STORAGE_EVENT } from 'monoidentity';
-import { addSync, scheduleSync } from './utils-sync.js';
-import { shouldPersist } from './utils-storage.js';
-import type { AwsFetch } from './backupcloud-connection.js';
-import { setCloudCacheEntry } from './backupcloud-pull.js';
-import { encodeCloudContent } from './_backupcloud.js';
+import { addSync, scheduleSync } from './utils-sync';
+import type { AwsFetch } from './backupcloud-connection';
+import { setCloudCacheEntry } from './backupcloud-pull';
+import { encodeCloudContent } from './_backupcloud';
+import { keyIsLocal } from './utils-key-info';
 
 const write = async (key: string, value: string | undefined, client: AwsFetch) => {
   console.debug('[monoidentity cloud] saving', key);
@@ -27,9 +27,7 @@ const write = async (key: string, value: string | undefined, client: AwsFetch) =
   if (!r.ok && r.status != 404) throw new Error(`DELETE ${key} failed: ${r.status}`);
 };
 
-export const mountCloudPush = (client: AwsFetch, signal: AbortSignal) => {
-  signal.throwIfAborted();
-
+export const cloudPush = (client: AwsFetch, signal: AbortSignal) => {
   const writeWrapped = async (key: string, value: string | undefined) =>
     write(key, value, client).catch((err) => {
       console.error('[monoidentity cloud] save failed', key, err);
@@ -42,8 +40,7 @@ export const mountCloudPush = (client: AwsFetch, signal: AbortSignal) => {
 
     const strategy = MONOIDENTITY_SYNC_FOR(key);
     if (!strategy) {
-      if (!shouldPersist(key))
-        console.warn('[monoidentity cloud]', key, "isn't marked to be synced");
+      if (!keyIsLocal(key)) console.warn('[monoidentity cloud]', key, "isn't marked to be synced");
       return;
     }
 
@@ -54,13 +51,5 @@ export const mountCloudPush = (client: AwsFetch, signal: AbortSignal) => {
     }
   };
 
-  addEventListener(STORAGE_EVENT, listener);
-
-  const cleanup = () => {
-    removeEventListener(STORAGE_EVENT, listener);
-    signal.removeEventListener('abort', cleanup);
-  };
-  signal.addEventListener('abort', cleanup, { once: true });
-
-  return cleanup;
+  addEventListener(STORAGE_EVENT, listener, { signal });
 };

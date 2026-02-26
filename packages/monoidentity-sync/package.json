@@ -22,6 +22,10 @@
     "check": "tsc --noEmit",
     "prepublishOnly": "pnpm run build"
   },
+  "dependencies": {
+    "aws4fetch": "^1.0.20",
+    "idb-keyval": "^6.2.2"
+  },
   "devDependencies": {
     "@types/wicg-file-system-access": "^2023.10.7",
     "base36-esm": "link:../base36-esm",
@@ -32,10 +36,6 @@
     "tsdown": "^0.20.3",
     "valibot": "^1.2.0",
     "vite": "8.0.0-beta.15"
-  },
-  "dependencies": {
-    "aws4fetch": "^1.0.20",
-    "idb-keyval": "^6.2.2"
   },
   "peerDependencies": {
     "monoidentity": "^0.31.1"
