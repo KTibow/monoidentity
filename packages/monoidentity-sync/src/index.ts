@@ -16,19 +16,15 @@ export type { Bucket } from './types';
 export const localAvailable =
   navigator.userAgent.includes('CrOS') && 'showDirectoryPicker' in window;
 
-export const autopush = () => {
+export const autopush = (signal: AbortSignal) => {
   if (localStorage[KEY_CLOUD]) {
-    const controller = new AbortController();
     const client = createCloudClient(JSON.parse(localStorage['monoidentity-sync/cloud']));
-    cloudPush(client, controller.signal);
-    return () => controller.abort();
+    cloudPush(client, signal);
   }
   if (localStorage[KEY_LOCAL_ENABLED]) {
-    const controller = new AbortController();
     get('handle', store).then((handle) => {
-      controller.signal.throwIfAborted();
-      localPush(handle, controller.signal);
+      signal.throwIfAborted();
+      localPush(handle, signal);
     });
-    return () => controller.abort();
   }
 };
