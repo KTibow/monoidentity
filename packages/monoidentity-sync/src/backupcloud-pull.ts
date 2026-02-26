@@ -68,7 +68,7 @@ const loadFromCloud = async (objects: { key: string; etag: string }[], client: A
   return model;
 };
 
-const _pullFromCloud = async (client: AwsFetch) => {
+const _pull = async (client: AwsFetch) => {
   const cachePromise = initCache();
   const objects = await listCloud(client);
   await cachePromise;
@@ -86,27 +86,7 @@ const _pullFromCloud = async (client: AwsFetch) => {
   }
 };
 
-const pullFromCloud = async (client: AwsFetch) => {
-  const promise = _pullFromCloud(client);
+export const cloudStartPull = (client: AwsFetch) => {
+  const promise = _pull(client);
   addSync('*', promise);
-  await promise;
-};
-
-export const cloudPull = (client: AwsFetch, signal: AbortSignal) => {
-  const syncIntervalId = setInterval(
-    () => {
-      pullFromCloud(client).catch((err) => {
-        console.error('[monoidentity cloud] pull failed', err);
-      });
-    },
-    15 * 60 * 1000,
-  );
-
-  signal.addEventListener(
-    'abort',
-    () => {
-      clearInterval(syncIntervalId);
-    },
-    { once: true },
-  );
 };

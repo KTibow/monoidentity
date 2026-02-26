@@ -6,7 +6,7 @@ import { localPush } from './backuplocal-push';
 import { KEY_CLOUD, KEY_LOCAL_ENABLED } from './utils-config';
 
 export { createCloudClient } from './backupcloud-connection';
-export { cloudPull } from './backupcloud-pull';
+export { cloudStartPull } from './backupcloud-pull';
 export { localPull } from './backuplocal-pull';
 
 export { default as createBucket } from './bucket-create.remote';
