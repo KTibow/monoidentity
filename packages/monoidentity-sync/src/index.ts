@@ -3,7 +3,7 @@ import { createCloudClient } from './backupcloud-connection';
 import { cloudPush } from './backupcloud-push';
 import { store } from './utils-idb';
 import { localPush } from './backuplocal-push';
-import { KEY_CLOUD, KEY_LOCAL_ENABLED } from './utils-config';
+import { KEY_CLOUD, KEY_LOCAL_ENABLED, KEY_LOCAL_HANDLE } from './utils-config';
 
 export { createCloudClient } from './backupcloud-connection';
 export { cloudStartPull } from './backupcloud-pull';
@@ -22,7 +22,7 @@ export const autopush = (signal: AbortSignal) => {
     cloudPush(client, signal);
   }
   if (localStorage[KEY_LOCAL_ENABLED]) {
-    get('handle', store).then((handle) => {
+    get(KEY_LOCAL_HANDLE, store).then((handle) => {
       signal.throwIfAborted();
       localPush(handle, signal);
     });
