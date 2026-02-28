@@ -1,4 +1,4 @@
-import { setLoginRecognized } from './+index.js';
+import { setLoginRecognized } from './index.js';
 
 const params = new URLSearchParams(location.hash.slice(1));
 
