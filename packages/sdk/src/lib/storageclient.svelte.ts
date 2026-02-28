@@ -1,6 +1,12 @@
 export const SYNC_REQUEST_EVENT = 'monoidentity-sync-request';
 export const STORAGE_EVENT = 'monoidentity-storage';
 
+type StorageEventDetail = {
+  key: string;
+  value: string | undefined;
+  isSync: boolean;
+};
+
 const waitForSync = async (key: string) => {
   await new Promise<void>((resolve, reject) =>
     window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
@@ -9,12 +15,12 @@ const waitForSync = async (key: string) => {
 
 declare global {
   interface WindowEventMap {
-    'monoidentity-storage': CustomEvent<{ key: string; value: string | undefined }>;
+    'monoidentity-storage': CustomEvent<StorageEventDetail>;
   }
 }
-const announce = (key: string, value?: string) => {
+const announce = (key: string, value: string | undefined, isSync = false) => {
   // Announce to all, even third parties
-  window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value } }));
+  window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value, isSync } }));
 };
 
 const storageCounters: Record<string, number> = $state({});
@@ -35,6 +41,7 @@ export const storageClient = (
   unprefix?: (key: string) => string | undefined,
   serialize?: (data: any) => string,
   deserialize?: (data: string) => any,
+  isSyncContext = false,
 ) => {
   if (prefix) {
     const oldPrefix = prefix;
@@ -82,7 +89,7 @@ export const storageClient = (
 
       if (localStorage[key] != value) {
         localStorage[key] = value;
-        announce(key, value);
+        announce(key, value, isSyncContext);
       } else {
         console.debug('[monoidentity storage] noop for', key);
       }
@@ -93,7 +100,7 @@ export const storageClient = (
       key = prefix(key);
 
       delete localStorage[key];
-      announce(key);
+      announce(key, undefined, isSyncContext);
       return true;
     },
     ownKeys() {
