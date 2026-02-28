@@ -21,7 +21,7 @@ const restoreFromDir = async (dir: FileSystemDirectoryHandle) => {
   await traverse(dir, '');
   if (!Object.keys(backup).length) return;
 
-  const client = _storageClient();
+  const client = _storageClient(undefined, undefined, undefined, undefined, true);
   for (const key in backup) {
     console.debug('[monoidentity local] loading', key);
     client[key] = backup[key];

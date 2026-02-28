@@ -74,7 +74,7 @@ const _pull = async (client: AwsFetch) => {
   await cachePromise;
   const remote = await loadFromCloud(objects, client);
 
-  const local = _storageClient();
+  const local = _storageClient(undefined, undefined, undefined, undefined, true);
   for (const key of Object.keys(local)) {
     if (key in remote) continue;
     if (keyIsLocal(key)) continue;

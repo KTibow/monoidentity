@@ -33,7 +33,9 @@ export const cloudPush = (client: AwsFetch, signal: AbortSignal) => {
       console.error('[monoidentity cloud] save failed', key, err);
     });
 
-  const listener = (event: CustomEvent<{ key: string; value?: string }>) => {
+  const listener = (event: CustomEvent<{ key: string; value?: string; isSync?: boolean }>) => {
+    if (event.detail.isSync) return;
+
     const fullKey = event.detail.key;
     if (!fullKey.startsWith('monoidentity/')) return;
     const key = fullKey.slice('monoidentity/'.length);

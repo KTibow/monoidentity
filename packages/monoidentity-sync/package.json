@@ -1,7 +1,7 @@
 {
   "name": "monoidentity-sync",
   "type": "module",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": "KTibow",
   "license": "ISC",
   "homepage": "https://github.com/KTibow/monoidentity",
@@ -31,7 +31,7 @@
     "base36-esm": "link:../base36-esm",
     "devalue": "^5.6.3",
     "dotenv": "^17.3.1",
-    "monoidentity": "^0.31.3",
+    "monoidentity": "^0.31.4",
     "monoserve": "^3.2.4",
     "tsdown": "^0.20.3",
     "valibot": "^1.2.0",

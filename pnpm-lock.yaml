@@ -90,8 +90,8 @@ importers:
         specifier: ^17.3.1
         version: 17.3.1
       monoidentity:
-        specifier: ^0.31.3
-        version: 0.31.3(svelte@5.53.2)(typescript@5.9.3)
+        specifier: ^0.31.4
+        version: 0.31.4(svelte@5.53.2)(typescript@5.9.3)
       monoserve:
         specifier: ^3.2.4
         version: 3.2.4(devalue@5.6.3)(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
@@ -1688,6 +1688,9 @@ packages:
   base36-esm@0.1.0:
     resolution: {integrity: sha512-tS/RrucuZs937n7V7Ri1ASbznlrAxku/MSkzQwZkU6VPjBjXah1vZvTZ13eojlwG3m6Tso17Qa5nR0GnbwqP5Q==}
 
+  base36-esm@0.1.1:
+    resolution: {integrity: sha512-/ri389LOlqaDf7eF0QUQowC84MM8P0UegxOes8a30KnsjR2LCuQOL/jHC9Dr19sIpfoEZXc6H9H46dFHkmogUQ==}
+
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
@@ -2733,8 +2736,8 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-  monoidentity@0.31.3:
-    resolution: {integrity: sha512-mO0vmfU4KiiDrsUtSOmtRJXBkb56OIUhIeM4fCwfqwlyEXQiUQrBaYYHvkVgVuyaz5SKaPsrfpWPHmiYUnYQvA==}
+  monoidentity@0.31.4:
+    resolution: {integrity: sha512-xkTt29bSFEZFSwcjvKpX+VVYcODztJ+pA3MgO1rDSzoNFwLDknQ4k9cvwkJKCiMLnlhi9rq8FhgUMp0BG6n6pQ==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -3051,14 +3054,14 @@ packages:
     resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rolldown-plugin-dts@0.22.1:
-    resolution: {integrity: sha512-5E0AiM5RSQhU6cjtkDFWH6laW4IrMu0j1Mo8x04Xo1ALHmaRMs9/7zej7P3RrryVHW/DdZAp85MA7Be55p0iUw==}
+  rolldown-plugin-dts@0.22.2:
+    resolution: {integrity: sha512-Ge+XF962Kobjr0hRPx1neVnLU2jpKkD2zevZTfPKf/0el4eYo9SyGPm0stiHDG2JQuL0Q3HLD0Kn+ST8esvVdA==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       '@ts-macro/tsc': ^0.3.6
       '@typescript/native-preview': '>=7.0.0-dev.20250601.1'
       rolldown: ^1.0.0-rc.3
-      typescript: ^5.0.0
+      typescript: ^5.0.0 || ^6.0.0-beta
       vue-tsc: ~3.2.0
     peerDependenciesMeta:
       '@ts-macro/tsc':
@@ -3399,8 +3402,8 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
-  unrun@0.2.27:
-    resolution: {integrity: sha512-Mmur1UJpIbfxasLOhPRvox/QS4xBiDii71hMP7smfRthGcwFL2OAmYRgduLANOAU4LUkvVamuP+02U+c90jlrw==}
+  unrun@0.2.28:
+    resolution: {integrity: sha512-LqMrI3ZEUMZ2476aCsbUTfy95CHByqez05nju4AQv4XFPkxh5yai7Di1/Qb0FoELHEEPDWhQi23EJeFyrBV0Og==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -5163,6 +5166,8 @@ snapshots:
 
   base36-esm@0.1.0: {}
 
+  base36-esm@0.1.1: {}
+
   base64-js@1.5.1: {}
 
   bignumber.js@9.3.1: {}
@@ -6506,9 +6511,9 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  monoidentity@0.31.3(svelte@5.53.2)(typescript@5.9.3):
+  monoidentity@0.31.4(svelte@5.53.2)(typescript@5.9.3):
     dependencies:
-      base36-esm: 0.1.0
+      base36-esm: 0.1.1
       devalue: 5.6.3
       svelte: 5.53.2
       valibot: 1.2.0(typescript@5.9.3)
@@ -6878,7 +6883,7 @@ snapshots:
 
   reusify@1.1.0: {}
 
-  rolldown-plugin-dts@0.22.1(oxc-resolver@11.18.0)(rolldown@1.0.0-rc.3)(typescript@5.9.3):
+  rolldown-plugin-dts@0.22.2(oxc-resolver@11.18.0)(rolldown@1.0.0-rc.3)(typescript@5.9.3):
     dependencies:
       '@babel/generator': 8.0.0-rc.1
       '@babel/helper-validator-identifier': 8.0.0-rc.1
@@ -7277,13 +7282,13 @@ snapshots:
       obug: 2.1.1
       picomatch: 4.0.3
       rolldown: 1.0.0-rc.3
-      rolldown-plugin-dts: 0.22.1(oxc-resolver@11.18.0)(rolldown@1.0.0-rc.3)(typescript@5.9.3)
+      rolldown-plugin-dts: 0.22.2(oxc-resolver@11.18.0)(rolldown@1.0.0-rc.3)(typescript@5.9.3)
       semver: 7.7.4
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
-      unrun: 0.2.27
+      unrun: 0.2.28
     optionalDependencies:
       publint: 0.3.17
       typescript: 5.9.3
@@ -7386,9 +7391,9 @@ snapshots:
 
   unpipe@1.0.0: {}
 
-  unrun@0.2.27:
+  unrun@0.2.28:
     dependencies:
-      rolldown: 1.0.0-rc.3
+      rolldown: 1.0.0-rc.5
 
   unstorage@1.17.4(aws4fetch@1.0.20)(idb-keyval@6.2.2):
     dependencies:

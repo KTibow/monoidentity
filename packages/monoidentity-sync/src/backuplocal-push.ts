@@ -35,7 +35,9 @@ export const localPush = (dir: FileSystemDirectoryHandle, signal: AbortSignal) =
     await parent.removeEntry(name);
   };
 
-  const handler = (event: CustomEvent<{ key: string; value?: string }>) => {
+  const handler = (event: CustomEvent<{ key: string; value?: string; isSync?: boolean }>) => {
+    if (event.detail.isSync) return;
+
     const fullKey = event.detail.key;
     if (!fullKey.startsWith('monoidentity/')) return;
     const key = fullKey.slice('monoidentity/'.length);
