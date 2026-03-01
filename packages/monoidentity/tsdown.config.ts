@@ -4,5 +4,6 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     'receive-callback': 'src/receive-callback.ts',
+    'storageclient.svelte': 'src/storageclient.svelte.ts',
   },
 });
