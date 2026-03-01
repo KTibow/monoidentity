@@ -68,6 +68,25 @@ importers:
         specifier: ^0.4.1
         version: 0.4.1(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(yaml@2.8.2))
 
+  packages/monoidentity:
+    dependencies:
+      base36-esm:
+        specifier: ^0.1.0
+        version: 0.1.1
+      devalue:
+        specifier: ^5.6.3
+        version: 5.6.3
+      svelte:
+        specifier: ^5.0.0
+        version: 5.53.2
+      valibot:
+        specifier: ^1.2.0
+        version: 1.2.0(typescript@5.9.3)
+    devDependencies:
+      tsdown:
+        specifier: ^0.20.3
+        version: 0.20.3(oxc-resolver@11.18.0)(publint@0.3.17)(typescript@5.9.3)
+
   packages/monoidentity-sync:
     dependencies:
       aws4fetch:
@@ -132,25 +151,6 @@ importers:
       valibot:
         specifier: ^1.2.0
         version: 1.2.0(typescript@5.9.3)
-
-  packages/sdk:
-    dependencies:
-      base36-esm:
-        specifier: ^0.1.0
-        version: 0.1.0
-      devalue:
-        specifier: ^5.6.3
-        version: 5.6.3
-      svelte:
-        specifier: ^5.0.0
-        version: 5.53.2
-      valibot:
-        specifier: ^1.2.0
-        version: 1.2.0(typescript@5.9.3)
-    devDependencies:
-      tsdown:
-        specifier: ^0.20.3
-        version: 0.20.3(oxc-resolver@11.18.0)(publint@0.3.17)(typescript@5.9.3)
 
 packages:
 
@@ -1617,9 +1617,6 @@ packages:
 
   base-64@1.0.0:
     resolution: {integrity: sha512-kwDPIFCGx0NZHog36dj+tHiwP4QMzsZ3AgMViUBKI0+V5n4U0ufTCUMhnQ04diaRI8EX/QcPfql7zlhZ7j4zgg==}
-
-  base36-esm@0.1.0:
-    resolution: {integrity: sha512-tS/RrucuZs937n7V7Ri1ASbznlrAxku/MSkzQwZkU6VPjBjXah1vZvTZ13eojlwG3m6Tso17Qa5nR0GnbwqP5Q==}
 
   base36-esm@0.1.1:
     resolution: {integrity: sha512-/ri389LOlqaDf7eF0QUQowC84MM8P0UegxOes8a30KnsjR2LCuQOL/jHC9Dr19sIpfoEZXc6H9H46dFHkmogUQ==}
@@ -5001,8 +4998,6 @@ snapshots:
   bail@2.0.2: {}
 
   base-64@1.0.0: {}
-
-  base36-esm@0.1.0: {}
 
   base36-esm@0.1.1: {}
 
