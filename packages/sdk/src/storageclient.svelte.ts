@@ -9,7 +9,7 @@ type StorageEventDetail = {
 
 const waitForSync = async (key: string) => {
   await new Promise<void>((resolve, reject) =>
-    window.dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
+    dispatchEvent(new CustomEvent(SYNC_REQUEST_EVENT, { detail: { key, resolve, reject } })),
   );
 };
 
@@ -20,7 +20,7 @@ declare global {
 }
 const announce = (key: string, value: string | undefined, isSync = false) => {
   // Announce to all, even third parties
-  window.dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value, isSync } }));
+  dispatchEvent(new CustomEvent(STORAGE_EVENT, { detail: { key, value, isSync } }));
 };
 
 const storageCounters: Record<string, number> = $state({});
