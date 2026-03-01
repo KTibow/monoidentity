@@ -7,4 +7,5 @@ export default defineConfig({
     'storageclient.svelte': 'src/storageclient.svelte.ts',
   },
   platform: 'browser',
+  treeshake: false,
 });
