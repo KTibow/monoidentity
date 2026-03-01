@@ -1,7 +1,7 @@
 {
   "name": "monoidentity-sync",
   "type": "module",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "KTibow",
   "license": "ISC",
   "homepage": "https://github.com/KTibow/monoidentity",
@@ -9,8 +9,8 @@
   "repository": "KTibow/monoidentity",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.mts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [

@@ -9,4 +9,5 @@ export default defineConfig({
       env: process.env as Record<string, string>,
     }),
   ],
+  platform: 'browser',
 });

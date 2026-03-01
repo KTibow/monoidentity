@@ -17,7 +17,7 @@ const config: KnipConfig = {
     },
     'packages/hub': {
       entry: ['src/**/*.astro'],
-      project: ['src/**/*.{astro,css,js,ts,mjs}'],
+      project: ['src/**/*.{astro,css,js,ts}'],
       ignoreDependencies: ['@astrojs/check'],
     },
     'packages/monoidentity-sync': {

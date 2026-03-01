@@ -6,4 +6,5 @@ export default defineConfig({
     'receive-callback': 'src/receive-callback.ts',
     'storageclient.svelte': 'src/storageclient.svelte.ts',
   },
+  platform: 'browser',
 });
